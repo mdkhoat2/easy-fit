@@ -5,8 +5,16 @@ data class User(
     val email: String,
     val username: String,
     val password: String,
-    val streak: Int = 0, // Number of consecutive workout days
-    val goals: Goals? // User-specific goals
+    val userDetail: UserDetail,
+)
+
+data class UserDetail(
+    val id: String,
+    val description: String,
+    val interests: String,
+    val isVerified: Boolean,
+    val avatarUrl: String,
+    val goals: Goals
 )
 
 data class Goals(
@@ -20,7 +28,7 @@ data class WeeklyHistory(
 )
 
 data class WeekSummary(
-    val weekNumber: Int,
+    val startDate: String,
     val missedSessions: Int,
     val totalTime: Int, // In minutes
     val sessionCount: Int

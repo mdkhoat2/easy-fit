@@ -4,12 +4,6 @@ import com.example.jetpackcompose.data.dataModel.WeeklyHistory
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.domain.repo.WorkoutRepository
 
-class GetWeeklyHistoryUseCase(private val repository: WorkoutRepository) {
-    suspend operator fun invoke(userId: String): WeeklyHistory {
-
-        return repository.getWeeklyHistory(userId)
-    }
-}
 
 class GetYourWorkoutsUseCase(private val repository: WorkoutRepository) {
     suspend operator fun invoke(userId: String): List<Workout> {

@@ -12,6 +12,10 @@ data class RegistrationRequest(
     val confirmPassword: String
 )
 
+data class TokenResponse(
+    val token: String
+)
+
 data class PasswordResetRequest(
     val email: String
 )

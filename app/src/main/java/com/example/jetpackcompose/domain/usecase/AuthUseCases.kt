@@ -54,4 +54,10 @@ class ValidateOTPUseCase(private val repository: AuthRepository) {
     }
 }
 
+class GetCurrentUserIDUseCase(private val repository: AuthRepository) {
+    suspend operator fun invoke(): String {
+        return repository.getCurrentUserID()
+    }
+}
+
 

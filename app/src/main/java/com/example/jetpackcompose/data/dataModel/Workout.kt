@@ -24,7 +24,7 @@ data class Exercise(
     val restTime: Int = 0 // Rest time between sets in seconds
 )
 
-data class WorkoutSummary(
+data class WorkoutSummary( //local data model
     val streak: Int,
     val exercisesCompleted: Int,
     val duration: Int, // In minutes
