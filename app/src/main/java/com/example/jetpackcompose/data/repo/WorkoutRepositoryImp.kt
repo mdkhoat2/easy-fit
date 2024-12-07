@@ -19,10 +19,13 @@ class WorkoutRepositoryImp(
             weeks =
                 List(cnt) {
                     WeekSummary(
+                        planId = "plan_${Random.nextInt(1000, 9999)}",
                         startDate = "2024-12-${Random.nextInt(1, 28)}",
                         missedSessions = Random.nextInt(0, 5),
                         totalTime = Random.nextInt(60, 300),
                         sessionCount = Random.nextInt(0, 7),
+                        MissedDays =
+                            List(Random.nextInt(0, 7)) { DayOfWeek.values().random() },
                     )
                 },
         )
@@ -56,4 +59,6 @@ class WorkoutRepositoryImp(
     ): Boolean = true
 
     override suspend fun createWorkout(workout: Workout): Boolean = true
+
+    override suspend fun deleteWorkout(workoutId: String): Boolean = true
 }

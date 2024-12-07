@@ -11,4 +11,5 @@ interface WorkoutRepository {
 
     suspend fun updateWorkout(workoutId: String, updatedWorkout: Workout): Boolean
     suspend fun createWorkout(workout: Workout): Boolean
+    suspend fun deleteWorkout(workoutId: String): Boolean
 }

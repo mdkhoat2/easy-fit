@@ -23,6 +23,12 @@ class CreateWorkoutUseCase(private val repository: WorkoutRepository) {
     }
 }
 
+class DeleteWorkoutUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(workoutId: String): Boolean {
+        return repository.deleteWorkout(workoutId)
+    }
+}
+
 
 
 
