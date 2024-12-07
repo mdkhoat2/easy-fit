@@ -12,7 +12,6 @@ import androidx.navigation.compose.rememberNavController
 */
 
 object Navigation{
-    val SPLASH_SCREEN = "splash_screen"
     val HOME_SCREEN = "home_screen"
 }
 
