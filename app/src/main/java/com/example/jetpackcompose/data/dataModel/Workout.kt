@@ -11,6 +11,7 @@ enum class ExerciseType {
 
 data class Workout(
     val id: String,
+    val creatorId: User?,
     val name: String,
     val exercises: List<Exercise>,
     val duration: Int // Total duration in minutes
@@ -19,9 +20,9 @@ data class Workout(
 data class Exercise(
     val name: ExerciseName,
     val type: ExerciseType = ExerciseType.COUNTED,
-    val repetition: Int = 0, // Number of repetitions for "counted" exercises
+    val repetition: Int = 10, // Number of repetitions for "counted" exercises
     val duration: Int = 0, // Duration in seconds for "timed" exercises
-    val restTime: Int = 0 // Rest time between sets in seconds
+    val restTime: Int = 15 // Rest time between sets in seconds
 )
 
 data class WorkoutSummary( //local data model

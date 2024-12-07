@@ -12,7 +12,7 @@ data class UserDetail(
     val description: String,
     val interests: String,
     val isVerified: Boolean,
-    val avatarUrl: String,
+    val avatarUrl: String?,
     val goals: Goals
 )
 

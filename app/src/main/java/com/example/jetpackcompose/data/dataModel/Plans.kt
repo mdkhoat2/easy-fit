@@ -12,7 +12,7 @@ data class PlannedWorkout(
     val workout: Workout
 )
 
-data class WeeklyHistory(
+data class PatchHistory(
     val weeks: List<WeekSummary> // Each week contains aggregated data
 )
 

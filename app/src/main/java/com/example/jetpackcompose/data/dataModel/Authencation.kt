@@ -16,11 +16,8 @@ data class TokenResponse(
     val token: String
 )
 
-data class PasswordResetRequest(
-    val email: String
-)
-
-data class OTPValidationRequest(
+data class AuthRequest(
     val email: String,
-    val otp: String
+    val password: String? = null,
+    val otp: String? = null
 )

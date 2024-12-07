@@ -4,13 +4,8 @@ import com.example.jetpackcompose.domain.repo.AuthRepository
 
 class LoginUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(email: String, password: String): Boolean {
-        if (email.isEmpty() || password.isEmpty()) {
-            throw IllegalArgumentException("Email or password must not be empty")
-        }
-
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            throw IllegalArgumentException("Email is not valid")
-        }
+        Validator.validateEmail(email)
+        Validator.validatePassword(password)
 
         return repository.login(email, password)
     }
@@ -18,17 +13,9 @@ class LoginUseCase(private val repository: AuthRepository) {
 
 class RegisterUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(email: String, username: String, password: String): Boolean {
-        if (email.isEmpty() || username.isEmpty() || password.isEmpty()) {
-            throw IllegalArgumentException("Email, username or password must not be empty")
-        }
-
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            throw IllegalArgumentException("Email is not valid")
-        }
-
-        if (password.length < 6) {
-            throw IllegalArgumentException("Password must be at least 6 characters")
-        }
+        Validator.validateEmail(email)
+        Validator.validatePassword(password)
+        Validator.validateUsername(username)
 
         return repository.register(email, username, password)
     }
@@ -36,13 +23,7 @@ class RegisterUseCase(private val repository: AuthRepository) {
 
 class ResetPasswordUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(email: String): Boolean {
-        if (email.isEmpty()) {
-            throw IllegalArgumentException("Email must not be empty")
-        }
-
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            throw IllegalArgumentException("Email is not valid")
-        }
+        Validator.validateEmail(email)
 
         return repository.resetPassword(email)
     }
@@ -50,6 +31,8 @@ class ResetPasswordUseCase(private val repository: AuthRepository) {
 
 class ValidateOTPUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(email: String, otp: String): Boolean {
+        Validator.validateEmail(email)
+
         return repository.validateOTP(email, otp)
     }
 }
@@ -59,5 +42,10 @@ class GetCurrentUserIDUseCase(private val repository: AuthRepository) {
         return repository.getCurrentUserID()
     }
 }
+
+
+
+
+
 
 

@@ -10,12 +10,12 @@ class WorkoutRepositoryImp(
     private val api: WorkoutApi,
     private val database: WorkoutDatabase,
 ) : WorkoutRepository {
-    override suspend fun getWeeklyHistory(
+    override suspend fun getPatchHistory(
         userId: String,
         cnt: Int,
         skip: Int,
-    ): WeeklyHistory =
-        WeeklyHistory(
+    ): PatchHistory =
+        PatchHistory(
             weeks =
                 List(cnt) {
                     WeekSummary(
@@ -24,8 +24,7 @@ class WorkoutRepositoryImp(
                         missedSessions = Random.nextInt(0, 5),
                         totalTime = Random.nextInt(60, 300),
                         sessionCount = Random.nextInt(0, 7),
-                        MissedDays =
-                            List(Random.nextInt(0, 7)) { DayOfWeek.values().random() },
+                        missedDays = List(Random.nextInt(0, 7)) { DayOfWeek.values().random() },
                     )
                 },
         )
@@ -46,10 +45,11 @@ class WorkoutRepositoryImp(
                             type = ExerciseType.values().random(),
                             repetition = Random.nextInt(10, 50),
                             duration = Random.nextInt(30, 120),
-                            restTime = Random.nextInt(10, 30),
+                            restTime = Random.nextInt(10, 30)
                         ),
                     ),
                 duration = Random.nextInt(15, 90),
+                creatorId = null,
             )
         }
 
