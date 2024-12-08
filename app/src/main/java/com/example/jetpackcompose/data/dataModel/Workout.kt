@@ -1,8 +1,15 @@
 package com.example.jetpackcompose.data.dataModel
 
 enum class ExerciseName {
-    PUSH_UP, SQUAT, PLANK, LUNGE, BURPEE, CRUNCHES, WALL_SIT, JUMP_ROPE, HIGH_KNEES,
-    MOUNTAIN_CLIMBER, JUMPING_JACK, LEG_RAISE, BICYCLE_CRUNCH, RUSSIAN_TWIST, SIDE_PLANK
+    PUSH_UP,
+    SIT_UP,
+    PLANK,
+    LEG_RAISE,
+    CRUNCH,
+    MOUNTAIN_CLIMBER,
+    JUMPING_JACK,
+    HIGH_KNEES,
+    BURPEE
 }
 
 enum class ExerciseType {
