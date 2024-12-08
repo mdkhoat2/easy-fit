@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.presentation.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
@@ -89,7 +91,10 @@ fun SelectWorkoutsScreen(getWorkouts: suspend () -> List<Workout>) {
             ) {
                 // Workout items
                 items(workouts) { workout ->
-                    WorkoutItem(workoutName = workout.name)
+                    WorkoutItem(workoutName = workout.name,
+                        onClick = {
+                            println("Item printe")
+                        })
                 }
 
                 // Add the search bar as the last item
@@ -117,25 +122,26 @@ fun SelectWorkoutsScreen(getWorkouts: suspend () -> List<Workout>) {
 
 
 @Composable
-fun WorkoutList(workouts: List<String>) {
+fun WorkoutList(workouts: List<String>, onItemClick: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(workouts) { workout ->
-            WorkoutItem(workoutName = workout)
+            WorkoutItem(workoutName = workout, onClick = { onItemClick(workout) })
         }
     }
 }
 
 @Composable
-fun WorkoutItem(workoutName: String) {
+fun WorkoutItem(workoutName: String,onClick: () -> Unit ) { //set onClickListener to the item
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .background(colorFromResource(R.color.bottom_bar_background))
-            .padding(16.dp),
+            .clickable {  onClick() }
+            .padding(vertical = 4.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -154,20 +160,37 @@ fun WorkoutItem(workoutName: String) {
                     .background(Color.Gray) // Set the color of the line
             )
 
-            Spacer(modifier = Modifier.width(16.dp)) // Space between line and icon
+            Spacer(modifier = Modifier.width(8.dp)) // Space between line and icon
 
-            // Edit icon
-            Icon(
-                imageVector = Icons.Default.Edit,
-                contentDescription = "Edit",
-                modifier = Modifier.size(24.dp),
-                tint = colorFromResource(R.color.btn_back_color) // Set the color of the icon
-            )
+            IconButton(
+                onClick =
+                {
+                    /* Handle edit button click */
+
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit",
+                    modifier = Modifier.size(24.dp),
+                    tint = colorFromResource(R.color.btn_back_color)
+                )
+            }
+
         }
     }
 
 }
 
-
-
-
+// preview
+@Preview
+@Composable
+fun SelectWorkoutsScreenPreview() {
+    //make a sample list of workouts
+    val workouts = listOf(
+        Workout("1", null, "Crunch", emptyList(), 30),
+        Workout("2", null, "Push Up", emptyList(), 45),
+        Workout("3", null, "Quay Tay", emptyList(), 60)
+    )
+    SelectWorkoutsScreen(getWorkouts = { workouts })
+}
