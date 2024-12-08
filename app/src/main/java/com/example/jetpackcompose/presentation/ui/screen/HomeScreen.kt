@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.presentation.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,13 +13,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +51,10 @@ import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.example.jetpackcompose.R
+import com.example.jetpackcompose.presentation.di.StatData
+import com.example.jetpackcompose.presentation.ui.viewmodel.HomeViewModel
+import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.util.colorFromResourceAlpha
 
 /**
  * Created by Duy on 29/11/2024
@@ -50,76 +64,174 @@ import com.example.jetpackcompose.R
 
 @Composable
 fun HomeScreen() {
+    val homeViewModel: HomeViewModel = HomeViewModel()
+    val uiState by homeViewModel.state.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "History",
-                color = Color.White,
-                style = MaterialTheme.typography.titleLarge
+        HistoryBar()
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+//        val pointsData = listOf(
+//            Point(0f, 40f),
+//            Point(1f, 90f),
+//            Point(2f, 0f),
+//            Point(3f, 60f),
+//            Point(4f, 10f)
+//        )
+
+        if (uiState.isLoading){
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
-            Spacer(modifier = Modifier.width(5.dp))
+        }
+        else{
+            progressChart(uiState.points)
+        }
+
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+//        val listData = listOf(
+//            StatData("Missed", "10"),
+//            StatData("Time", "10:04"),
+//            StatData("Session", "2")
+//        )
+
+        if (uiState.isLoading){
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+        }
+        else{
+            WeeklyStat(uiState.listData)
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        StartSessionButton()
+    }
+}
+
+@Composable
+fun HistoryBar(){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "History",
+            color = Color.White,
+            style = Typography.titleLarge
+        )
+        Spacer(modifier = Modifier.width(5.dp))
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+            contentDescription = "Arrow",
+            tint = Color.LightGray
+        )
+    }
+}
+
+@Composable
+fun WeeklyStat(listData: List<StatData>){
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        text = "This week",
+        color = Color.White,
+        style = Typography.titleLarge
+    )
+    // Scrollable Stats Row
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        items(listData) { stat ->
+            StatCard(title = stat.title, value = stat.value)
+        }
+    }
+}
+
+@Composable
+fun StartSessionButton(){
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        OutlinedButton(
+            onClick = {},
+            modifier = Modifier
+                .width(162.dp)
+                .height(50.dp)
+                .clip(RoundedCornerShape(10.dp)),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = Color(0xFF9AC0D6),
+                containerColor = Color(0xFF9AC0D6).copy(alpha = 0.2f)
+            )
+
+        )
+        {
+            Text(
+                text = "Start session",
+                style = Typography.titleSmall,
+                color = Color(0xFF9AC0D6)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = "Arrow",
-                tint = Color.LightGray
+                tint = Color(0xFF9AC0D6)
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Box(
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth()
-                .background(colorFromResource(R.color.bottom_bar_background)),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            val pointsData = listOf(
-                Point(0f, 40f),
-                Point(1f, 90f),
-                Point(2f, 0f),
-                Point(3f, 60f),
-                Point(4f, 10f)
-            )
+    }
+}
 
-            LineChartScreen(pointsData)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        // Scrollable Stats Row
+@Composable
+fun progressChart(pointsData: List<Point>){
+    Box(
+        modifier = Modifier
+            .height(200.dp)
+            .fillMaxWidth()
+            .background(colorFromResource(R.color.bottom_bar_background)),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        LineChartScreen(pointsData)
     }
 }
 
 @Composable
 fun StatCard(title: String, value: String)
 {
-    Column(
+    Box(
         modifier = Modifier
-            .size(100.dp)
+            .width(114.dp)
+            .height(122.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(colorFromResource(R.color.home_btn))
-            .padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .background(color = Color(0xFF1E1E1E))
+            .border(width = 2.dp, color = Color(0xFF595959), shape = RoundedCornerShape(8.dp))
     ){
         Text(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(top = 8.dp),
             text = title,
             color = colorFromResource(R.color.white),
             style = MaterialTheme.typography.titleMedium
         )
-        Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = value,
             color = colorFromResource(R.color.line_color),
-            style = MaterialTheme.typography.labelLarge
+            style = Typography.titleLarge,
+            modifier = Modifier.align(Alignment.Center)
         )
-
     }
 }
 

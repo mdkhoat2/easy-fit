@@ -41,7 +41,9 @@ android {
 
 dependencies {
 
-    implementation("co.yml:ycharts:2.1.0")
+    implementation(libs.ycharts)
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.lifecycle.viewmodel)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
