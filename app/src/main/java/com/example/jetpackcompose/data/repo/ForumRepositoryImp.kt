@@ -5,10 +5,20 @@ import com.example.jetpackcompose.data.dataModel.ForumPost
 import com.example.jetpackcompose.domain.repo.ForumRepository
 
 class ForumRepositoryImp : ForumRepository {
+    // Helper Function
+    private fun generateRandomUser(): User =
+        User(
+            id = "user_${(1000..9999).random()}",
+            email = "user${(1000..9999).random()}@example.com",
+            username = "User${(1000..9999).random()}",
+            password = "Pass${(1000..9999).random()}",
+        )
+
     override suspend fun getForumList(skip: Int): List<ForumPost> =
         List(5) {
             ForumPost(
                 id = "post_${(1000..9999).random()}",
+                user = generateRandomUser(),
                 title = "Post Title ${(1..100).random()}",
                 content = "Sample post content ${(1..100).random()}",
                 tags = List((1..3).random()) { "tag${(1..5).random()}" },
@@ -34,11 +44,11 @@ class ForumRepositoryImp : ForumRepository {
         List(5) {
             ForumComment(
                 id = "comment_${(1000..9999).random()}",
+                user = generateRandomUser(),
                 content = "This is a sample comment ${(1..100).random()}.",
                 upvote = (0..100).random(),
                 downvote = (0..50).random(),
                 timestamp = System.currentTimeMillis() - (0..365 * 24 * 60 * 60 * 1000).random(),
-                user = null,
             )
         }
 
