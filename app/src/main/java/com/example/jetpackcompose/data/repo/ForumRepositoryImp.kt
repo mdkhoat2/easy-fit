@@ -2,6 +2,7 @@ package com.example.jetpackcompose.data.repo
 
 import com.example.jetpackcompose.data.dataModel.ForumComment
 import com.example.jetpackcompose.data.dataModel.ForumPost
+import com.example.jetpackcompose.data.dataModel.User
 import com.example.jetpackcompose.domain.repo.ForumRepository
 
 class ForumRepositoryImp : ForumRepository {
