@@ -33,11 +33,11 @@ class WorkoutRepositoryImp(
     //     return List(4) { getWeeklyHistory(userId, cnt = 1, skip = 0) }
     // }
 
-    override suspend fun getYourWorkouts(userId: String): List<Workout> =
-        List(5) {
+    override suspend fun getYourWorkouts(): List<Workout> =
+        List(20) {
             Workout(
                 id = "workout_${Random.nextInt(1000, 9999)}",
-                name = "Workout ${Random.nextInt(1, 5)}",
+                name = "Workout ${Random.nextInt(1, 100)}",
                 exercises =
                     listOf(
                         Exercise(

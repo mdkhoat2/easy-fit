@@ -5,10 +5,9 @@ import com.example.jetpackcompose.domain.repo.WorkoutRepository
 
 
 class GetYourWorkoutsUseCase(private val repository: WorkoutRepository) {
-    suspend operator fun invoke(userId: String): List<Workout> {
-        Validator.validateNonEmpty(userId, "User ID")
+    suspend operator fun invoke(): List<Workout> {
 
-        return repository.getYourWorkouts(userId)
+        return repository.getYourWorkouts()
     }
 }
 
