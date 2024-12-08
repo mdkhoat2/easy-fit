@@ -4,7 +4,6 @@ import com.example.jetpackcompose.data.api.WorkoutApi
 import com.example.jetpackcompose.data.dataModel.*
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.domain.repo.WorkoutRepository
-import kotlin.random.Random
 
 class WorkoutRepositoryImp(
     private val api: WorkoutApi,
@@ -19,12 +18,12 @@ class WorkoutRepositoryImp(
             weeks =
                 List(cnt) {
                     WeekSummary(
-                        planId = "plan_${Random.nextInt(1000, 9999)}",
-                        startDate = "2024-12-${Random.nextInt(1, 28)}",
-                        missedSessions = Random.nextInt(0, 5),
-                        totalTime = Random.nextInt(60, 300),
-                        sessionCount = Random.nextInt(0, 7),
-                        missedDays = List(Random.nextInt(0, 7)) { DayOfWeek.values().random() },
+                        planId = "plan_${(1000..9999).random()}",
+                        startDate = "2024-12-${(1..28).random()}",
+                        missedSessions = (0..5).random(),
+                        totalTime = (60..300).random(),
+                        sessionCount = (0..7).random(),
+                        missedDays = List((0..7).random()) { DayOfWeek.values().random() },
                     )
                 },
         )
@@ -36,19 +35,19 @@ class WorkoutRepositoryImp(
     override suspend fun getYourWorkouts(userId: String): List<Workout> =
         List(5) {
             Workout(
-                id = "workout_${Random.nextInt(1000, 9999)}",
-                name = "Workout ${Random.nextInt(1, 5)}",
+                id = "workout_${(1000..9999).random()}",
+                name = "Workout ${(1..5).random()}",
                 exercises =
-                    listOf(
+                    List((1..5).random()) {
                         Exercise(
                             name = ExerciseName.values().random(),
                             type = ExerciseType.values().random(),
-                            repetition = Random.nextInt(10, 50),
-                            duration = Random.nextInt(30, 120),
-                            restTime = Random.nextInt(10, 30)
-                        ),
-                    ),
-                duration = Random.nextInt(15, 90),
+                            repetition = (10..50).random(),
+                            duration = (30..120).random(),
+                            restTime = (10..30).random(),
+                        )
+                    },
+                duration = (15..90).random(),
                 creatorId = null,
             )
         }
@@ -58,7 +57,7 @@ class WorkoutRepositoryImp(
         updatedWorkout: Workout,
     ): Boolean = true
 
-    override suspend fun createWorkout(workout: Workout): Boolean = true
+    override suspend fun createWorkout(workout: Workout): Boolean = (0..1).random() == 1
 
     override suspend fun deleteWorkout(workoutId: String): Boolean = true
 }
