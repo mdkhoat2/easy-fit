@@ -28,3 +28,7 @@ sealed class BottomBarScreen (
         icon = R.drawable.icon_account
     )
 }
+
+object Routes {
+    var selectWorkout = "selectWorkout"
+}

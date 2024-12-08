@@ -11,15 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -37,6 +34,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
 import co.yml.charts.axis.AxisData
 import co.yml.charts.common.model.Point
 import co.yml.charts.ui.linechart.LineChart
@@ -51,10 +50,10 @@ import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.example.jetpackcompose.R
+import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.di.StatData
 import com.example.jetpackcompose.presentation.ui.viewmodel.HomeViewModel
 import com.example.jetpackcompose.ui.theme.Typography
-import com.example.jetpackcompose.util.colorFromResourceAlpha
 
 /**
  * Created by Duy on 29/11/2024
@@ -63,8 +62,10 @@ import com.example.jetpackcompose.util.colorFromResourceAlpha
  */
 
 @Composable
-fun HomeScreen() {
-    val homeViewModel: HomeViewModel = HomeViewModel()
+fun HomeScreen(
+    navController: NavController
+) {
+    val homeViewModel = HomeViewModel()
     val uiState by homeViewModel.state.collectAsState()
     Column(
         modifier = Modifier
@@ -89,7 +90,7 @@ fun HomeScreen() {
             )
         }
         else{
-            progressChart(uiState.points)
+            ProgressChart(uiState.points)
         }
 
 
@@ -112,7 +113,7 @@ fun HomeScreen() {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        StartSessionButton()
+        StartSessionButton(navController)
     }
 }
 
@@ -161,13 +162,15 @@ fun WeeklyStat(listData: List<StatData>){
 }
 
 @Composable
-fun StartSessionButton(){
+fun StartSessionButton(navController: NavController){
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
         OutlinedButton(
-            onClick = {},
+            onClick = {
+                navController.navigate(Routes.selectWorkout)
+            },
             modifier = Modifier
                 .width(162.dp)
                 .height(50.dp)
@@ -195,7 +198,7 @@ fun StartSessionButton(){
 }
 
 @Composable
-fun progressChart(pointsData: List<Point>){
+fun ProgressChart(pointsData: List<Point>){
     Box(
         modifier = Modifier
             .height(200.dp)
@@ -317,5 +320,5 @@ fun LineChartScreen(pointsData: List<Point>){
 @Composable
 @Preview
 fun HomeScreenPreview(){
-    HomeScreen()
+    HomeScreen(navController = NavController(LocalContext.current))
 }

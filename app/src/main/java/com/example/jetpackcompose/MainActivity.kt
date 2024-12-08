@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.jetpackcompose.presentation.ui.screen.MainScreen
+import com.example.jetpackcompose.presentation.ui.screen.SelectWorkoutsScreen
 import com.example.jetpackcompose.ui.theme.JetPackComposeTheme
 
 class MainActivity : ComponentActivity() {

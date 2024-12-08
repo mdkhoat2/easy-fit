@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">JetPackCompose</string>
+    <string-array name="exercise">
+        <item>Push Up</item>
+        <item>Sit Up</item>
+        <item>Plank</item>
+        <item>Leg Raise</item>
+        <item>Crunch</item>
+        <item>Mountain Climber</item>
+        <item>Jumping Jack</item>
+        <item>High Knees</item>
+        <item>Burpee</item>
+        <item>Leg Raise</item>
+    </string-array>
 </resources>

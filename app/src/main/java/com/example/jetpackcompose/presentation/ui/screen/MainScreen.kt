@@ -50,6 +50,10 @@ fun BottomBar(navController: NavHostController){
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
+    if (currentDestination?.route !in screens.map { it.route }){
+        return
+    }
+
     NavigationBar(
         containerColor = colorFromResource(R.color.bottom_bar_background)
     ){
