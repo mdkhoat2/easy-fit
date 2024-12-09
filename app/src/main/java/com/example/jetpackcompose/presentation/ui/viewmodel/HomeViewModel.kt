@@ -42,4 +42,8 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         )
 
     }
+
+    fun UpdateValue(newValue: String){
+        _state.value.listData[0].value = newValue
+    }
 }

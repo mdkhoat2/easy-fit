@@ -9,6 +9,7 @@ import com.example.jetpackcompose.presentation.ui.screen.ForumScreen
 import com.example.jetpackcompose.presentation.ui.screen.HomeScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
 import com.example.jetpackcompose.presentation.ui.screen.SelectWorkoutsScreen
+import com.example.jetpackcompose.presentation.ui.screen.SessionTrackingScreen
 
 @Composable
 fun BottomNavGraph(navController: NavHostController){
@@ -30,6 +31,9 @@ fun BottomNavGraph(navController: NavHostController){
         }
         composable(route = Routes.selectWorkout) {
             SelectWorkoutsScreen(navController)
+        }
+        composable(route = Routes.sessionTracking) {
+            SessionTrackingScreen(navController)
         }
     }
 }
