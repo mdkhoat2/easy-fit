@@ -32,4 +32,5 @@ sealed class BottomBarScreen (
 object Routes {
     var selectWorkout = "selectWorkout"
     var sessionTracking = "sessionTracking"
+    var wellDone = "wellDone"
 }

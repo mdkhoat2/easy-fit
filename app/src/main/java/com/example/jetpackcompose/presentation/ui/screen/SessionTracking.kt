@@ -71,7 +71,7 @@ fun TopBar(navController: NavController){
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
-        IconButton(onClick = {/* Handle back button click */}){
+        IconButton(onClick = {navController.navigateUp()}){
             Icon(
                 imageVector = Icons.Default.Close,
                 contentDescription = "Close",

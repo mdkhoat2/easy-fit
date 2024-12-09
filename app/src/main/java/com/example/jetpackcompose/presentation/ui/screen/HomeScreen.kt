@@ -169,7 +169,7 @@ fun StartSessionButton(navController: NavController){
     ){
         OutlinedButton(
             onClick = {
-                navController.navigate(Routes.sessionTracking)
+                navController.navigate(Routes.selectWorkout)
             },
             modifier = Modifier
                 .width(162.dp)
