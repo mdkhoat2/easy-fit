@@ -45,7 +45,8 @@ class WorkoutRepositoryImp(
                             type = ExerciseType.values().random(),
                             repetition = Random.nextInt(10, 50),
                             duration = Random.nextInt(30, 120),
-                            restTime = Random.nextInt(10, 30)
+                            restTime = Random.nextInt(10, 30),
+                            iconId = Random.nextInt(1, 10),
                         ),
                     ),
                 duration = Random.nextInt(15, 90),

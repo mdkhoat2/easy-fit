@@ -1,15 +1,14 @@
 package com.example.jetpackcompose.data.dataModel
 
+import com.example.jetpackcompose.R
+
 enum class ExerciseName {
+    HAND_GRIP,
+    JUMPING_ROPE,
     PUSH_UP,
     SIT_UP,
-    PLANK,
-    LEG_RAISE,
-    CRUNCH,
-    MOUNTAIN_CLIMBER,
-    JUMPING_JACK,
-    HIGH_KNEES,
-    BURPEE
+    WEIGHTLIFTING,
+    YOGA
 }
 
 enum class ExerciseType {
@@ -29,7 +28,7 @@ data class Exercise(
     val type: ExerciseType = ExerciseType.COUNTED,
     val repetition: Int = 10, // Number of repetitions for "counted" exercises
     val duration: Int = 0, // Duration in seconds for "timed" exercises
-    val restTime: Int = 15 // Rest time between sets in seconds
+    val restTime: Int = 15, // Rest time between sets in seconds
 )
 
 data class WorkoutSummary( //local data model
@@ -45,6 +44,30 @@ data class ExerciseDetail(
     val reps: Int,
     val duration: Int // Optional (for timed exercises)
 )
+
+fun getExerciseString(exercise:Exercise): String {
+    return when(exercise.name) {
+        ExerciseName.HAND_GRIP -> "Hand Grip"
+        ExerciseName.JUMPING_ROPE -> "Jumping Rope"
+        ExerciseName.PUSH_UP -> "Push Up"
+        ExerciseName.SIT_UP -> "Sit Up"
+        ExerciseName.WEIGHTLIFTING -> "Weightlifting"
+        ExerciseName.YOGA -> "Yoga"
+    }
+}
+
+fun getExerciseIcon(exercise:Exercise): Int {
+    return when(exercise.name) {
+        ExerciseName.HAND_GRIP -> R.drawable.hand_grip
+        ExerciseName.JUMPING_ROPE -> R.drawable.jumping_rope
+        ExerciseName.PUSH_UP -> R.drawable.push_up
+        ExerciseName.SIT_UP -> R.drawable.sit_up
+        ExerciseName.WEIGHTLIFTING -> R.drawable.weightlifting
+        ExerciseName.YOGA -> R.drawable.yoga
+    }
+}
+
+
 
 
 
