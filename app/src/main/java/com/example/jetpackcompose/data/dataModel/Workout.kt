@@ -31,18 +31,8 @@ data class Exercise(
     val restTime: Int = 15, // Rest time between sets in seconds
 )
 
-data class WorkoutSummary( //local data model
-    val streak: Int,
-    val exercisesCompleted: Int,
-    val duration: Int, // In minutes
-    val exercises: List<ExerciseDetail>
-)
-
-data class ExerciseDetail(
-    val name: String,
-    val sets: Int,
-    val reps: Int,
-    val duration: Int // Optional (for timed exercises)
+data class Streak( // User's current streak
+    val streak: Int
 )
 
 fun getExerciseString(exercise:Exercise): String {

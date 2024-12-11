@@ -87,8 +87,8 @@ fun SelectWorkoutsScreen(
                     WorkoutItem(
                         workoutName = workout.name,
                         onClick = {
-//                            navController.navigate("well_done_screen/${workout.id}")
-                            navController.navigate(Routes.sessionTracking)
+                            navController.navigate("well_done_screen/${workout.id}")
+                            //navController.navigate(Routes.sessionTracking)
                         })
                 }
 

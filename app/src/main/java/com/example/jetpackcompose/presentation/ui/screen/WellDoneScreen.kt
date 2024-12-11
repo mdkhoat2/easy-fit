@@ -25,10 +25,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun WellDoneScreen(
-    streak: Int,
-    exercises: String,
-    duration: String,
-    exerciseDetails: List<Pair<String, String>>,
+    wellDoneScreenState: WellDoneScreenState,
     onSaveReceiptClick: () -> Unit,
     onReturnHomeClick: () -> Unit
 ) {
@@ -65,15 +62,15 @@ fun WellDoneScreen(
                     // Stats
                     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                         Text("Streak", color = Color.White, style = MaterialTheme.typography.bodyMedium)
-                        Text("$streak days", color = Color.Green, style = MaterialTheme.typography.bodyMedium)
+                        Text("${wellDoneScreenState.streak} days", color = Color.Green, style = MaterialTheme.typography.bodyMedium)
                     }
                     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                         Text("Exercises", color = Color.White, style = MaterialTheme.typography.bodyMedium)
-                        Text("$exercises", color = Color.Green, style = MaterialTheme.typography.bodyMedium)
+                        Text(wellDoneScreenState.exercises, color = Color.Green, style = MaterialTheme.typography.bodyMedium)
                     }
                     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                         Text("Duration", color = Color.White, style = MaterialTheme.typography.bodyMedium)
-                        Text(duration, color = Color.Green, style = MaterialTheme.typography.bodyMedium)
+                        Text(wellDoneScreenState.duration, color = Color.Green, style = MaterialTheme.typography.bodyMedium)
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -89,7 +86,7 @@ fun WellDoneScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Exercise Details
-                    exerciseDetails.forEach { (exercise, detail) ->
+                    wellDoneScreenState.exerciseDetails.forEach { (exercise, detail) ->
                         Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                             Text(exercise, color = Color.White, style = MaterialTheme.typography.bodyMedium)
                             Text(detail, color = Color.White, style = MaterialTheme.typography.bodyMedium)
@@ -133,12 +130,24 @@ fun WellDoneScreenPreview() {
         "Kicks" to "20×",
         "Wall sit" to "30 sec"
     )
-    WellDoneScreen(
+
+    val wellDoneScreenState = WellDoneScreenState(
         streak = 40,
         exercises = "Legs and Core",
         duration = "6m4s",
-        exerciseDetails = exerciseDetails,
+        exerciseDetails = exerciseDetails
+    )
+
+    WellDoneScreen(
+        wellDoneScreenState,
         onSaveReceiptClick = { /* Handle Save Receipt */ },
         onReturnHomeClick = { /* Handle Return Home */ }
     )
 }
+
+data class WellDoneScreenState(
+    val streak: Int = 0,
+    val exercises: String = "",
+    val duration: String = "",
+    val exerciseDetails: List<Pair<String, String>> = emptyList()
+)

@@ -32,5 +32,5 @@ sealed class BottomBarScreen (
 object Routes {
     var selectWorkout = "selectWorkout"
     var sessionTracking = "sessionTracking"
-    var wellDone = "wellDone"
+    val wellDone = "well_done_screen/{workoutId}"
 }

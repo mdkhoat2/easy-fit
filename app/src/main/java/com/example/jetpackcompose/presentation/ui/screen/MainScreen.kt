@@ -26,6 +26,7 @@ import com.example.jetpackcompose.R
 import com.example.jetpackcompose.data.api.WorkoutApi
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
+import com.example.jetpackcompose.data.repo.WorkoutRepositoryProvider
 import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
 import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.BottomNavGraph
@@ -35,22 +36,13 @@ import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewMod
 @Composable
 fun MainScreen(){
     val navController = rememberNavController()
-    val selectWorkoutViewModel = remember {
-        val getYourWorkoutsUseCase = GetYourWorkoutsUseCase(
-            WorkoutRepositoryImp(
-                WorkoutApi(),
-                WorkoutDatabase()
-            )
-        )
-        SelectWorkoutViewModel(getYourWorkoutsUseCase)
-    }
 
     Scaffold(
         bottomBar = {BottomBar(navController = navController)},
         contentColor = Color.White,
         containerColor = Color.Black
     ){
-        BottomNavGraph(navController = navController, selectWorkoutViewModel = selectWorkoutViewModel)
+        BottomNavGraph(navController = navController)
     }
 }
 

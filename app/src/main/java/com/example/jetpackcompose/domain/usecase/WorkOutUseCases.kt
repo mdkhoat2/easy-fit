@@ -11,6 +11,32 @@ class GetYourWorkoutsUseCase(private val repository: WorkoutRepository) {
     }
 }
 
+class GetWorkoutByIdUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(workoutId: String): Workout {
+        return repository.getWorkoutById(workoutId)
+    }
+}
+
+class GetWorkoutStreak(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(): Int {
+        return repository.getWorkoutStreak()
+    }
+}
+
+class AddWorkoutStreak(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(): Boolean {
+        return repository.addWorkoutStreak()
+    }
+}
+
+
+
+class ResetWorkoutStreak(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(): Boolean {
+        return repository.resetWorkoutStreak()
+    }
+}
+
 class EditWorkoutUseCase(private val repository: WorkoutRepository) {
     suspend operator fun invoke(workoutId: String, updatedWorkout: Workout): Boolean {
         Validator.validateNonEmpty(workoutId, "Workout ID")
