@@ -1,12 +1,13 @@
 package com.example.jetpackcompose.presentation.ui.screen
 
-import android.graphics.drawable.Icon
+import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,16 +24,17 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.presentation.di.ExerciseItem
+import com.example.jetpackcompose.presentation.di.ExerciseUIType
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
 import com.example.jetpackcompose.ui.theme.Typography
 import kotlin.coroutines.cancellation.CancellationException
@@ -56,6 +59,11 @@ import kotlin.coroutines.cancellation.CancellationException
 @Composable
 fun SessionTrackingScreen(navController: NavController, viewModel: SessionTrackingViewModel){
     val uiState by viewModel.state.collectAsState()
+    var showExitDialog by remember { mutableStateOf(false)}
+
+    BackHandler {
+        showExitDialog = true
+    }
 
     Column(
         modifier = Modifier
@@ -63,50 +71,112 @@ fun SessionTrackingScreen(navController: NavController, viewModel: SessionTracki
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        // State to track if the workout is paused
-        var isPaused by remember { mutableStateOf(false) }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            IconButton(onClick = {navController.navigateUp()}){
-                Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "Close",
-                    tint = Color(0xFF9AC0D6)
-                )
-            }
-            Text(
-                text = "00:36",
-                color = Color.White,
-                style = Typography.bodyLarge
-            )
-            IconButton(onClick = {isPaused = !isPaused}){
-                Icon(
-                    imageVector = if (isPaused) Icons.Default.PlayArrow else ImageVector.vectorResource(id = R.drawable.icon_pause),
-                    contentDescription = "Pause",
-                    tint = Color(0xFF9AC0D6)
-                )
-            }
-        }
+        WorkoutTopBar(
+            time = uiState.elapsedTime,
+            isPaused = uiState.isPaused,
+            onPauseClick = { viewModel.togglePause() },
+            onCloseClick = { showExitDialog = true }
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
-        CurrentExercise(isPaused, uiState.currentExercise!!, onCycleComplete = {
-            viewModel.nextExercise()
-        })
+        uiState.currentExercise?.let { exercise ->
+            CurrentExercise(
+                isPaused = uiState.isPaused,
+                exerciseItem = exercise,
+                onCycleComplete = { viewModel.nextExercise() }
+            )
+        } ?: Text("No exercise available", color = Color.White)
 
         Spacer(modifier = Modifier.weight(1f))
 
         // Bottom row
-        BottomListExercises(uiState.exercises)
+        BottomListExercises(uiState.exercises, uiState.currentExerciseIndex)
 
         Spacer(modifier = Modifier.height(32.dp))
     }
+
+    if (showExitDialog) {
+        ExitWorkoutDialog(
+            onConfirm = {
+                navController.navigateUp()
+            },
+            onDismiss = {
+                showExitDialog = false
+            }
+        )
+    }
+}
+
+@Composable
+fun WorkoutTopBar(
+    time: Long,
+    isPaused: Boolean,
+    onPauseClick: () -> Unit,
+    onCloseClick: () -> Unit
+){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        IconButton(onClick = onCloseClick) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close",
+                tint = Color(0xFF9AC0D6)
+            )
+        }
+
+        Text(
+            text = formatTime(time),
+            color = Color.White,
+            style = Typography.bodyLarge
+        )
+
+        IconButton(onClick = onPauseClick) {
+            Icon(
+                imageVector = if (isPaused) {
+                    Icons.Default.PlayArrow
+                } else {
+                    ImageVector.vectorResource(id = R.drawable.icon_pause)
+                },
+                contentDescription = if (isPaused) "Resume" else "Pause",
+                tint = Color(0xFF9AC0D6)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ExitWorkoutDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+){
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Exit Workout?") },
+        text = { Text("Are you sure you want to end this workout? Your progress will not be saved.") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Exit")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Continue")
+            }
+        }
+    )
+}
+
+@SuppressLint("DefaultLocale")
+private fun formatTime(timeInMillis: Long): String {
+    val seconds = (timeInMillis / 1000) % 60
+    val minutes = (timeInMillis / (1000 * 60)) % 60
+    return String.format("%02d:%02d", minutes, seconds)
 }
 
 @Composable
@@ -120,31 +190,145 @@ fun CurrentExercise(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
-            text = "10x reps",
-            color = Color.White,
-            style = Typography.bodyLarge
-        )
+        when (exerciseItem.type) {
+            is ExerciseUIType.RepsBased -> {
+                Text(
+                    text = "${exerciseItem.type.totalReps}x reps",
+                    color = Color.White,
+                    style = Typography.bodyLarge
+                )
 
-        Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-        AnimatedCircularFillWithButton(isPaused, exerciseItem, onCycleComplete)
+                RepBasedExercise(
+                    exerciseItem = exerciseItem,
+                    onComplete = onCycleComplete
+                )
+            }
+            is ExerciseUIType.TimeBased -> {
+                var remainingSeconds by remember { mutableLongStateOf(exerciseItem.type.totalSeconds) }
+                Text(
+                    text = formatTime(remainingSeconds),
+                    color = Color.White,
+                    style = Typography.bodyLarge
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TimeBasedExercise(
+                    isPaused = isPaused,
+                    exerciseItem = exerciseItem,
+                    totalSeconds = exerciseItem.type.totalSeconds,
+                    onTimeUpdate = {remainingSeconds = it},
+                    onComplete = onCycleComplete
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = exerciseItem.name,
-            color = Color.White, 
+            color = Color.White,
             style = Typography.bodyLarge
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Take it slowly and feel of your core",
+            text = exerciseItem.description,
             color = Color.White,
-            style = Typography.bodySmall
+            style = Typography.bodyMedium
         )
+    }
+}
+
+@Composable
+fun TimeBasedExercise(
+    isPaused: Boolean,
+    exerciseItem: ExerciseItem,
+    totalSeconds: Long,
+    onTimeUpdate: (Long) -> Unit,
+    onComplete: () -> Unit
+) {
+    val animatedSweepAngle = remember { Animatable(0f) }
+    var lastValue by remember { mutableFloatStateOf(0f) }
+
+    LaunchedEffect(isPaused){
+        if (!isPaused){
+            try {
+                animatedSweepAngle.animateTo(
+                    targetValue = 360f,
+                    animationSpec = tween(
+                        durationMillis = (totalSeconds * 1000 * (1 - lastValue / 360f)).toInt(),
+                        easing = LinearEasing
+                    )
+                ){
+                    val progress = this.value / 360f
+                    val remainingTime = ((1 - progress) * totalSeconds).toLong()
+                    onTimeUpdate(remainingTime)
+                }
+                onComplete()
+                lastValue = 0f
+                animatedSweepAngle.snapTo(0f)
+            }
+            catch (e : CancellationException){
+                lastValue = animatedSweepAngle.value
+            }
+        }
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(180.dp)
+    ){
+        Canvas(modifier = Modifier.size(170.dp)){
+            drawArc(
+                color = Color(0xFFD5FF5F),
+                startAngle = -90f,
+                sweepAngle = animatedSweepAngle.value,
+                useCenter = true,
+                style = Fill
+            )
+        }
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(150.dp)
+                .background(color = colorResource(R.color.home_btn), shape = CircleShape)
+        ){
+            Icon(
+                imageVector = ImageVector.vectorResource(id = exerciseItem.id),
+                contentDescription = exerciseItem.description,
+                tint = colorResource(exerciseItem.colorActive),
+                modifier = Modifier.size(85.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun RepBasedExercise(exerciseItem: ExerciseItem, onComplete: () -> Unit) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(180.dp)
+    ){
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(150.dp)
+                .background(color = colorResource(R.color.home_btn), shape = CircleShape)
+                .clickable { onComplete() }
+        ){
+            Icon(
+                imageVector = ImageVector.vectorResource(id = exerciseItem.id),
+                contentDescription = exerciseItem.description,
+                tint = colorResource(exerciseItem.colorActive),
+                modifier = Modifier.size(85.dp)
+            )
+        }
     }
 }
 
@@ -215,7 +399,7 @@ fun AnimatedCircularFillWithButton(
 @Composable
 fun BottomListExercises(
     exercises: List<ExerciseItem>,
-    currentExerciseIndex: Int = 0
+    currentExerciseIndex: Int
 ){
     LazyRow(
         modifier = Modifier
