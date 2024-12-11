@@ -18,6 +18,7 @@ import com.example.jetpackcompose.presentation.ui.screen.SelectWorkoutsScreen
 import com.example.jetpackcompose.presentation.ui.screen.SessionTrackingScreen
 import com.example.jetpackcompose.presentation.ui.screen.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewModel
+import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
 
 @Composable
 fun BottomNavGraph(
@@ -43,7 +44,8 @@ fun BottomNavGraph(
             SelectWorkoutsScreen(navController, viewModel = selectWorkoutViewModel)
         }
         composable(route = Routes.sessionTracking) {
-            SessionTrackingScreen(navController)
+            val viewModel = SessionTrackingViewModel()
+            SessionTrackingScreen(navController, viewModel = viewModel)
         }
         composable(
             route = "well_done_screen/{workoutId}",

@@ -4,13 +4,10 @@ import androidx.lifecycle.ViewModel
 import co.yml.charts.common.model.Point
 import com.example.jetpackcompose.presentation.di.StatData
 import com.example.jetpackcompose.presentation.ui.UIState.HomeUIState
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 
-@HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class HomeViewModel : ViewModel() {
     private val _state = MutableStateFlow(HomeUIState())
     val state = _state.asStateFlow()
 

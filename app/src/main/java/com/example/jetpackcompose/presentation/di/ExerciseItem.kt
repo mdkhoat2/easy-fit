@@ -11,26 +11,26 @@ sealed class ExerciseItem(
     val colorInactive: Int = R.color.white
 ) {
     data object SitUp : ExerciseItem(
-        "Sit-up",
+        "CRUNCHES",
         R.drawable.sit_up)
 
     data object PushUp : ExerciseItem(
-        "Push-up",
+        "PUSH UP",
         R.drawable.push_up
     )
 
     data object JumpingRope: ExerciseItem(
-        "Jumping Rope",
+        "JUMPING ROPE",
         R.drawable.jumping_rope
     )
 
     data object WeightLifting: ExerciseItem(
-        "Weight Lifting",
+        "WEIGHT LIFTING",
         R.drawable.weightlifting
     )
 
     data object Yoga: ExerciseItem(
-        "Yoga",
+        "YOGA",
         R.drawable.yoga
     )
 }
