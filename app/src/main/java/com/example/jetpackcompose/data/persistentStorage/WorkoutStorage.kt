@@ -36,6 +36,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 5,
+                            description = "Squeeze the hand grip"
                         ),
                         Exercise(
                             name = ExerciseName.SIT_UP,
@@ -43,6 +44,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 5,
+                            description = "Lay on your back and sit up"
                         ),
                         Exercise(
                             name = ExerciseName.PUSH_UP,
@@ -50,6 +52,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 0,
+                            description = "Push up from the ground"
                         ),
                     ),
                     duration = 30,
@@ -65,6 +68,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do jumping rope"
                         ),
                         Exercise(
                             name = ExerciseName.JUMPING_ROPE,
@@ -72,6 +76,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do jumping rope"
                         ),
                         Exercise(
                             name = ExerciseName.JUMPING_ROPE,
@@ -79,6 +84,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do jumping rope"
                         ),
                     ),
                     duration = 90,
@@ -94,6 +100,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do yoga"
                         ),
                         Exercise(
                             name = ExerciseName.YOGA,
@@ -101,6 +108,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do yoga"
                         ),
                         Exercise(
                             name = ExerciseName.YOGA,
@@ -108,6 +116,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do yoga"
                         ),
                     ),
                     duration = 90,
@@ -123,6 +132,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 5,
+                            description = "Lift weights"
                         ),
                         Exercise(
                             name = ExerciseName.WEIGHTLIFTING,
@@ -130,6 +140,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 5,
+                            description = "Lift weights"
                         ),
                         Exercise(
                             name = ExerciseName.WEIGHTLIFTING,
@@ -137,6 +148,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 5,
+                            description = "Lift weights"
                         ),
                     ),
                     duration = 30,

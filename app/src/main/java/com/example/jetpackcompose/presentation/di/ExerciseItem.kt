@@ -2,47 +2,37 @@ package com.example.jetpackcompose.presentation.di
 
 
 import com.example.jetpackcompose.R
+import com.example.jetpackcompose.data.dataModel.Exercise
+import com.example.jetpackcompose.data.dataModel.ExerciseName
+import com.example.jetpackcompose.data.dataModel.ExerciseType
+import com.example.jetpackcompose.data.dataModel.getExerciseIcon
+import com.example.jetpackcompose.data.dataModel.getExerciseString
 
 sealed class ExerciseUIType{
     data class RepsBased(val totalReps: Int) : ExerciseUIType()
     data class TimeBased(val totalSeconds: Long) : ExerciseUIType()
 }
 
-sealed class ExerciseItem(
+data class ExerciseItem(
     val name: String,
     val id: Int,
     val description: String = "",
     val colorActive: Int = R.color.line_color,
     val colorInactive: Int = R.color.white,
     val type: ExerciseUIType
-) {
-    data object SitUp : ExerciseItem(
-        "CRUNCHES",
-        id = R.drawable.sit_up,
-        type = ExerciseUIType.RepsBased(10)
-    )
+)
 
-    data object PushUp : ExerciseItem(
-        "PUSH UP",
-        id = R.drawable.push_up,
-        type = ExerciseUIType.RepsBased(10)
-    )
+fun Exercise.toExerciseItem(): ExerciseItem {
+    val exerciseUIType: ExerciseUIType = if (this.type == ExerciseType.TIMED){
+        ExerciseUIType.TimeBased(this.duration.toLong())
+    }
+    else ExerciseUIType.RepsBased(this.repetition)
 
-    data object JumpingRope: ExerciseItem(
-        "JUMPING ROPE",
-        id = R.drawable.jumping_rope,
-        type = ExerciseUIType.TimeBased(2)
-    )
 
-    data object WeightLifting: ExerciseItem(
-        "WEIGHT LIFTING",
-        id = R.drawable.weightlifting,
-        type = ExerciseUIType.RepsBased(10)
-    )
-
-    data object Yoga: ExerciseItem(
-        "YOGA",
-        id = R.drawable.yoga,
-        type = ExerciseUIType.TimeBased(60)
-    )
-}
+    return  ExerciseItem(
+            name = getExerciseString(this),
+            id = getExerciseIcon(this),
+            description = this.description,
+            type = exerciseUIType
+        )
+    }

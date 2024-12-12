@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.domain.usecase
 
+import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.PatchHistory
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.domain.repo.WorkoutRepository
@@ -30,6 +31,12 @@ class CreateWorkoutUseCase(private val repository: WorkoutRepository) {
         Validator.validateNonEmptyList(workout.exercises, "Exercises")
 
         return repository.createWorkout(workout)
+    }
+}
+
+class getExerciseFromWorkoutUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(workoutId: String): List<Exercise> {
+        return repository.getExerciseFromWorkout(workoutId)
     }
 }
 

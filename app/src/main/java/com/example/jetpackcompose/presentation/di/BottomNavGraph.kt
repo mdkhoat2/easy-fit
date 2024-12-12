@@ -1,10 +1,15 @@
 package com.example.jetpackcompose.presentation.di
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.jetpackcompose.data.database.WorkoutDatabase
+import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
+import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
+import com.example.jetpackcompose.domain.usecase.getExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.ui.screen.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
 import com.example.jetpackcompose.presentation.ui.screen.AccountScreen
@@ -41,7 +46,16 @@ fun BottomNavGraph(
             SelectWorkoutsScreen(navController, viewModel = selectWorkoutViewModel)
         }
         composable(route = Routes.sessionTracking) {
-            val viewModel = SessionTrackingViewModel()
+            val getExerciseFromWorkoutUseCase = remember {
+                getExerciseFromWorkoutUseCase(
+                    WorkoutRepositoryImp(
+                        WorkoutDatabase.getInstance(navController.context)
+                    )
+                )
+            }
+
+            val viewModel = SessionTrackingViewModel(getExerciseFromWorkoutUseCase)
+
             SessionTrackingScreen(navController, viewModel = viewModel){
                 sessionTrackingState = viewModel.state.value
             }

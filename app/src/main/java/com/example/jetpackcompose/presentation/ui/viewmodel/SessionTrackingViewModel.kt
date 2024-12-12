@@ -2,7 +2,11 @@ package com.example.jetpackcompose.presentation.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jetpackcompose.data.dataModel.Exercise
+import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
+import com.example.jetpackcompose.domain.usecase.getExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.di.ExerciseItem
+import com.example.jetpackcompose.presentation.di.toExerciseItem
 import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -14,7 +18,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SessionTrackingViewModel @Inject constructor(): ViewModel(){
+class SessionTrackingViewModel @Inject constructor(private val getExerciseFromWorkoutUseCase: getExerciseFromWorkoutUseCase): ViewModel(){
     private val _state = MutableStateFlow(SessionTrackingUIState())
     val state = _state.asStateFlow()
 
@@ -33,16 +37,10 @@ class SessionTrackingViewModel @Inject constructor(): ViewModel(){
         }
     }
 
-    private fun fetchData(): List<ExerciseItem> {
-        // Simulate data fetching
-        return listOf(
-            ExerciseItem.SitUp,
-            ExerciseItem.PushUp,
-            ExerciseItem.JumpingRope,
-            ExerciseItem.WeightLifting,
-            ExerciseItem.SitUp,
-            ExerciseItem.PushUp,
-        )
+    private suspend fun  fetchData(): List<ExerciseItem> {
+        // Fetch data from the database
+        val exercises = getExerciseFromWorkoutUseCase.invoke("workout_1234")
+        return exercises.map { it.toExerciseItem() }
     }
 
     fun nextExercise(){

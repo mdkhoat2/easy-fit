@@ -13,6 +13,10 @@ class WorkoutRepositoryImp(
 
     override suspend fun getWorkoutById(workoutId: String): Workout? = database.getWorkoutById(workoutId)
 
+    override suspend fun getExerciseFromWorkout(workoutId: String): List<Exercise> {
+        return database.getExerciseFromWorkout(workoutId)
+    }
+
     override suspend fun getWorkoutStreak(): Int
     {
         return database.getWorkoutStreak()

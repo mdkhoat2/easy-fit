@@ -199,13 +199,13 @@ fun WellDoneScreen(
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun WellDoneScreenPreview() {
-    val viewModel = SessionTrackingViewModel()
-    val uiState by viewModel.state.collectAsState()
-    WellDoneScreen(
-        navController = NavController(LocalContext.current),
-        uiState
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun WellDoneScreenPreview() {
+//    val viewModel = SessionTrackingViewModel()
+//    val uiState by viewModel.state.collectAsState()
+//    WellDoneScreen(
+//        navController = NavController(LocalContext.current),
+//        uiState
+//    )
+//}

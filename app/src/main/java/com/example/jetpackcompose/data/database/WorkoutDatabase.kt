@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.data.database
 
 import android.content.Context
+import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.data.persistentStorage.PersistentStorageManager
 
@@ -40,6 +41,11 @@ class WorkoutDatabase private constructor(private val context: Context) {
         workouts[index] = workout
         PersistentStorageManager.saveWorkoutsToFile(context)
         return true
+    }
+
+    fun getExerciseFromWorkout(workoutId: String): List<Exercise> {
+        val workout = PersistentStorageManager.getWorkouts().find { it.id == workoutId }
+        return workout?.exercises ?: emptyList()
     }
 
     fun getWorkoutStreak() = PersistentStorageManager.getStreak()
