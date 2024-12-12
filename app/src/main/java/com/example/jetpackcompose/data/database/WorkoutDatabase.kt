@@ -1,12 +1,6 @@
 package com.example.jetpackcompose.data.database
 
 import android.content.Context
-import com.example.jetpackcompose.data.dataModel.DayOfWeek
-import com.example.jetpackcompose.data.dataModel.Exercise
-import com.example.jetpackcompose.data.dataModel.ExerciseName
-import com.example.jetpackcompose.data.dataModel.ExerciseType
-import com.example.jetpackcompose.data.dataModel.PatchHistory
-import com.example.jetpackcompose.data.dataModel.WeekSummary
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.data.persistentStorage.PersistentStorageManager
 
@@ -21,17 +15,14 @@ class WorkoutDatabase private constructor(private val context: Context) {
             return instance ?: synchronized(this) {
                 PersistentStorageManager.loadWorkoutsFromFile(context)
                 PersistentStorageManager.loadStreakFromFile(context)
-
-                instance ?: WorkoutDatabase(context).also { instance = it }
-
+                PersistentStorageManager.fillWithMockData()
+                instance ?: WorkoutDatabase(context.applicationContext).also { instance = it }
             }
         }
     }
 
     // Database here
-    fun getAllWorkouts(): List<Workout> {
-        return PersistentStorageManager.loadWorkoutsFromFile(context)
-    }
+    fun getAllWorkouts() = PersistentStorageManager.getWorkouts()
 
     fun addWorkout(workout: Workout) {
         val workouts = PersistentStorageManager.getWorkouts().toMutableList()
@@ -51,20 +42,12 @@ class WorkoutDatabase private constructor(private val context: Context) {
         return true
     }
 
-    fun getWorkoutStreak(): Int {
-        return PersistentStorageManager.getStreak()
-    }
+    fun getWorkoutStreak() = PersistentStorageManager.getStreak()
 
     fun updateWorkoutStreak(newStreak: Int) {
         PersistentStorageManager.setStreak(newStreak)
         PersistentStorageManager.saveStreakToFile(context)
     }
-
-    fun resetWorkoutStreak() {
-        PersistentStorageManager.setStreak(0)
-        PersistentStorageManager.saveStreakToFile(context)
-    }
-
     fun getWorkoutById(workoutId: String): Workout? {
         return PersistentStorageManager.getWorkouts().find { it.id == workoutId }
     }

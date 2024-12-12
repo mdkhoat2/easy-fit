@@ -66,9 +66,3 @@ fun getExerciseIcon(exercise:Exercise): Int {
         ExerciseName.YOGA -> R.drawable.yoga
     }
 }
-
-
-
-
-
-

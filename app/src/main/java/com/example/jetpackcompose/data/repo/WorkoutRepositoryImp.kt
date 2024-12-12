@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.data.repo
 
+import android.content.Context
 import com.example.jetpackcompose.data.dataModel.*
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.domain.repo.WorkoutRepository
@@ -8,32 +9,6 @@ class WorkoutRepositoryImp(
     private val database: WorkoutDatabase,
 ) : WorkoutRepository {
 
-<<<<<<< Updated upstream
-    // override suspend fun getMonthlyHistory(userId: String): List<WeeklyHistory> {
-    //     return List(4) { getWeeklyHistory(userId, cnt = 1, skip = 0) }
-    // }
-
-    override suspend fun getYourWorkouts(): List<Workout> =
-        List(20) {
-            Workout(
-                id = "workout_${Random.nextInt(1000, 9999)}",
-                name = "Workout ${Random.nextInt(1, 100)}",
-                exercises =
-                    listOf(
-                        Exercise(
-                            name = ExerciseName.values().random(),
-                            type = ExerciseType.values().random(),
-                            repetition = Random.nextInt(10, 50),
-                            duration = Random.nextInt(30, 120),
-                            restTime = Random.nextInt(10, 30)
-                        ),
-                    ),
-                duration = Random.nextInt(15, 90),
-                creatorId = null,
-            )
-        }
-
-=======
     override suspend fun getYourWorkouts(): List<Workout> = database.getAllWorkouts()
 
     override suspend fun getWorkoutById(workoutId: String): Workout? = database.getWorkoutById(workoutId)
@@ -43,7 +18,7 @@ class WorkoutRepositoryImp(
         return database.getWorkoutStreak()
     }
     override suspend fun resetWorkoutStreak(): Boolean {
-        database.resetWorkoutStreak()
+        database.updateWorkoutStreak(0)
         return true
     }
 
@@ -53,7 +28,6 @@ class WorkoutRepositoryImp(
         return true
     }
 
->>>>>>> Stashed changes
     override suspend fun updateWorkout(
         workoutId: String,
         updatedWorkout: Workout,
@@ -71,15 +45,20 @@ class WorkoutRepositoryImp(
     {
         return true
     }
+
+//    override suspend fun getPatchHistory(cnt: Int, skip: Int): PatchHistory {
+//        return PatchHistory()
+//    }
 }
-<<<<<<< Updated upstream
-=======
 
 object WorkoutRepositoryProvider {
-    private val workoutDatabase = WorkoutDatabase.getInstance()
+    private var repositoryInstance: WorkoutRepository? = null
 
-    val repository: WorkoutRepository by lazy {
-        WorkoutRepositoryImp(database = workoutDatabase)
+    fun getRepository(context: Context): WorkoutRepository {
+        return repositoryInstance ?: synchronized(this) {
+            repositoryInstance ?: WorkoutRepositoryImp(
+                database = WorkoutDatabase.getInstance(context.applicationContext)
+            ).also { repositoryInstance = it }
+        }
     }
 }
->>>>>>> Stashed changes
