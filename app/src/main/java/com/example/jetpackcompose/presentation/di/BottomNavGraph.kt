@@ -2,11 +2,11 @@ package com.example.jetpackcompose.presentation.di
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.jetpackcompose.presentation.ui.screen.WellDoneScreen
+import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
 import com.example.jetpackcompose.presentation.ui.screen.AccountScreen
 import com.example.jetpackcompose.presentation.ui.screen.ForumScreen
 import com.example.jetpackcompose.presentation.ui.screen.HomeScreen
@@ -20,6 +20,7 @@ import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewM
 fun BottomNavGraph(
     navController: NavHostController,
     selectWorkoutViewModel: SelectWorkoutViewModel){
+    var sessionTrackingState : SessionTrackingUIState = SessionTrackingUIState()
     NavHost(
         navController = navController,
         startDestination = BottomBarScreen.Home.route
@@ -41,22 +42,12 @@ fun BottomNavGraph(
         }
         composable(route = Routes.sessionTracking) {
             val viewModel = SessionTrackingViewModel()
-            SessionTrackingScreen(navController, viewModel = viewModel)
+            SessionTrackingScreen(navController, viewModel = viewModel){
+                sessionTrackingState = viewModel.state.value
+            }
         }
-        composable(
-            route = "well_done_screen/{workoutId}",
-            arguments = listOf(navArgument("workoutId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val workoutId = backStackEntry.arguments?.getString("workoutId") ?: return@composable
-            val workout = selectWorkoutViewModel.getWorkoutById(workoutId) // Call the method from the ViewModel
-            WellDoneScreen(
-                streak = 10,
-                exercises = workout.name,
-                duration = workout.duration.toString(),
-                exerciseDetails = workout.exercises.map { it.name.toString() to it.repetition.toString() },
-                onSaveReceiptClick = { /* Save receipt action */ },
-                onReturnHomeClick = { navController.navigate(BottomBarScreen.Home.route) }
-            )
+        composable(route = Routes.wellDone) {
+            WellDoneScreen(navController, sessionTrackingState)
         }
     }
 }

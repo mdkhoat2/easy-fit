@@ -76,7 +76,8 @@ fun SelectWorkoutsScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(top = 32.dp)
+                .padding(horizontal = 16.dp)
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
@@ -109,21 +110,6 @@ fun SelectWorkoutsScreen(
                     )
                 }
             }
-        }
-    }
-}
-
-
-
-
-@Composable
-fun WorkoutList(workouts: List<String>, onItemClick: (String) -> Unit) {
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(workouts) { workout ->
-            WorkoutItem(workoutName = workout, onClick = { onItemClick(workout) })
         }
     }
 }
