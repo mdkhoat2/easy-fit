@@ -279,6 +279,26 @@ fun CurrentExercise(
                     onTimeUpdate = { remainingSeconds = it },
                     onComplete = onCycleComplete
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = exerciseItem.name,
+                    color = Color.White,
+                    style = Typography.labelLarge
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Keep doing this exercise until it's completed.",
+                    color = Color.White.copy(alpha = 0.4f),
+                    style = Typography.bodyLarge,
+                    textAlign = TextAlign.Center,  // Add this for center alignment
+                    modifier = Modifier
+                        .fillMaxWidth()  // Add this to make text take full width
+                        .padding(horizontal = 16.dp),
+                )
             }
         }
     }
