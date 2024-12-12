@@ -11,7 +11,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,65 +45,92 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.presentation.di.ExerciseItem
 import com.example.jetpackcompose.presentation.di.ExerciseUIType
+import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
 import com.example.jetpackcompose.ui.theme.Typography
 import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
-fun SessionTrackingScreen(navController: NavController, viewModel: SessionTrackingViewModel){
+fun SessionTrackingScreen(
+    navController: NavController,
+    viewModel: SessionTrackingViewModel,
+    onFinishWorkout: () -> Unit){
     val uiState by viewModel.state.collectAsState()
     var showExitDialog by remember { mutableStateOf(false)}
+    var shouldNavigate by remember { mutableStateOf(false)}
 
     BackHandler {
         showExitDialog = true
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        WorkoutTopBar(
-            time = uiState.elapsedTime,
-            isPaused = uiState.isPaused,
-            onPauseClick = { viewModel.togglePause() },
-            onCloseClick = { showExitDialog = true }
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        uiState.currentExercise?.let { exercise ->
-            CurrentExercise(
-                isPaused = uiState.isPaused,
-                exerciseItem = exercise,
-                onCycleComplete = { viewModel.nextExercise() }
-            )
-        } ?: Text("No exercise available", color = Color.White)
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Bottom row
-        BottomListExercises(uiState.exercises, uiState.currentExerciseIndex)
-
-        Spacer(modifier = Modifier.height(32.dp))
+    LaunchedEffect (shouldNavigate) {
+        if (shouldNavigate){
+            navController.navigate(Routes.wellDone){
+                popUpTo(Routes.sessionTracking){
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+        }
     }
 
-    if (showExitDialog) {
-        ExitWorkoutDialog(
-            onConfirm = {
-                navController.navigateUp()
-            },
-            onDismiss = {
-                showExitDialog = false
-            }
-        )
+    if (!shouldNavigate){
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            WorkoutTopBar(
+                time = uiState.elapsedTime,
+                isPaused = uiState.isPaused,
+                onPauseClick = { viewModel.togglePause() },
+                onCloseClick = { showExitDialog = true }
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            uiState.currentExercise?.let { exercise ->
+                CurrentExercise(
+                    isPaused = uiState.isPaused,
+                    exerciseItem = exercise,
+                    onCycleComplete = {
+                        if (viewModel.isEnd()) {
+                            onFinishWorkout()
+                            shouldNavigate = true
+                        }
+                        else{
+                            viewModel.nextExercise()
+                        }
+                    }
+                )
+            } ?: Text("No exercise available", color = Color.White)
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Bottom row
+            BottomListExercises(uiState.exercises, uiState.currentExerciseIndex)
+
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+
+        if (showExitDialog) {
+            ExitWorkoutDialog(
+                onConfirm = {
+                    navController.navigateUp()
+                },
+                onDismiss = {
+                    showExitDialog = false
+                }
+            )
+        }
     }
 }
 
@@ -118,7 +144,7 @@ fun WorkoutTopBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
+            .padding(vertical = 32.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ){
@@ -161,22 +187,32 @@ private fun ExitWorkoutDialog(
         text = { Text("Are you sure you want to end this workout? Your progress will not be saved.") },
         confirmButton = {
             TextButton(onClick = onConfirm) {
-                Text("Exit")
+                Text(
+                    text = "Exit",
+                    color = Color(0xFF9AC0D6), 
+                    style = Typography.titleLarge
+                )
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Continue")
+                Text(
+                    text = "Continue",
+                    color = Color(0xFF9AC0D6),
+                    style = Typography.titleLarge
+                )
             }
         }
     )
 }
 
 @SuppressLint("DefaultLocale")
-private fun formatTime(timeInMillis: Long): String {
-    val seconds = (timeInMillis / 1000) % 60
+fun formatTime(timeInMillis: Long): String {
+    val hours = (timeInMillis / (1000 * 60 * 60)) % 24
     val minutes = (timeInMillis / (1000 * 60)) % 60
-    return String.format("%02d:%02d", minutes, seconds)
+    val seconds = (timeInMillis / 1000) % 60
+
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
 }
 
 @Composable
@@ -195,7 +231,7 @@ fun CurrentExercise(
                 Text(
                     text = "${exerciseItem.type.totalReps}x reps",
                     color = Color.White,
-                    style = Typography.bodyLarge
+                    style = Typography.headlineLarge
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -204,9 +240,30 @@ fun CurrentExercise(
                     exerciseItem = exerciseItem,
                     onComplete = onCycleComplete
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = exerciseItem.name,
+                    color = Color.White,
+                    style = Typography.labelLarge
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "Tap the circle once you have completed this exercise.",
+                    color = Color.White.copy(alpha = 0.4f),
+                    style = Typography.bodyLarge,
+                    textAlign = TextAlign.Center,  // Add this for center alignment
+                    modifier = Modifier
+                        .fillMaxWidth()  // Add this to make text take full width
+                        .padding(horizontal = 16.dp),
+                )
             }
             is ExerciseUIType.TimeBased -> {
                 var remainingSeconds by remember { mutableLongStateOf(exerciseItem.type.totalSeconds) }
+
                 Text(
                     text = formatTime(remainingSeconds),
                     color = Color.White,
@@ -219,27 +276,11 @@ fun CurrentExercise(
                     isPaused = isPaused,
                     exerciseItem = exerciseItem,
                     totalSeconds = exerciseItem.type.totalSeconds,
-                    onTimeUpdate = {remainingSeconds = it},
+                    onTimeUpdate = { remainingSeconds = it },
                     onComplete = onCycleComplete
                 )
             }
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = exerciseItem.name,
-            color = Color.White,
-            style = Typography.bodyLarge
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = exerciseItem.description,
-            color = Color.White,
-            style = Typography.bodyMedium
-        )
     }
 }
 
@@ -265,7 +306,7 @@ fun TimeBasedExercise(
                     )
                 ){
                     val progress = this.value / 360f
-                    val remainingTime = ((1 - progress) * totalSeconds).toLong()
+                    val remainingTime = ((1 - progress) * totalSeconds).toLong() * 1000
                     onTimeUpdate(remainingTime)
                 }
                 onComplete()
@@ -333,70 +374,6 @@ fun RepBasedExercise(exerciseItem: ExerciseItem, onComplete: () -> Unit) {
 }
 
 @Composable
-fun AnimatedCircularFillWithButton(
-    isPaused: Boolean,
-    exerciseItem: ExerciseItem,
-    onCycleComplete: () -> Unit
-) {
-    val animatedSweepAngle = remember { Animatable(0f) }
-    var lastValue by remember { mutableFloatStateOf(0f) }
-
-    // LaunchedEffect to handle the animation
-    LaunchedEffect(isPaused) {
-        while (!isPaused) {
-            try {
-                // Start animation from last paused position
-                animatedSweepAngle.animateTo(
-                    targetValue = 360f,
-                    animationSpec = tween(
-                        durationMillis = (15000 * (1 - lastValue / 360f)).toInt(), // Adjust duration based on progress
-                        easing = LinearEasing
-                    )
-                )
-                onCycleComplete()
-                lastValue = 0f
-                animatedSweepAngle.snapTo(0f) // Reset the animation for the next cycle
-            } catch (e: CancellationException) {
-                // Store the last value when cancelled
-                lastValue = animatedSweepAngle.value
-                break
-            }
-        }
-    }
-
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.size(180.dp)
-    ) {
-        // Canvas with animated arc
-        Canvas(modifier = Modifier.size(170.dp)) {
-            drawArc(
-                color = Color(0xFFD5FF5F),
-                startAngle = -90f, // Start at the top
-                sweepAngle = animatedSweepAngle.value, // Animated sweep angle
-                useCenter = true,
-                style = Fill,
-            )
-        }
-
-        // Button in the center
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(150.dp)
-                .background(color = colorResource(R.color.home_btn), shape = CircleShape)
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(id = exerciseItem.id),
-                contentDescription = exerciseItem.description,
-                tint = colorResource(exerciseItem.colorActive),
-                modifier = Modifier.size(85.dp)
-            )
-        }
-    }
-}
-
-@Composable
 fun BottomListExercises(
     exercises: List<ExerciseItem>,
     currentExerciseIndex: Int
@@ -405,8 +382,7 @@ fun BottomListExercises(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(32.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp)
+        horizontalArrangement = Arrangement.Center,
     ){
         items(exercises.size){
             index ->
@@ -414,6 +390,7 @@ fun BottomListExercises(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
+                    .padding(horizontal = 8.dp)
                     .size(42.dp)
                     .background(color = colorResource(R.color.home_btn), shape = CircleShape)
             ) {
@@ -432,5 +409,5 @@ fun BottomListExercises(
 @Composable
 @Preview
 fun SessionTrackingPreview(){
-    SessionTrackingScreen(navController = NavController(LocalContext.current), viewModel = SessionTrackingViewModel())
+    SessionTrackingScreen(navController = NavController(LocalContext.current), viewModel = SessionTrackingViewModel()) {}
 }

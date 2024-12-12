@@ -1,6 +1,6 @@
 package com.example.jetpackcompose.presentation.di
 
-import android.graphics.Color
+
 import com.example.jetpackcompose.R
 
 sealed class ExerciseUIType{
@@ -31,7 +31,7 @@ sealed class ExerciseItem(
     data object JumpingRope: ExerciseItem(
         "JUMPING ROPE",
         id = R.drawable.jumping_rope,
-        type = ExerciseUIType.TimeBased(60)
+        type = ExerciseUIType.TimeBased(2)
     )
 
     data object WeightLifting: ExerciseItem(

@@ -4,14 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackcompose.presentation.di.ExerciseItem
 import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SessionTrackingViewModel : ViewModel(){
+@HiltViewModel
+class SessionTrackingViewModel @Inject constructor(): ViewModel(){
     private val _state = MutableStateFlow(SessionTrackingUIState())
     val state = _state.asStateFlow()
 
@@ -30,12 +33,15 @@ class SessionTrackingViewModel : ViewModel(){
         }
     }
 
-    private suspend fun fetchData(): List<ExerciseItem> {
+    private fun fetchData(): List<ExerciseItem> {
         // Simulate data fetching
         return listOf(
             ExerciseItem.SitUp,
             ExerciseItem.PushUp,
-            ExerciseItem.JumpingRope
+            ExerciseItem.JumpingRope,
+            ExerciseItem.WeightLifting,
+            ExerciseItem.SitUp,
+            ExerciseItem.PushUp,
         )
     }
 
@@ -44,6 +50,13 @@ class SessionTrackingViewModel : ViewModel(){
         if (currentExerciseIndex < _state.value.exercises.size - 1){
             _state.value = _state.value.copy(currentExerciseIndex = currentExerciseIndex + 1)
         }
+        else{
+            endTimer()
+        }
+    }
+
+    fun isEnd(): Boolean{
+        return _state.value.currentExerciseIndex == _state.value.exercises.size - 1
     }
 
     fun togglePause(){
@@ -52,16 +65,6 @@ class SessionTrackingViewModel : ViewModel(){
             lastTimestamp = 0
         }
     }
-
-//    fun startWorkout(){
-//        viewModelScope.launch {
-//            _state.value = _state.value.copy(
-//                currentExerciseIndex = 0,
-//
-//            )
-//        }
-//        startTimer()
-//    }
 
     private fun startTimer() {
         timerJob?.cancel()
@@ -79,4 +82,11 @@ class SessionTrackingViewModel : ViewModel(){
             }
         }
     }
+
+    private fun endTimer(){
+        timerJob?.cancel()
+    }
+
+    // clear the model
+
 }

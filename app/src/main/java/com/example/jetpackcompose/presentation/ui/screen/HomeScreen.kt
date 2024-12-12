@@ -70,7 +70,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         HistoryBar()
 
@@ -122,7 +122,7 @@ fun HistoryBar(){
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(top = 32.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
