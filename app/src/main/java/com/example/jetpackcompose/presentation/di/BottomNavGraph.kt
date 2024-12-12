@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.jetpackcompose.presentation.ui.screen.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
 import com.example.jetpackcompose.presentation.ui.screen.AccountScreen
 import com.example.jetpackcompose.presentation.ui.screen.ForumScreen
@@ -11,7 +13,6 @@ import com.example.jetpackcompose.presentation.ui.screen.HomeScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
 import com.example.jetpackcompose.presentation.ui.screen.SelectWorkoutsScreen
 import com.example.jetpackcompose.presentation.ui.screen.SessionTrackingScreen
-import com.example.jetpackcompose.presentation.ui.screen.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
 

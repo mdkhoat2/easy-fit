@@ -23,23 +23,23 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.jetpackcompose.R
-import com.example.jetpackcompose.data.api.WorkoutApi
+import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewModel
+
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
 import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.BottomNavGraph
-import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen(){
     val navController = rememberNavController()
+    val context = LocalContext.current
     val selectWorkoutViewModel = remember {
         val getYourWorkoutsUseCase = GetYourWorkoutsUseCase(
             WorkoutRepositoryImp(
-                WorkoutApi(),
-                WorkoutDatabase()
+                WorkoutDatabase.getInstance(context)
             )
         )
         SelectWorkoutViewModel(getYourWorkoutsUseCase)
