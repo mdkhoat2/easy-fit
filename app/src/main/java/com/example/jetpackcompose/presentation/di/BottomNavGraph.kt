@@ -6,9 +6,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+<<<<<<< Updated upstream
 import com.example.jetpackcompose.data.api.WorkoutApi
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
+=======
+import com.example.jetpackcompose.data.repo.WorkoutRepositoryProvider
+>>>>>>> Stashed changes
 import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
 import com.example.jetpackcompose.presentation.ui.screen.AccountScreen
 import com.example.jetpackcompose.presentation.ui.screen.ForumScreen
@@ -16,7 +20,6 @@ import com.example.jetpackcompose.presentation.ui.screen.HomeScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
 import com.example.jetpackcompose.presentation.ui.screen.SelectWorkoutsScreen
 import com.example.jetpackcompose.presentation.ui.screen.SessionTrackingScreen
-import com.example.jetpackcompose.presentation.ui.screen.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
 
@@ -41,7 +44,17 @@ fun BottomNavGraph(
             AccountScreen()
         }
         composable(route = Routes.selectWorkout) {
+<<<<<<< Updated upstream
             SelectWorkoutsScreen(navController, viewModel = selectWorkoutViewModel)
+=======
+            val selectWorkoutViewModel = remember {
+                val repository = WorkoutRepositoryProvider.repository
+                val getYourWorkoutsUseCase = GetYourWorkoutsUseCase(repository)
+                SelectWorkoutViewModel(getYourWorkoutsUseCase)
+            }
+
+            SelectWorkoutsScreen(navController, selectWorkoutViewModel)
+>>>>>>> Stashed changes
         }
         composable(route = Routes.sessionTracking) {
             val viewModel = SessionTrackingViewModel()

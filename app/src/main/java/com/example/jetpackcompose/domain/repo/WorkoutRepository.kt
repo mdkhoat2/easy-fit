@@ -6,8 +6,12 @@ import com.example.jetpackcompose.data.dataModel.Workout
 
 interface WorkoutRepository {
 
-    suspend fun getPatchHistory(userId: String, cnt:Int, skip:Int): PatchHistory
+    //suspend fun getPatchHistory(cnt:Int, skip:Int): PatchHistory
     suspend fun getYourWorkouts(): List<Workout>
+<<<<<<< Updated upstream
+=======
+    suspend fun getWorkoutById(workoutId: String): Workout?
+>>>>>>> Stashed changes
 
     suspend fun updateWorkout(workoutId: String, updatedWorkout: Workout): Boolean
     suspend fun createWorkout(workout: Workout): Boolean
