@@ -1,5 +1,7 @@
 package com.example.jetpackcompose.presentation.ui.screen
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +53,9 @@ import co.yml.charts.ui.linechart.model.SelectionHighlightPoint
 import co.yml.charts.ui.linechart.model.SelectionHighlightPopUp
 import co.yml.charts.ui.linechart.model.ShadowUnderLine
 import com.example.jetpackcompose.R
+import com.example.jetpackcompose.data.database.WorkoutDatabase
+import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
+import com.example.jetpackcompose.domain.usecase.GetPatchHistoryUseCase
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.di.StatData
 import com.example.jetpackcompose.presentation.ui.viewmodel.HomeViewModel
@@ -63,9 +69,18 @@ import com.example.jetpackcompose.ui.theme.Typography
 
 @Composable
 fun HomeScreen(
-    navController: NavController
+    navController: NavController,
+    context: Context = LocalContext.current
 ) {
-    val homeViewModel = HomeViewModel()
+    val homeViewModel = remember {
+        val getPatchHistoryUseCase = GetPatchHistoryUseCase(
+            WorkoutRepositoryImp(
+                WorkoutDatabase.getInstance(context)
+            )
+        )
+        HomeViewModel(getPatchHistoryUseCase)
+    }
+
     val uiState by homeViewModel.state.collectAsState()
     Column(
         modifier = Modifier
@@ -75,14 +90,6 @@ fun HomeScreen(
         HistoryBar()
 
         Spacer(modifier = Modifier.height(16.dp))
-
-//        val pointsData = listOf(
-//            Point(0f, 40f),
-//            Point(1f, 90f),
-//            Point(2f, 0f),
-//            Point(3f, 60f),
-//            Point(4f, 10f)
-//        )
 
         if (uiState.isLoading){
             CircularProgressIndicator(
@@ -199,6 +206,7 @@ fun StartSessionButton(navController: NavController){
 
 @Composable
 fun ProgressChart(pointsData: List<Point>){
+    Log.d("ProgressChart", "Points data: $pointsData")
     Box(
         modifier = Modifier
             .height(200.dp)

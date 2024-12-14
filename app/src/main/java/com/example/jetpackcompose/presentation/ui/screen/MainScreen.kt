@@ -36,21 +36,13 @@ import com.example.jetpackcompose.presentation.di.BottomNavGraph
 fun MainScreen(){
     val navController = rememberNavController()
     val context = LocalContext.current
-    val selectWorkoutViewModel = remember {
-        val getYourWorkoutsUseCase = GetYourWorkoutsUseCase(
-            WorkoutRepositoryImp(
-                WorkoutDatabase.getInstance(context)
-            )
-        )
-        SelectWorkoutViewModel(getYourWorkoutsUseCase)
-    }
 
     Scaffold(
         bottomBar = {BottomBar(navController = navController)},
         contentColor = Color.White,
         containerColor = Color.Black
     ){
-        BottomNavGraph(navController = navController, selectWorkoutViewModel = selectWorkoutViewModel)
+        BottomNavGraph(navController = navController, context = context)
     }
 }
 

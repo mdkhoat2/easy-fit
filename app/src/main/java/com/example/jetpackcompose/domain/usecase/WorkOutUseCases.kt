@@ -46,12 +46,12 @@ class DeleteWorkoutUseCase(private val repository: WorkoutRepository) {
     }
 }
 
-//class GetPatchHistoryUseCase(private val repository: WorkoutRepository) {
-//    suspend operator fun invoke(cnt:Int=10,skip:Int=0): PatchHistory {
-//
-//        return repository.getPatchHistory(cnt,skip)
-//    }
-//}
+class GetPatchHistoryUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(cnt:Int=12,skip:Int=0): PatchHistory? {
+
+        return repository.getPatchHistory(cnt,skip)
+    }
+}
 
 
 

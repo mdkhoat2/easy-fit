@@ -22,7 +22,7 @@ class SelectWorkoutViewModel @Inject constructor(private val getYourWorkoutsUseC
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
             try {
-                val workouts = getYourWorkoutsUseCase.invoke() // Pass the user ID as needed
+                val workouts = getYourWorkoutsUseCase.invoke()
                 _state.value = _state.value.copy(
                     workouts = workouts,
                     isLoading = false

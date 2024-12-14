@@ -33,21 +33,6 @@ data class Exercise(
     val description: String
 )
 
-data class WorkoutSummary( //local data model
-    val streak: Int,
-    val exercisesCompleted: Int,
-    val duration: Int, // In minutes
-    val exercises: List<ExerciseDetail>
-)
-
-data class ExerciseDetail(
-    val name: String,
-    val sets: Int,
-    val reps: Int,
-    val duration: Int, // Optional (for timed exercises)
-    val description: String
-)
-
 fun getExerciseString(exercise:Exercise): String {
     return when(exercise.name) {
         ExerciseName.HAND_GRIP -> "Hand Grip"

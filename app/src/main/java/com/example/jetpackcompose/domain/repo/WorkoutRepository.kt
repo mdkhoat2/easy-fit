@@ -2,12 +2,11 @@ package com.example.jetpackcompose.domain.repo
 
 import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.PatchHistory
+import com.example.jetpackcompose.data.dataModel.WeekSummary
 import com.example.jetpackcompose.data.dataModel.Workout
 
 
 interface WorkoutRepository {
-
-    //suspend fun getPatchHistory(cnt:Int, skip:Int): PatchHistory
     suspend fun getYourWorkouts(): List<Workout>
     suspend fun getWorkoutById(workoutId: String): Workout?
 
@@ -18,6 +17,9 @@ interface WorkoutRepository {
     suspend fun deleteWorkout(workoutId: String): Boolean
 
     suspend fun getWorkoutStreak(): Int
-    suspend fun resetWorkoutStreak(): Boolean
-    suspend fun addWorkoutStreak(): Boolean
+    suspend fun resetWorkoutStreak()
+    suspend fun addWorkoutStreak()
+
+    suspend fun getPatchHistory(cnt:Int=4, skip:Int=0): PatchHistory?
+    suspend fun addWeekToHistory(weekSummary: WeekSummary): Boolean
 }

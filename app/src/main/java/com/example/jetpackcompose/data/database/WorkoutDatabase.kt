@@ -2,6 +2,7 @@ package com.example.jetpackcompose.data.database
 
 import android.content.Context
 import com.example.jetpackcompose.data.dataModel.Exercise
+import com.example.jetpackcompose.data.dataModel.PatchHistory
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.data.persistentStorage.PersistentStorageManager
 
@@ -16,11 +17,17 @@ class WorkoutDatabase private constructor(private val context: Context) {
             return instance ?: synchronized(this) {
                 PersistentStorageManager.loadWorkoutsFromFile(context)
                 PersistentStorageManager.loadStreakFromFile(context)
+                PersistentStorageManager.loadMissedWeeksFromFile(context)
                 PersistentStorageManager.fillWithMockData()
                 instance ?: WorkoutDatabase(context.applicationContext).also { instance = it }
             }
         }
     }
+
+    private val cachedPatchHistory: PatchHistory = PatchHistory(emptyList())
+    private var cachedWorkouts: List<Workout> = emptyList()
+    private var cachedStreak: Int = 0
+    private var isCached = false
 
     // Database here
     fun getAllWorkouts() = PersistentStorageManager.getWorkouts()
@@ -57,5 +64,18 @@ class WorkoutDatabase private constructor(private val context: Context) {
     fun getWorkoutById(workoutId: String): Workout? {
         return PersistentStorageManager.getWorkouts().find { it.id == workoutId }
     }
+
+    fun getPatchHistory() : PatchHistory {
+        //check if Cached Patch History is empty if not return it else return the Patch History from the file and cache it
+        if (isCached) {
+            return cachedPatchHistory
+        }
+
+        val patchHistory = PersistentStorageManager.getMissedWeeks() ?: return PatchHistory(emptyList())
+
+
+        return PatchHistory(patchHistory.weeks)
+    }
+
 }
 

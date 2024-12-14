@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.presentation.ui.screen
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.data.dataModel.Workout
+import com.example.jetpackcompose.data.database.WorkoutDatabase
+import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
+import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewModel
 
@@ -48,9 +53,18 @@ import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewMod
 @Composable
 fun SelectWorkoutsScreen(
     navController: NavController,
-    viewModel: SelectWorkoutViewModel
+    context: Context
 ) {
-    val state by viewModel.state.collectAsState()
+    val selectWorkoutViewModel = remember {
+        val getYourWorkoutsUseCase = GetYourWorkoutsUseCase(
+            WorkoutRepositoryImp(
+                WorkoutDatabase.getInstance(context)
+            )
+        )
+        SelectWorkoutViewModel(getYourWorkoutsUseCase)
+    }
+
+    val state by selectWorkoutViewModel.state.collectAsState()
     val workouts = state.workouts
 
     Scaffold(
@@ -84,13 +98,13 @@ fun SelectWorkoutsScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 // Workout items
-                items( workouts) { workout ->
+                items(workouts) { workout ->
                     WorkoutItem(
                         workoutName = workout.name,
                         onClick = {
-//                            navController.navigate("well_done_screen/${workout.id}")
-                            navController.navigate(Routes.sessionTracking)
-                        })
+                            navController.navigate("${Routes.sessionTracking}/${workout.id}")
+                        }
+                    )
                 }
 
                 // Add the search bar as the last item
