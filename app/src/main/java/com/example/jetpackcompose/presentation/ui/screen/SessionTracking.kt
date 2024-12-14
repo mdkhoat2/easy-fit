@@ -426,8 +426,8 @@ fun BottomListExercises(
 }
 
 
-@Composable
-@Preview
-fun SessionTrackingPreview(){
-    SessionTrackingScreen(navController = NavController(LocalContext.current), viewModel = SessionTrackingViewModel()) {}
-}
+//@Composable
+//@Preview
+//fun SessionTrackingPreview(){
+//    SessionTrackingScreen(navController = NavController(LocalContext.current), viewModel = SessionTrackingViewModel()) {}
+//}

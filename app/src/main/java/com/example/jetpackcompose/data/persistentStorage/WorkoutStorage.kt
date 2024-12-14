@@ -6,6 +6,7 @@ import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.ExerciseName
 import com.example.jetpackcompose.data.dataModel.ExerciseType
 import com.example.jetpackcompose.data.dataModel.PatchHistory
+import com.example.jetpackcompose.data.dataModel.Plan
 import com.example.jetpackcompose.data.dataModel.WeekSummary
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.google.gson.Gson
@@ -17,10 +18,10 @@ object PersistentStorageManager {
     private const val STREAK_FILE_NAME = "streak.json"
     private val gson = Gson()
 
-    private var patchHistory : PatchHistory? = null
+    private var missedWeeks : PatchHistory? = null
     private val workouts = mutableListOf<Workout>()
     private var streak: Int = 0
-
+    private lateinit var currentPlan: Plan
 
     // **Workouts Management**
     fun fillWithMockData() {
@@ -36,6 +37,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 5,
+                            description = "Squeeze the hand grip"
                         ),
                         Exercise(
                             name = ExerciseName.SIT_UP,
@@ -43,6 +45,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 5,
+                            description = "Lay on your back and sit up"
                         ),
                         Exercise(
                             name = ExerciseName.PUSH_UP,
@@ -50,6 +53,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 0,
+                            description = "Push up from the ground"
                         ),
                     ),
                     duration = 30,
@@ -65,6 +69,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do jumping rope"
                         ),
                         Exercise(
                             name = ExerciseName.JUMPING_ROPE,
@@ -72,6 +77,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do jumping rope"
                         ),
                         Exercise(
                             name = ExerciseName.JUMPING_ROPE,
@@ -79,6 +85,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do jumping rope"
                         ),
                     ),
                     duration = 90,
@@ -94,6 +101,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do yoga"
                         ),
                         Exercise(
                             name = ExerciseName.YOGA,
@@ -101,6 +109,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do yoga"
                         ),
                         Exercise(
                             name = ExerciseName.YOGA,
@@ -108,6 +117,7 @@ object PersistentStorageManager {
                             repetition = 0,
                             duration = 30,
                             restTime = 10,
+                            description = "Do yoga"
                         ),
                     ),
                     duration = 90,
@@ -123,6 +133,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 5,
+                            description = "Lift weights"
                         ),
                         Exercise(
                             name = ExerciseName.WEIGHTLIFTING,
@@ -130,6 +141,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 5,
+                            description = "Lift weights"
                         ),
                         Exercise(
                             name = ExerciseName.WEIGHTLIFTING,
@@ -137,6 +149,7 @@ object PersistentStorageManager {
                             repetition = 10,
                             duration = 0,
                             restTime = 5,
+                            description = "Lift weights"
                         ),
                     ),
                     duration = 30,
@@ -148,13 +161,21 @@ object PersistentStorageManager {
 
         streak = 0
 
-        patchHistory =PatchHistory(
+        missedWeeks =PatchHistory(
             weeks = listOf(
                 WeekSummary(
-                    planId = "plan_1234",
-                    startDate = "2024-12-01",
+                    startDate = "2024-11-18",
+                    missedSessions = 1,
+                    totalTime = 90,
+                    sessionCount = 4,
+                    missedDays = listOf(
+                        DayOfWeek.WEDNESDAY,
+                    ),
+                ),
+                WeekSummary(
+                    startDate = "2024-12-02",
                     missedSessions = 2,
-                    totalTime = 120,
+                    totalTime = 123,
                     sessionCount = 5,
                     missedDays = listOf(
                         DayOfWeek.MONDAY,
@@ -162,25 +183,16 @@ object PersistentStorageManager {
                     ),
                 ),
                 WeekSummary(
-                    planId = "plan_5678",
-                    startDate = "2024-12-08",
-                    missedSessions = 1,
-                    totalTime = 90,
-                    sessionCount = 4,
-                    missedDays = listOf(
-                        DayOfWeek.FRIDAY,
-                    ),
-                ),
-                WeekSummary(
-                    planId = "plan_9101",
-                    startDate = "2024-12-15",
+                    startDate = "2024-12-16",
                     missedSessions = 0,
-                    totalTime = 150,
+                    totalTime = 157,
                     sessionCount = 6,
                     missedDays = emptyList(),
                 ),
             ),
         )
+
+        currentPlan = Plan(name = "Beginner",dateWorkout = listOf(DayOfWeek.MONDAY,DayOfWeek.WEDNESDAY,DayOfWeek.FRIDAY,))
     }
 
 
@@ -213,31 +225,29 @@ object PersistentStorageManager {
         return streak
     }
 
-    // **Patch History Management**
-    fun savePatchHistoryToFile(context: Context) {
+    fun saveMissedWeekToFile(context: Context) {
         val file = File(context.filesDir, STREAK_FILE_NAME)
-        file.writeText(gson.toJson(patchHistory))
+        file.writeText(gson.toJson(missedWeeks))
     }
 
-    fun loadPatchHistoryFromFile(context: Context): PatchHistory? {
+    fun loadMissedWeeksFromFile(context: Context): PatchHistory? {
         val file = File(context.filesDir, STREAK_FILE_NAME)
         if (file.exists()) {
             val type = object : TypeToken<PatchHistory>() {}.type
-            patchHistory = gson.fromJson(file.readText(), type)
+            missedWeeks = gson.fromJson(file.readText(), type)
         }
-        return patchHistory
+        return missedWeeks
     }
 
     // Expose current state
     fun getWorkouts(): List<Workout> = workouts
     fun getStreak(): Int = streak
-    fun setStreak(value: Int) {
-        streak = value
-    }
+    fun setStreak(value: Int) {streak = value}
 
-    fun setPatchHistory(value: PatchHistory) {
-        patchHistory = value
-    }
+    fun setPatchHistory(value: PatchHistory) {missedWeeks = value}
 
-    fun getPatchHistory(): PatchHistory? = patchHistory
+    fun getMissedWeeks(): PatchHistory? = missedWeeks
+
+    fun getCurrentPlan(): Plan = currentPlan
+    fun setCurrentPlan(plan: Plan) {currentPlan = plan}
 }

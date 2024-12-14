@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.data.dataModel
 
 import com.example.jetpackcompose.R
+import org.hamcrest.Description
 
 enum class ExerciseName {
     HAND_GRIP,
@@ -29,20 +30,7 @@ data class Exercise(
     val repetition: Int = 10, // Number of repetitions for "counted" exercises
     val duration: Int = 0, // Duration in seconds for "timed" exercises
     val restTime: Int = 15, // Rest time between sets in seconds
-)
-
-data class WorkoutSummary( //local data model
-    val streak: Int,
-    val exercisesCompleted: Int,
-    val duration: Int, // In minutes
-    val exercises: List<ExerciseDetail>
-)
-
-data class ExerciseDetail(
-    val name: String,
-    val sets: Int,
-    val reps: Int,
-    val duration: Int // Optional (for timed exercises)
+    val description: String
 )
 
 fun getExerciseString(exercise:Exercise): String {

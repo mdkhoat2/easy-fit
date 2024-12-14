@@ -1,8 +1,13 @@
 package com.example.jetpackcompose.presentation.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jetpackcompose.data.dataModel.Exercise
+import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
+import com.example.jetpackcompose.domain.usecase.getExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.di.ExerciseItem
+import com.example.jetpackcompose.presentation.di.toExerciseItem
 import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -14,7 +19,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SessionTrackingViewModel @Inject constructor(): ViewModel(){
+class SessionTrackingViewModel @Inject constructor(
+    private val getExerciseFromWorkoutUseCase: getExerciseFromWorkoutUseCase,
+    private val workoutId: String
+): ViewModel(){
     private val _state = MutableStateFlow(SessionTrackingUIState())
     val state = _state.asStateFlow()
 
@@ -24,6 +32,7 @@ class SessionTrackingViewModel @Inject constructor(): ViewModel(){
     init {
         // Load data asynchronously
         viewModelScope.launch {
+            Log.d("SessionTrackingViewModel", "workoutId: $workoutId")
             val exercises = fetchData()
             _state.value = _state.value.copy(
                 exercises = exercises,
@@ -33,16 +42,11 @@ class SessionTrackingViewModel @Inject constructor(): ViewModel(){
         }
     }
 
-    private fun fetchData(): List<ExerciseItem> {
-        // Simulate data fetching
-        return listOf(
-            ExerciseItem.SitUp,
-            ExerciseItem.PushUp,
-            ExerciseItem.JumpingRope,
-            ExerciseItem.WeightLifting,
-            ExerciseItem.SitUp,
-            ExerciseItem.PushUp,
-        )
+    private suspend fun  fetchData(): List<ExerciseItem> {
+        // Fetch data from the database
+        val exercises = getExerciseFromWorkoutUseCase.invoke(workoutId)
+        print(exercises)
+        return exercises.map { it.toExerciseItem() }
     }
 
     fun nextExercise(){
@@ -87,6 +91,9 @@ class SessionTrackingViewModel @Inject constructor(): ViewModel(){
         timerJob?.cancel()
     }
 
+    fun setExerciseIndex(index: Int){
+        _state.value = _state.value.copy(currentExerciseIndex = index)
+    }
     // clear the model
 
 }

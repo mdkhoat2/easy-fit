@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.domain.usecase
 
+import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.PatchHistory
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.domain.repo.WorkoutRepository
@@ -33,18 +34,24 @@ class CreateWorkoutUseCase(private val repository: WorkoutRepository) {
     }
 }
 
+class getExerciseFromWorkoutUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(workoutId: String): List<Exercise> {
+        return repository.getExerciseFromWorkout(workoutId)
+    }
+}
+
 class DeleteWorkoutUseCase(private val repository: WorkoutRepository) {
     suspend operator fun invoke(workoutId: String): Boolean {
         return repository.deleteWorkout(workoutId)
     }
 }
 
-//class GetPatchHistoryUseCase(private val repository: WorkoutRepository) {
-//    suspend operator fun invoke(cnt:Int=10,skip:Int=0): PatchHistory {
-//
-//        return repository.getPatchHistory(cnt,skip)
-//    }
-//}
+class GetPatchHistoryUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(cnt:Int=12,skip:Int=0): PatchHistory? {
+
+        return repository.getPatchHistory(cnt,skip)
+    }
+}
 
 
 
