@@ -3,9 +3,7 @@ package com.example.jetpackcompose.presentation.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.jetpackcompose.data.dataModel.Exercise
-import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
-import com.example.jetpackcompose.domain.usecase.getExerciseFromWorkoutUseCase
+import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.di.ExerciseItem
 import com.example.jetpackcompose.presentation.di.toExerciseItem
 import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
@@ -20,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SessionTrackingViewModel @Inject constructor(
-    private val getExerciseFromWorkoutUseCase: getExerciseFromWorkoutUseCase,
+    private val getExerciseFromWorkoutUseCase: GetExerciseFromWorkoutUseCase,
     private val workoutId: String
 ): ViewModel(){
     private val _state = MutableStateFlow(SessionTrackingUIState())

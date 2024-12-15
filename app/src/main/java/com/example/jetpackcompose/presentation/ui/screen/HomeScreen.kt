@@ -1,7 +1,6 @@
 package com.example.jetpackcompose.presentation.ui.screen
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -70,13 +69,12 @@ import com.example.jetpackcompose.ui.theme.Typography
 @Composable
 fun HomeScreen(
     navController: NavController,
-    context: Context = LocalContext.current
+    context: Context = LocalContext.current,
+    workoutDatabase: WorkoutDatabase
 ) {
     val homeViewModel = remember {
         val getPatchHistoryUseCase = GetPatchHistoryUseCase(
-            WorkoutRepositoryImp(
-                WorkoutDatabase.getInstance(context)
-            )
+            WorkoutRepositoryImp(workoutDatabase, context)
         )
         HomeViewModel(getPatchHistoryUseCase)
     }
@@ -102,12 +100,6 @@ fun HomeScreen(
 
 
         Spacer(modifier = Modifier.height(16.dp))
-
-//        val listData = listOf(
-//            StatData("Missed", "10"),
-//            StatData("Time", "10:04"),
-//            StatData("Session", "2")
-//        )
 
         if (uiState.isLoading){
             CircularProgressIndicator(
@@ -206,7 +198,6 @@ fun StartSessionButton(navController: NavController){
 
 @Composable
 fun ProgressChart(pointsData: List<Point>){
-    Log.d("ProgressChart", "Points data: $pointsData")
     Box(
         modifier = Modifier
             .height(200.dp)
@@ -325,8 +316,8 @@ fun LineChartScreen(pointsData: List<Point>){
 }
 
 
-@Composable
-@Preview
-fun HomeScreenPreview(){
-    HomeScreen(navController = NavController(LocalContext.current))
-}
+//@Composable
+//@Preview
+//fun HomeScreenPreview(){
+//    HomeScreen(navController = NavController(LocalContext.current))
+//}
