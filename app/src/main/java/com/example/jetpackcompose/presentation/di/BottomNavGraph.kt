@@ -17,14 +17,14 @@ import androidx.navigation.navArgument
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
-import com.example.jetpackcompose.presentation.ui.screen.WellDoneScreen
+import com.example.jetpackcompose.presentation.ui.screen.Home.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
-import com.example.jetpackcompose.presentation.ui.screen.AccountScreen
-import com.example.jetpackcompose.presentation.ui.screen.ForumScreen
-import com.example.jetpackcompose.presentation.ui.screen.HomeScreen
-import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
-import com.example.jetpackcompose.presentation.ui.screen.SelectWorkoutsScreen
-import com.example.jetpackcompose.presentation.ui.screen.SessionTrackingScreen
+import com.example.jetpackcompose.presentation.ui.screen.Account.AccountScreen
+import com.example.jetpackcompose.presentation.ui.screen.Forum.ForumScreen
+import com.example.jetpackcompose.presentation.ui.screen.Home.HomeScreen
+import com.example.jetpackcompose.presentation.ui.screen.Plan.PlanScreen
+import com.example.jetpackcompose.presentation.ui.screen.Home.SelectWorkoutsScreen
+import com.example.jetpackcompose.presentation.ui.screen.Home.SessionTrackingScreen
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
 
 @Composable

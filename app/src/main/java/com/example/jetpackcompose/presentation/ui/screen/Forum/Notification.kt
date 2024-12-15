@@ -1,4 +1,4 @@
-package com.example.jetpackcompose.presentation.ui.screen
+package com.example.jetpackcompose.presentation.ui.screen.Forum
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
  */
 
 @Composable
-fun ForumScreen() {
+fun Notification() {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -37,6 +37,6 @@ fun ForumScreen() {
 
 @Composable
 @Preview
-fun ForumScreenPreview(){
-    ForumScreen()
+fun NotificationPreview(){
+    Notification()
 }

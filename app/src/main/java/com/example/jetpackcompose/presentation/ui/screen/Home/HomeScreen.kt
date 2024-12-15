@@ -1,4 +1,4 @@
-package com.example.jetpackcompose.presentation.ui.screen
+package com.example.jetpackcompose.presentation.ui.screen.Home
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
@@ -57,6 +56,7 @@ import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.GetPatchHistoryUseCase
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.di.StatData
+import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
 import com.example.jetpackcompose.presentation.ui.viewmodel.HomeViewModel
 import com.example.jetpackcompose.ui.theme.Typography
 

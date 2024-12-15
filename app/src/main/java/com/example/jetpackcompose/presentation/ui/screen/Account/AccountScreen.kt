@@ -1,4 +1,4 @@
-package com.example.jetpackcompose.presentation.ui.screen
+package com.example.jetpackcompose.presentation.ui.screen.Account
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -1,4 +1,4 @@
-package com.example.jetpackcompose.presentation.ui.screen
+package com.example.jetpackcompose.presentation.ui.screen.Forum
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,15 +19,15 @@ import androidx.compose.ui.unit.sp
  */
 
 @Composable
-fun PlanScreen() {
+fun ForumScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Blue),
+            .background(Color.Red),
         contentAlignment = Alignment.Center
     ){
         Text(
-            text = "Plan Screen",
+            text = "Forum Screen",
             fontSize = 40.sp,
             fontWeight = FontWeight.SemiBold,
             color = Color.White
@@ -37,6 +37,6 @@ fun PlanScreen() {
 
 @Composable
 @Preview
-fun PlanScreenPreview(){
-    PlanScreen()
+fun ForumScreenPreview(){
+    ForumScreen()
 }

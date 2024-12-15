@@ -1,7 +1,6 @@
-package com.example.jetpackcompose.presentation.ui.screen
+package com.example.jetpackcompose.presentation.ui.screen.Home
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +48,7 @@ import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
 import com.example.jetpackcompose.presentation.di.Routes
+import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
 import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
