@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.presentation.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackcompose.data.dataModel.Workout
@@ -27,6 +28,7 @@ class SelectWorkoutViewModel @Inject constructor(private val getYourWorkoutsUseC
                     workouts = workouts,
                     isLoading = false
                 )
+                Log.d("SelectWorkoutViewModel", "Workouts: $workouts")
             } catch (e: Exception) {
                 // Handle errors (e.g., show an error message)
                 _state.value = _state.value.copy(
@@ -40,11 +42,10 @@ class SelectWorkoutViewModel @Inject constructor(private val getYourWorkoutsUseC
     fun onSearchQueryChanged(query: String) {
         _state.value = _state.value.copy(searchQuery = query)
 
-        // Optionally filter workouts based on the search query
         val filteredWorkouts = _state.value.workouts.filter {
             it.name.contains(query, ignoreCase = true)
         }
-        _state.value = _state.value.copy(workouts = filteredWorkouts)
+        _state.value = _state.value.copy(searchQuery = query, filteredWorkouts = filteredWorkouts)
     }
 
     fun getWorkoutById(workoutId: String): Workout {

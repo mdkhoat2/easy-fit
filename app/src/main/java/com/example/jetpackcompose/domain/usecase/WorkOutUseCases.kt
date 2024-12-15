@@ -34,7 +34,7 @@ class CreateWorkoutUseCase(private val repository: WorkoutRepository) {
     }
 }
 
-class getExerciseFromWorkoutUseCase(private val repository: WorkoutRepository) {
+class GetExerciseFromWorkoutUseCase(private val repository: WorkoutRepository) {
     suspend operator fun invoke(workoutId: String): List<Exercise> {
         return repository.getExerciseFromWorkout(workoutId)
     }

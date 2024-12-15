@@ -27,18 +27,12 @@ class HomeViewModel @Inject constructor(private val getPatchHistoryUseCase: GetP
             try {
                 // Call the suspend function inside the coroutine
                 val patch = getPatchHistoryUseCase.invoke()
+                //Log.d("HomeViewModel", "Patch: $patch")
 
                 // each point is a week in the patch history y is the number of sessions count is the week number
                 val points = patch?.weeks?.mapIndexed { index, weekSummary ->
                     Point(index.toFloat(), weekSummary.sessionCount.toFloat())
                 } ?: emptyList()
-
-                // List of data to be displayed in the list
-                // get the data from the patch history
-
-                //get total missed sessions
-                //get total time spent
-                //get total sessions
 
                 val listData = patch?.weeks?.let {
                     val missed = it.sumOf { it.missedSessions }
@@ -57,8 +51,9 @@ class HomeViewModel @Inject constructor(private val getPatchHistoryUseCase: GetP
                     patchHistory = patch,
                     listData = listData
                 )
-                Log.d("HomeViewModel", "Patch history loaded: $patch")
-                Log.d("HomeViewModel", "Points loaded: $points")
+
+                //Log.d("HomeViewModel", "Points: $points")
+                //Log.d("HomeViewModel", "ListData: $listData")
             } catch (e: Exception) {
                 // Handle errors appropriately
                 _state.value = _state.value.copy(

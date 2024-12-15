@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.presentation.ui.screen
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,19 +55,23 @@ import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewMod
 @Composable
 fun SelectWorkoutsScreen(
     navController: NavController,
+    workoutDatabase: WorkoutDatabase,
     context: Context
 ) {
     val selectWorkoutViewModel = remember {
         val getYourWorkoutsUseCase = GetYourWorkoutsUseCase(
             WorkoutRepositoryImp(
-                WorkoutDatabase.getInstance(context)
+                context = context,
+                database = workoutDatabase
             )
         )
         SelectWorkoutViewModel(getYourWorkoutsUseCase)
     }
 
     val state by selectWorkoutViewModel.state.collectAsState()
-    val workouts = state.workouts
+    val workouts = state.filteredWorkouts.takeIf { state.searchQuery.isNotBlank() } ?: state.workouts
+
+    val searchQuery = remember { mutableStateOf(state.searchQuery) }
 
     Scaffold(
         contentColor = Color.Gray,
@@ -110,8 +116,11 @@ fun SelectWorkoutsScreen(
                 // Add the search bar as the last item
                 item {
                     OutlinedTextField(
-                        value = "",
-                        onValueChange = { /* Handle search input */ },
+                        value = state.searchQuery,
+                        onValueChange = { query ->
+                            searchQuery.value = query
+                            selectWorkoutViewModel.onSearchQueryChanged(query)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 4.dp)

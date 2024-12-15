@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.data.repo
 
 import android.content.Context
+import android.util.Log
 import com.example.jetpackcompose.data.dataModel.*
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.domain.repo.WorkoutRepository
@@ -9,6 +10,7 @@ import java.time.LocalDate
 
 class WorkoutRepositoryImp(
     private val database: WorkoutDatabase,
+    private val context: Context
 ) : WorkoutRepository {
     override suspend fun getYourWorkouts(): List<Workout> = database.getAllWorkouts()
 
@@ -19,29 +21,31 @@ class WorkoutRepositoryImp(
     }
 
     override suspend fun getWorkoutStreak(): Int {return database.getWorkoutStreak()}
-    override suspend fun resetWorkoutStreak(){database.updateWorkoutStreak(0)}
-    override suspend fun addWorkoutStreak(){database.updateWorkoutStreak(database.getWorkoutStreak() + 1)}
+    override suspend fun resetWorkoutStreak(){database.updateWorkoutStreak(context,0)}
+    override suspend fun addWorkoutStreak(){database.updateWorkoutStreak(context,database.getWorkoutStreak() + 1)}
 
     override suspend fun updateWorkout(
         workoutId: String,
         updatedWorkout: Workout,
     ): Boolean {
-        return database.editWorkout(workoutId,updatedWorkout)
+        return database.editWorkout(context,workoutId,updatedWorkout)
     }
 
     override suspend fun createWorkout(workout: Workout): Boolean
     {
-        database.addWorkout(workout)
+        database.addWorkout(context,workout)
         return true
     }
 
     override suspend fun deleteWorkout(workoutId: String): Boolean
     {
+
         return true
     }
 
     override suspend fun getPatchHistory(cnt: Int, skip: Int): PatchHistory {
         val fullHistory = database.getPatchHistory()
+        Log.d("WorkoutRepositoryImp", "Full history: $fullHistory")
 
         if (cnt < 0 || skip < 0) {
             throw IllegalArgumentException("Both cnt and skip must be non-negative")
@@ -84,7 +88,6 @@ class WorkoutRepositoryImp(
 
         return PatchHistory(allWeeks.take(cnt))
     }
-
 
     override suspend fun addWeekToHistory(weekSummary: WeekSummary): Boolean {
         val history = database.getPatchHistory()

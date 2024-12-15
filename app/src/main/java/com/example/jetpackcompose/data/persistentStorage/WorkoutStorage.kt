@@ -11,243 +11,58 @@ import com.example.jetpackcompose.data.dataModel.WeekSummary
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 object PersistentStorageManager {
     private const val WORKOUTS_FILE_NAME = "workouts.json"
     private const val STREAK_FILE_NAME = "streak.json"
+    private const val MISSED_WEEKS_FILE_NAME = "missed_weeks.json"
     private val gson = Gson()
 
-    private var missedWeeks : PatchHistory? = null
-    private val workouts = mutableListOf<Workout>()
-    private var streak: Int = 0
-    private lateinit var currentPlan: Plan
+    // Generic save function
 
-    // **Workouts Management**
-    fun fillWithMockData() {
-        workouts+=(0..3).map {
-            when (it) {
-                0 -> Workout(
-                    id = "workout_1234",
-                    name = "All Rounder",
-                    exercises = listOf(
-                        Exercise(
-                            name = ExerciseName.HAND_GRIP,
-                            type = ExerciseType.COUNTED,
-                            repetition = 10,
-                            duration = 0,
-                            restTime = 5,
-                            description = "Squeeze the hand grip"
-                        ),
-                        Exercise(
-                            name = ExerciseName.SIT_UP,
-                            type = ExerciseType.COUNTED,
-                            repetition = 10,
-                            duration = 0,
-                            restTime = 5,
-                            description = "Lay on your back and sit up"
-                        ),
-                        Exercise(
-                            name = ExerciseName.PUSH_UP,
-                            type = ExerciseType.COUNTED,
-                            repetition = 10,
-                            duration = 0,
-                            restTime = 0,
-                            description = "Push up from the ground"
-                        ),
-                    ),
-                    duration = 30,
-                    creatorId = null,
-                )
-                1 -> Workout(
-                    id = "workout_5678",
-                    name = "Cardio Blast",
-                    exercises = listOf(
-                        Exercise(
-                            name = ExerciseName.JUMPING_ROPE,
-                            type = ExerciseType.TIMED,
-                            repetition = 0,
-                            duration = 30,
-                            restTime = 10,
-                            description = "Do jumping rope"
-                        ),
-                        Exercise(
-                            name = ExerciseName.JUMPING_ROPE,
-                            type = ExerciseType.TIMED,
-                            repetition = 0,
-                            duration = 30,
-                            restTime = 10,
-                            description = "Do jumping rope"
-                        ),
-                        Exercise(
-                            name = ExerciseName.JUMPING_ROPE,
-                            type = ExerciseType.TIMED,
-                            repetition = 0,
-                            duration = 30,
-                            restTime = 10,
-                            description = "Do jumping rope"
-                        ),
-                    ),
-                    duration = 90,
-                    creatorId = null,
-                )
-                2 -> Workout(
-                    id = "workout_9101",
-                    name = "Yoga",
-                    exercises = listOf(
-                        Exercise(
-                            name = ExerciseName.YOGA,
-                            type = ExerciseType.TIMED,
-                            repetition = 0,
-                            duration = 30,
-                            restTime = 10,
-                            description = "Do yoga"
-                        ),
-                        Exercise(
-                            name = ExerciseName.YOGA,
-                            type = ExerciseType.TIMED,
-                            repetition = 0,
-                            duration = 30,
-                            restTime = 10,
-                            description = "Do yoga"
-                        ),
-                        Exercise(
-                            name = ExerciseName.YOGA,
-                            type = ExerciseType.TIMED,
-                            repetition = 0,
-                            duration = 30,
-                            restTime = 10,
-                            description = "Do yoga"
-                        ),
-                    ),
-                    duration = 90,
-                    creatorId = null,
-                )
-                3 -> Workout(
-                    id = "workout_1213",
-                    name = "Weightlifting",
-                    exercises = listOf(
-                        Exercise(
-                            name = ExerciseName.WEIGHTLIFTING,
-                            type = ExerciseType.COUNTED,
-                            repetition = 10,
-                            duration = 0,
-                            restTime = 5,
-                            description = "Lift weights"
-                        ),
-                        Exercise(
-                            name = ExerciseName.WEIGHTLIFTING,
-                            type = ExerciseType.COUNTED,
-                            repetition = 10,
-                            duration = 0,
-                            restTime = 5,
-                            description = "Lift weights"
-                        ),
-                        Exercise(
-                            name = ExerciseName.WEIGHTLIFTING,
-                            type = ExerciseType.COUNTED,
-                            repetition = 10,
-                            duration = 0,
-                            restTime = 5,
-                            description = "Lift weights"
-                        ),
-                    ),
-                    duration = 30,
-                    creatorId = null,
-                )
-                else -> throw IllegalStateException("Unexpected index: $it")
-            }
+    private suspend inline fun <reified T> saveToFile(context: Context, fileName: String, data: T) {
+        withContext(Dispatchers.IO) { // Perform the operation on a background thread
+            val file = File(context.filesDir, fileName)
+            file.writeText(gson.toJson(data))
         }
-
-        streak = 0
-
-        missedWeeks =PatchHistory(
-            weeks = listOf(
-                WeekSummary(
-                    startDate = "2024-11-18",
-                    missedSessions = 1,
-                    totalTime = 90,
-                    sessionCount = 4,
-                    missedDays = listOf(
-                        DayOfWeek.WEDNESDAY,
-                    ),
-                ),
-                WeekSummary(
-                    startDate = "2024-12-02",
-                    missedSessions = 2,
-                    totalTime = 123,
-                    sessionCount = 5,
-                    missedDays = listOf(
-                        DayOfWeek.MONDAY,
-                        DayOfWeek.WEDNESDAY,
-                    ),
-                ),
-                WeekSummary(
-                    startDate = "2024-12-16",
-                    missedSessions = 0,
-                    totalTime = 157,
-                    sessionCount = 6,
-                    missedDays = emptyList(),
-                ),
-            ),
-        )
-
-        currentPlan = Plan(name = "Beginner",dateWorkout = listOf(DayOfWeek.MONDAY,DayOfWeek.WEDNESDAY,DayOfWeek.FRIDAY,))
     }
 
-
-    fun saveWorkoutsToFile(context: Context) {
-        val file = File(context.filesDir, WORKOUTS_FILE_NAME)
-        file.writeText(gson.toJson(workouts))
-    }
-
-    fun loadWorkoutsFromFile(context: Context): List<Workout> {
-        val file = File(context.filesDir, WORKOUTS_FILE_NAME)
-        if (file.exists()) {
-            val type = object : TypeToken<List<Workout>>() {}.type
-            workouts.clear()
-            workouts.addAll(gson.fromJson(file.readText(), type))
+    // Generic load function with a default value
+    private suspend inline fun <reified T> loadFromFile(context: Context, fileName: String, defaultValue: T): T {
+        return withContext(Dispatchers.IO) {
+            val file = File(context.filesDir, fileName)
+            if (file.exists()) {
+                gson.fromJson(file.readText(), object : TypeToken<T>() {}.type)
+            } else defaultValue
         }
-        return workouts
     }
 
-    // **Streak Management**
-    fun saveStreakToFile(context: Context) {
-        val file = File(context.filesDir, STREAK_FILE_NAME)
-        file.writeText(streak.toString())
+    suspend fun saveWorkouts(context: Context, workouts: List<Workout>) {
+        saveToFile(context, WORKOUTS_FILE_NAME, workouts)
     }
 
-    fun loadStreakFromFile(context: Context): Int {
-        val file = File(context.filesDir, STREAK_FILE_NAME)
-        if (file.exists()) {
-            streak = file.readText().toInt()
-        }
-        return streak
+    suspend fun loadWorkouts(context: Context): List<Workout> {
+        return loadFromFile(context, WORKOUTS_FILE_NAME, emptyList())
     }
 
-    fun saveMissedWeekToFile(context: Context) {
-        val file = File(context.filesDir, STREAK_FILE_NAME)
-        file.writeText(gson.toJson(missedWeeks))
+    suspend fun saveStreak(context: Context, streak: Int) {
+        saveToFile(context, STREAK_FILE_NAME, streak)
     }
 
-    fun loadMissedWeeksFromFile(context: Context): PatchHistory? {
-        val file = File(context.filesDir, STREAK_FILE_NAME)
-        if (file.exists()) {
-            val type = object : TypeToken<PatchHistory>() {}.type
-            missedWeeks = gson.fromJson(file.readText(), type)
-        }
-        return missedWeeks
+    suspend fun loadStreak(context: Context): Int {
+        return loadFromFile(context, STREAK_FILE_NAME, 0)
     }
 
-    // Expose current state
-    fun getWorkouts(): List<Workout> = workouts
-    fun getStreak(): Int = streak
-    fun setStreak(value: Int) {streak = value}
+    suspend fun saveMissedWeeks(context: Context, patchHistory: PatchHistory) {
+        saveToFile(context, MISSED_WEEKS_FILE_NAME, patchHistory)
+    }
 
-    fun setPatchHistory(value: PatchHistory) {missedWeeks = value}
-
-    fun getMissedWeeks(): PatchHistory? = missedWeeks
-
-    fun getCurrentPlan(): Plan = currentPlan
-    fun setCurrentPlan(plan: Plan) {currentPlan = plan}
+    suspend fun loadMissedWeeks(context: Context): PatchHistory {
+        return loadFromFile(context, MISSED_WEEKS_FILE_NAME, PatchHistory(emptyList()))
+    }
 }
