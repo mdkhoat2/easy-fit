@@ -1,8 +1,11 @@
 package com.example.jetpackcompose.data.dataModel
 
 data class Plan(
-    val name: String,
-    val dateWorkout: List<DayOfWeek>
+    val name: String="",
+    val dateWorkout: List<DayOfWeek>,
+    val maxMissDay: Int=0,
+    val minSession: Int=0,
+    val minHour: Float=0f,
 )
 
 data class PatchHistory(

@@ -230,7 +230,7 @@ fun StatCard(title: String, value: String)
         )
         Text(
             text = value,
-            color = colorFromResource(R.color.line_color),
+            color = colorFromResource(R.color.primary_green),
             style = Typography.titleLarge,
             modifier = Modifier.align(Alignment.Center)
         )
@@ -268,18 +268,18 @@ fun LineChartScreen(pointsData: List<Point>){
                 Line(
                     dataPoints = pointsData,
                     LineStyle(
-                        color = colorFromResource(R.color.line_color),
+                        color = colorFromResource(R.color.primary_green),
                         lineType = LineType.Straight(isDotted = false)
                     ),
                     IntersectionPoint(
-                        color = colorFromResource(R.color.line_color)
+                        color = colorFromResource(R.color.primary_green)
                     ),
                     SelectionHighlightPoint(color = Color.Transparent),
                     ShadowUnderLine(
                         alpha = 0.5f,
                         brush = Brush.verticalGradient(
                             colors = listOf(
-                                colorFromResource(R.color.line_color),
+                                colorFromResource(R.color.primary_green),
                                 Color.Transparent
                             )
                         )

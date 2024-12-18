@@ -2,6 +2,7 @@ package com.example.jetpackcompose.domain.usecase
 
 import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.PatchHistory
+import com.example.jetpackcompose.data.dataModel.WeekSummary
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.domain.repo.WorkoutRepository
 
@@ -52,6 +53,17 @@ class GetPatchHistoryUseCase(private val repository: WorkoutRepository) {
         return repository.getPatchHistory(cnt,skip)
     }
 }
+
+class AddWeekToHistoryUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(weekSummary: WeekSummary): Boolean {
+        return repository.addWeekToHistory(weekSummary)
+    }
+}
+
+class GetPlanUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke() = repository.getPlan()
+}
+
 
 
 

@@ -45,7 +45,7 @@ class WorkoutRepositoryImp(
 
     override suspend fun getPatchHistory(cnt: Int, skip: Int): PatchHistory {
         val fullHistory = database.getPatchHistory()
-        Log.d("WorkoutRepositoryImp", "Full history: $fullHistory")
+        //Log.d("WorkoutRepositoryImp", "Full history: $fullHistory")
 
         if (cnt < 0 || skip < 0) {
             throw IllegalArgumentException("Both cnt and skip must be non-negative")
@@ -85,6 +85,7 @@ class WorkoutRepositoryImp(
             }
             currentWeek = currentWeek.plusWeeks(1)
         }
+        //Log.d("WorkoutRepositoryImp", "All weeks: $allWeeks")
 
         return PatchHistory(allWeeks.take(cnt))
     }
@@ -93,5 +94,13 @@ class WorkoutRepositoryImp(
         val history = database.getPatchHistory()
 
         return true
+    }
+
+    override suspend fun getPlan(): Plan {
+        return database.getPlan()
+    }
+
+    override suspend fun updatePlan(plan: Plan): Boolean {
+        return database.updatePlan(context,plan)
     }
 }

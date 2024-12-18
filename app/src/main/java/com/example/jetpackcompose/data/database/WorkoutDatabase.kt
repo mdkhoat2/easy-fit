@@ -34,10 +34,13 @@ class WorkoutDatabase private constructor() {
         cachedWorkouts = PersistentStorageManager.loadWorkouts(context)
         cachedStreak = PersistentStorageManager.loadStreak(context)
         cachedPatchHistory = PersistentStorageManager.loadMissedWeeks(context)
+        cachedPlan = PersistentStorageManager.loadPlan(context)
+        // for testing uncomment the line below and comment the line above
 //        fillWithSampleData()
 //        PersistentStorageManager.saveMissedWeeks(context, cachedPatchHistory)
 //        PersistentStorageManager.saveWorkouts(context, cachedWorkouts)
 //        PersistentStorageManager.saveStreak(context, cachedStreak)
+//        PersistentStorageManager.savePlan(context, cachedPlan)
     }
 
     private var cachedPatchHistory: PatchHistory = PatchHistory(emptyList())
@@ -45,7 +48,10 @@ class WorkoutDatabase private constructor() {
     private var cachedStreak: Int = 0
     private lateinit var cachedPlan: Plan
 
-    // Database here
+    /**
+     *  |  WORKOUTS
+     */
+
     fun getAllWorkouts(): List<Workout> = cachedWorkouts
 
     suspend fun addWorkout(context: Context, workout: Workout) {
@@ -61,9 +67,25 @@ class WorkoutDatabase private constructor() {
         return true
     }
 
+    suspend fun deleteWorkout(context: Context, workoutId: String): Boolean {
+        val index = cachedWorkouts.indexOfFirst { it.id == workoutId }
+        if (index == -1) return false
+        cachedWorkouts = cachedWorkouts.toMutableList().apply { removeAt(index) }
+        PersistentStorageManager.saveWorkouts(context, cachedWorkouts)
+        return true
+    }
+
+    fun getWorkoutById(workoutId: String): Workout? {
+        return cachedWorkouts.find { it.id == workoutId }
+    }
+
     fun getExerciseFromWorkout(workoutId: String): List<Exercise> {
         return cachedWorkouts.find { it.id == workoutId }?.exercises ?: emptyList()
     }
+
+    /**
+     *  |  STREAK
+     */
 
     fun getWorkoutStreak(): Int = cachedStreak
 
@@ -72,11 +94,28 @@ class WorkoutDatabase private constructor() {
         PersistentStorageManager.saveStreak(context, cachedStreak)
     }
 
+    /**
+     *  |  PATCH HISTORY
+     */
+
     fun getPatchHistory(): PatchHistory = cachedPatchHistory
 
-    fun getWorkoutById(workoutId: String): Workout? {
-        return cachedWorkouts.find { it.id == workoutId }
+    suspend fun addWeekToHistory(context: Context, weekSummary: WeekSummary): Boolean {
+        cachedPatchHistory = PatchHistory(cachedPatchHistory.weeks + weekSummary)
+        PersistentStorageManager.saveMissedWeeks(context, cachedPatchHistory)
+        return true
     }
+
+    /**     |
+     * PLAN V
+     */
+
+    suspend fun updatePlan(context: Context, plan: Plan): Boolean {
+        cachedPlan = plan
+        PersistentStorageManager.savePlan(context, cachedPlan)
+        return true
+    }
+    fun getPlan(): Plan = cachedPlan
 
     fun fillWithSampleData()
     {
@@ -304,7 +343,8 @@ class WorkoutDatabase private constructor() {
             ),
         )
 
-        cachedPlan = Plan(name = "Beginner",dateWorkout = listOf(DayOfWeek.MONDAY,DayOfWeek.WEDNESDAY,DayOfWeek.FRIDAY,))
+        cachedPlan = Plan(name = "Beginner",dateWorkout = listOf(DayOfWeek.MONDAY,DayOfWeek.WEDNESDAY,DayOfWeek.FRIDAY,),
+            maxMissDay = 3,minSession = 10,minHour = 4f)
     }
 }
 
