@@ -64,15 +64,14 @@ fun PlanScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Black)
-            .padding(16.dp),
+            .padding(horizontal = 16.dp, vertical = 32.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Title
         Text(
             text = "This Month",
             color = Color.White,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
+            fontSize = 24.sp
         )
         // Top Section: Circular Indicators
         Row(

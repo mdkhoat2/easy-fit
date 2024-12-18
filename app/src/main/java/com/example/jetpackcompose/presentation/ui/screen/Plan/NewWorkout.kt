@@ -31,6 +31,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.jetpackcompose.R
+import com.example.jetpackcompose.presentation.ui.screen.Component.LineDivider
+import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
 
 /**
  * Created by Duy on 29/11/2024
@@ -39,7 +42,7 @@ import androidx.navigation.NavController
  */
 
 @Composable
-fun NewWorkoutScreen(navController: NavController) {
+fun NewWorkoutScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,25 +51,26 @@ fun NewWorkoutScreen(navController: NavController) {
     ) {
         // Top Navigation Bar
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Back",
-                color = Color.Blue,
+                color = colorFromResource(R.color.primary_teal),
                 fontSize = 16.sp,
-                modifier = Modifier.clickable { navController.popBackStack() }
+//                modifier = Modifier.clickable { navController.popBackStack() }
             )
+
             Text(
-                text = "New Workout",
+                text = "Edit Workout",
                 color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = "Save",
-                color = Color.Blue,
+                color = colorFromResource(R.color.primary_teal),
                 fontSize = 16.sp,
                 modifier = Modifier.clickable { /* Save Action */ }
             )
@@ -76,7 +80,9 @@ fun NewWorkoutScreen(navController: NavController) {
 
         // Input Field for Workout Name
         Column {
-            Text("Name", color = Color.Gray, fontSize = 14.sp)
+            Text(
+                modifier = Modifier.padding(4.dp),
+                text ="Name", color = Color.Gray, fontSize = 14.sp)
             OutlinedTextField(
                 value = "",
                 onValueChange = { /* Handle input */ },
@@ -86,6 +92,7 @@ fun NewWorkoutScreen(navController: NavController) {
 
             )
             Text(
+                modifier = Modifier.padding( 8.dp),
                 text = "Maximum 15 letters",
                 color = Color.Gray,
                 fontSize = 12.sp
@@ -95,31 +102,50 @@ fun NewWorkoutScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Queue Section
-        Text(
-            text = "Queue",
-            color = Color.White,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+        Row( // 2 text one start and one end
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         )
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            QueueItem(number = 1, name = "PUSH UP")
-            QueueItem(number = 2, name = "CRUNGES")
-            AddExerciseButton()
+        {
+            Text(
+                text = "Queue",
+                color = Color.White,
+                fontSize = 16.sp,
+            )
+            Text(
+                text = "Total: 4",
+                color = colorFromResource(R.color.primary_teal),
+                fontSize = 12.sp,
+                modifier = Modifier.clickable { /* Handle Add Exercise Action */ }
+            )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        LineDivider()
+
+        LazyVerticalGrid(
+            columns  = GridCells.Fixed(4),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(4) {
+                QueueItem(number = it + 1, name = "PUSH UP")
+            }
+            item {
+                AddExerciseButton()
+            }
+        }
 
         // Exercise Section
         Text(
+            modifier = Modifier.padding(top = 32.dp),
             text = "Exercise",
             color = Color.White,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold
+            fontSize = 16.sp
         )
+        LineDivider()
 
-        Spacer(modifier = Modifier.height(8.dp))
+
 
         // Exercise Grid
         LazyVerticalGrid(
@@ -127,9 +153,17 @@ fun NewWorkoutScreen(navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-
+            items(8) {
+                ExerciseItem(name = "PUSH UP", icon = Icons.Default.Favorite)
+            }
         }
     }
+}
+
+@Preview
+@Composable
+fun NewWorkoutScreenPreview() {
+    NewWorkoutScreen()
 }
 
 @Composable
@@ -177,16 +211,3 @@ fun ExerciseItem(name: String, icon: ImageVector) {
     }
 }
 
-// Sample Exercise Data
-val exerciseList = listOf(
-    Exercise("BREATHE", Icons.Default.Favorite),
-    Exercise("PUSH UP", Icons.Default.Favorite),
-    Exercise("WEIGHT LIFT", Icons.Default.Favorite),
-    Exercise("CRUNGES", Icons.Default.Favorite),
-    Exercise("ROPE JUMP", Icons.Default.Favorite),
-    Exercise("HAND GRIP", Icons.Default.Favorite),
-    Exercise("HOOP", Icons.Default.Favorite),
-    Exercise("ROPE JUMP", Icons.Default.Favorite),
-)
-
-data class Exercise(val name: String, val icon: ImageVector)
