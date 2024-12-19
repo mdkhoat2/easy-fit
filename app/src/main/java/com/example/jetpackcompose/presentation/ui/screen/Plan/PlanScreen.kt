@@ -36,6 +36,7 @@ import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.GetPatchHistoryUseCase
 import com.example.jetpackcompose.domain.usecase.GetPlanUseCase
+import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.viewmodel.PlanViewModel
 import java.time.LocalDate
 import java.time.YearMonth
@@ -104,7 +105,7 @@ fun PlanScreen(
         GoalSection(uiState.dayType,uiState.plan)
 
         // Library Buttons
-        LibrarySection()
+        LibrarySection(navController)
     }
 }
 
@@ -237,7 +238,7 @@ fun GoalSection(
 }
 
 @Composable
-fun LibrarySection(
+fun LibrarySection( navController: NavController
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Row(
@@ -257,8 +258,17 @@ fun LibrarySection(
         ) {
             LibraryButton("Edit Plan", Modifier.weight(1f),
                 onClick = { /* Handle click here */ },iconIm = Icons.Default.DateRange)
-            LibraryButton("Create Workout", Modifier.weight(1f),
-                onClick = { /* Handle click here */ }, iconIm = Icons.Default.Add)
+            LibraryButton("Create Workout ", Modifier.weight(1f),
+                onClick = { navController.navigate(Routes.newWorkout) }, iconIm = Icons.Default.Add)
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            LibraryButton("Edit Goal", Modifier.weight(1f),
+                onClick = { }, iconIm = Icons.Default.DateRange)
+            Box(modifier = Modifier.weight(1f)) // Empty Box
         }
     }
 }
@@ -315,7 +325,6 @@ fun CustomCalendar(
         val remainingBlanks = 7 - (size % 7) // Trailing blank spaces to fill the row
         if (remainingBlanks < 7) repeat(remainingBlanks) { add("") }
     }
-    Log.d("PlanScreen", "daysType: $dayType")
     Box(
         modifier = Modifier.width(200.dp),
         contentAlignment = Alignment.Center // Centers the calendar horizontally
@@ -326,8 +335,8 @@ fun CustomCalendar(
             // Month and Year Title
             Text(
                 text = "${today.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${today.year}",
-                fontSize = 14.sp,fontWeight = FontWeight.Bold,color = Color.White,
-                modifier = Modifier.padding(bottom = 8.dp).align(Alignment.End)
+                fontSize = 12.sp,fontWeight = FontWeight.Bold,color = Color.White,
+                modifier = Modifier.align(Alignment.End)
             )
 
             // Weekday Headers
@@ -352,14 +361,14 @@ fun CustomCalendar(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .aspectRatio(1f)
-                                .padding(5.dp), // Reduced padding
+                                .aspectRatio(1.5f)
+                                .padding(2.dp), // Reduced padding
                             contentAlignment = Alignment.Center
                         ) {
                             if (day.isNotBlank()) {
                                 Box(
                                     modifier = Modifier
-                                        .size(24.dp) // Consistent circle size
+                                        .size(15.dp) // Consistent circle size
                                         .background(
                                             when (dayType[day.toInt() - 1]) {
                                                 1 -> colorFromResource(R.color.grid_color)

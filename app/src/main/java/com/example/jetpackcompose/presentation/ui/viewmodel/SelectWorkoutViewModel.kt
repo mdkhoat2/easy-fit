@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
-import com.example.jetpackcompose.presentation.ui.UIState.SelectWorkoutUIState
+import com.example.jetpackcompose.presentation.ui.uiState.SelectWorkoutUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

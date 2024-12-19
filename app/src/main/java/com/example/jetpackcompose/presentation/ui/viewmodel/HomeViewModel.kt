@@ -1,12 +1,11 @@
 package com.example.jetpackcompose.presentation.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.yml.charts.common.model.Point
 import com.example.jetpackcompose.domain.usecase.GetPatchHistoryUseCase
 import com.example.jetpackcompose.presentation.di.StatData
-import com.example.jetpackcompose.presentation.ui.UIState.HomeUIState
+import com.example.jetpackcompose.presentation.ui.uiState.HomeUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

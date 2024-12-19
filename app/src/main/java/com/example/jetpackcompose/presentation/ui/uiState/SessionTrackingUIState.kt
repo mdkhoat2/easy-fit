@@ -1,4 +1,4 @@
-package com.example.jetpackcompose.presentation.ui.UIState
+package com.example.jetpackcompose.presentation.ui.uiState
 
 import com.example.jetpackcompose.presentation.di.ExerciseItem
 

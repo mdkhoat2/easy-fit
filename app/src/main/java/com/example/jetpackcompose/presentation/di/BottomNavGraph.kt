@@ -18,13 +18,14 @@ import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.ui.screen.Home.WellDoneScreen
-import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
+import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
 import com.example.jetpackcompose.presentation.ui.screen.Account.AccountScreen
 import com.example.jetpackcompose.presentation.ui.screen.Forum.ForumScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.HomeScreen
 //import com.example.jetpackcompose.presentation.ui.screen.Plan.PlanScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SelectWorkoutsScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SessionTrackingScreen
+import com.example.jetpackcompose.presentation.ui.screen.Plan.NewWorkoutScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
 
@@ -91,6 +92,17 @@ fun BottomNavGraph(
                 }
                 composable(route = Routes.wellDone) {
                     WellDoneScreen(navController, sessionTrackingState)
+                }
+
+                composable(
+                    route = Routes.newWorkout
+                ) {
+                    NewWorkoutScreen(
+                        navController,
+                        workoutDatabase,
+                        context
+                    )
+
                 }
             }
         }

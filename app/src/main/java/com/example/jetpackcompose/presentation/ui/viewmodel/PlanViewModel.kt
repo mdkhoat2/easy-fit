@@ -1,13 +1,11 @@
 package com.example.jetpackcompose.presentation.ui.viewmodel
 
-import android.util.Log
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackcompose.data.dataModel.DayOfWeek
 import com.example.jetpackcompose.domain.usecase.GetPatchHistoryUseCase
 import com.example.jetpackcompose.domain.usecase.GetPlanUseCase
-import com.example.jetpackcompose.presentation.ui.UIState.PlanUIState
+import com.example.jetpackcompose.presentation.ui.uiState.PlanUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch

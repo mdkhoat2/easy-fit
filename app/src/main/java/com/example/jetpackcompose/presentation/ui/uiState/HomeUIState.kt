@@ -1,4 +1,4 @@
-package com.example.jetpackcompose.presentation.ui.UIState
+package com.example.jetpackcompose.presentation.ui.uiState
 
 import co.yml.charts.common.model.Point
 import com.example.jetpackcompose.data.dataModel.PatchHistory

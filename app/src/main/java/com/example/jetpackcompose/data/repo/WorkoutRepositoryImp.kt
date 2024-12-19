@@ -39,7 +39,7 @@ class WorkoutRepositoryImp(
 
     override suspend fun deleteWorkout(workoutId: String): Boolean
     {
-
+        database.deleteWorkout(context,workoutId)
         return true
     }
 

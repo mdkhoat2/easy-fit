@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.data.persistentStorage
 
 import android.content.Context
+import android.util.Log
 import com.example.jetpackcompose.data.dataModel.DayOfWeek
 import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.ExerciseName
@@ -45,6 +46,7 @@ object PersistentStorageManager {
 
     suspend fun saveWorkouts(context: Context, workouts: List<Workout>) {
         saveToFile(context, WORKOUTS_FILE_NAME, workouts)
+        Log.d("PersistentStorageManager", "Saved workouts: $workouts")
     }
 
     suspend fun loadWorkouts(context: Context): List<Workout> {

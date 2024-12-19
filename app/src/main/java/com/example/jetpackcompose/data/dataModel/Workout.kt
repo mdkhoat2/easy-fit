@@ -9,7 +9,8 @@ enum class ExerciseName {
     PUSH_UP,
     SIT_UP,
     WEIGHTLIFTING,
-    YOGA
+    YOGA,
+    BREAK
 }
 
 enum class ExerciseType {
@@ -41,6 +42,7 @@ fun getExerciseString(exercise:Exercise): String {
         ExerciseName.SIT_UP -> "Sit Up"
         ExerciseName.WEIGHTLIFTING -> "Weightlifting"
         ExerciseName.YOGA -> "Yoga"
+        ExerciseName.BREAK -> "Break"
     }
 }
 
@@ -52,5 +54,39 @@ fun getExerciseIcon(exercise:Exercise): Int {
         ExerciseName.SIT_UP -> R.drawable.sit_up
         ExerciseName.WEIGHTLIFTING -> R.drawable.weightlifting
         ExerciseName.YOGA -> R.drawable.yoga
+        ExerciseName.BREAK -> R.drawable.heart_beat
     }
+}
+
+fun getAllExercises(): List<Exercise> {
+    return listOf(
+        Exercise(
+            name = ExerciseName.HAND_GRIP,
+            description = "Hand Grip is a simple exercise that can help you build strength in your hands and forearms."
+        ),
+        Exercise(
+            name = ExerciseName.JUMPING_ROPE,
+            description = "Jumping Rope is a great cardio exercise that can help you burn calories and improve your heart health."
+        ),
+        Exercise(
+            name = ExerciseName.PUSH_UP,
+            description = "Push Up is a classic exercise that can help you build strength in your chest, shoulders, and triceps."
+        ),
+        Exercise(
+            name = ExerciseName.SIT_UP,
+            description = "Sit Up is a core exercise that can help you build strength in your abdominal muscles."
+        ),
+        Exercise(
+            name = ExerciseName.WEIGHTLIFTING,
+            description = "Weightlifting is a strength training exercise that can help you build muscle mass and improve your overall strength."
+        ),
+        Exercise(
+            name = ExerciseName.YOGA,
+            description = "Yoga is a mind-body exercise that can help you improve your flexibility, strength, and mental well-being."
+        )
+    )
+}
+
+fun generateWorkoutID(): String {
+    return "workout_${System.currentTimeMillis()}"
 }

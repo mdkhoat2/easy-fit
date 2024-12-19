@@ -38,7 +38,7 @@ import androidx.navigation.NavController
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.ExerciseUIType
-import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
+import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
 import com.example.jetpackcompose.ui.theme.Typography
 
 @Composable
@@ -112,6 +112,7 @@ fun WellDoneScreen(
                                 }
                             }
                             is ExerciseUIType.TimeBased -> {
+                                if (exercise.name=="Rest" ) return@items
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
