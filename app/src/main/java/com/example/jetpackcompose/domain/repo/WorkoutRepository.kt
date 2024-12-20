@@ -22,7 +22,8 @@ interface WorkoutRepository {
     suspend fun addWorkoutStreak()
 
     suspend fun getPatchHistory(cnt:Int=4, skip:Int=0): PatchHistory?
-    suspend fun addWeekToHistory(weekSummary: WeekSummary): Boolean
+    suspend fun addSessionToHistory(duraMilis:Float): Boolean
+    suspend fun addMissedDayToHistory(): Boolean
 
     suspend fun getPlan(): Plan
     suspend fun updatePlan(plan: Plan): Boolean

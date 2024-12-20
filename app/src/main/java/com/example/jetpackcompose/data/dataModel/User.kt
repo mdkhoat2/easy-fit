@@ -21,3 +21,7 @@ data class Goals(
     val days: Int,
     val hours: Int // Total workout hours
 )
+
+data class LastSession(
+    val date: String,
+)

@@ -71,6 +71,7 @@ class NewWorkoutViewModel @Inject constructor(
     }
 
     fun onWorkoutNameChanged(name: String) {
+        if (name.length > 20) return
         _state.value = state.value.copy(workoutName = name)
     }
 }

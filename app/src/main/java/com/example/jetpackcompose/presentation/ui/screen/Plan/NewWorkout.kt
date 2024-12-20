@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -137,13 +138,13 @@ fun NewWorkoutScreen(
                     value = uiState.value.workoutName,
                     onValueChange = { viewModel.onWorkoutNameChanged(it) },
                     placeholder = { Text("Name your new workout here", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(), textStyle = TextStyle(color = Color.White, fontSize = 20.sp),
                     singleLine = true
                 )
 
                 Text(
                     modifier = Modifier.padding(8.dp),
-                    text = "Maximum 15 letters",
+                    text = "Maximum 20 letters",
                     color = Color.Gray,
                     fontSize = 12.sp
                 )
@@ -163,7 +164,7 @@ fun NewWorkoutScreen(
                     fontSize = 16.sp
                 )
                 Text(
-                    text = "Total:",
+                    text = "Total: ${uiState.value.queueExercise.size}",
                     color = colorFromResource(R.color.primary_teal),
                     fontSize = 12.sp
                 )

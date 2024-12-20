@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -80,7 +81,9 @@ fun PlanScreen(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             if (uiState.isLoading)
-                CircularProgressIndicator()
+                CircularProgressIndicator(
+                    color = Color.White,strokeWidth = 4.dp,modifier = Modifier.size(72.dp)
+                )
             else
             {
                 CircularIndicator(
@@ -96,7 +99,7 @@ fun PlanScreen(
                 CircularIndicator(
                     label = "Session",
                     value = uiState.totalSession.toFloat(),
-                    maxValue = uiState.totalSession.toFloat()
+                    maxValue = uiState.plan?.minSession?.toFloat() ?: 1f
                 )
             }
         }
@@ -151,10 +154,10 @@ fun CircularIndicator(label: String, value: Float, maxValue: Float=1f) {
 
 fun getColorFromProgress(progress: Float): Color {
     return when (progress) {
-        in 0.0..0.25 -> Color.White
-        in 0.25..0.5 -> Color(0xFF9AC0D6)
-        in 0.5..0.75 -> Color(0xFFD5FFAF) // light green
-        in 0.75..1.0 -> Color(0xFFD5FF5F) // green
+        in 0.0..0.25 -> Color(0xFF9AC0D6)
+        in 0.25..0.5 -> Color(0xFFD5FFAF)
+        in 0.5..0.99 -> Color(0xFFD5FF5F) // light green
+        in 0.99..1.0 -> Color(0xFF4FAF4F) // green
         else -> Color(0xFF4FAF4F)
     }
 }
@@ -177,25 +180,12 @@ fun GoalSection(
             Column(
                 modifier = Modifier.weight(1f).align(Alignment.CenterVertically)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
+                Text(
                         text = "Goal",
                         color = Color.White,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold
-                    )
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit",
-                        tint = colorFromResource(R.color.primary_teal),
-                        modifier = Modifier.size(24.dp).clickable {
-                            /* go to goal Edit */
-                        }
-                    )
-                }
+                )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -230,7 +220,6 @@ fun GoalSection(
             Spacer(modifier = Modifier.width(16.dp))
 
             CustomCalendar(
-                modifier = Modifier.weight(1.5f).align(Alignment.CenterVertically),
                 dayType = dayType
             )
         }
@@ -309,7 +298,6 @@ fun LibraryButton(title: String,modifier: Modifier = Modifier,
 
 @Composable
 fun CustomCalendar(
-    modifier: Modifier = Modifier,
     dayType: List<Int> = List(42) { 0 }
 ) {
     val today = LocalDate.now()
@@ -361,17 +349,27 @@ fun CustomCalendar(
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .aspectRatio(1.5f)
-                                .padding(2.dp), // Reduced padding
+                                .aspectRatio(1.5f), // Reduced padding
                             contentAlignment = Alignment.Center
                         ) {
                             if (day.isNotBlank()) {
+                                if (dayType[day.toInt() - 1] == 5 || dayType[day.toInt() - 1] == 6) {
+                                    Box(modifier = Modifier.size(17.dp).background(Color(0xEEFFFFFF),
+                                        shape = CircleShape),
+                                        contentAlignment = Alignment.Center){
+                                        Box(modifier = Modifier
+                                            .size(15.dp).background(
+                                                colorFromResource(R.color.bottom_bar_background)
+                                                ,shape = CircleShape)
+                                        )
+                                    }
+                                }
                                 Box(
                                     modifier = Modifier
-                                        .size(15.dp) // Consistent circle size
+                                        .size(14.dp) // Consistent circle size
                                         .background(
                                             when (dayType[day.toInt() - 1]) {
-                                                1 -> colorFromResource(R.color.grid_color)
+                                                1,6 -> colorFromResource(R.color.grid_color)
                                                 2 -> colorFromResource(R.color.primary_green)
                                                 3 -> colorFromResource(R.color.primary_orange)
                                                 4 -> colorFromResource(R.color.primary_teal)
@@ -393,6 +391,7 @@ fun CustomCalendar(
                                         textAlign = TextAlign.Center
                                     )
                                 }
+
                             }
                         }
                     }

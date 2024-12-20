@@ -3,6 +3,7 @@ package com.example.jetpackcompose.presentation.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackcompose.data.dataModel.DayOfWeek
+import com.example.jetpackcompose.data.dataModel.dateToDayOfWeek
 import com.example.jetpackcompose.domain.usecase.GetPatchHistoryUseCase
 import com.example.jetpackcompose.domain.usecase.GetPlanUseCase
 import com.example.jetpackcompose.presentation.ui.uiState.PlanUIState
@@ -79,7 +80,8 @@ class PlanViewModel @Inject constructor(
                                 date.isAfter(today) ->
                                     if (plan.dateWorkout.contains(dateToDayOfWeek(date))) 4 else 1
                                 date.isBefore(today) -> 2 // Past, not missed
-                                else -> 5 // Today (not missed)
+                                else -> // Today 5 mean completed, 6 mean not completed
+                                    if (plan.dateWorkout.contains(dateToDayOfWeek(date))) 6 else 5
                             }
                         }
                     }
@@ -90,7 +92,7 @@ class PlanViewModel @Inject constructor(
                 }
 
                 val missedCnt = patch?.weeks?.sumOf { it.missedSessions } ?: 0
-                val totalHour = patch?.weeks?.sumOf { it.totalTime }?.toFloat() ?: 0f
+                val totalHour = patch?.weeks?.sumOf { (it.totalTime/60).toInt() }?.toFloat() ?: 0f
                 val totalSession = patch?.weeks?.sumOf { it.sessionCount } ?: 0
 
 
@@ -112,24 +114,8 @@ class PlanViewModel @Inject constructor(
         }
     }
 
-    fun dateToDayOfWeek(date: LocalDate): DayOfWeek {
-        return when (date.dayOfWeek.value) {
-            1 -> DayOfWeek.MONDAY
-            2 -> DayOfWeek.TUESDAY
-            3 -> DayOfWeek.WEDNESDAY
-            4 -> DayOfWeek.THURSDAY
-            5 -> DayOfWeek.FRIDAY
-            6 -> DayOfWeek.SATURDAY
-            7 -> DayOfWeek.SUNDAY
-            else -> DayOfWeek.SUNDAY
-        }
-    }
-
-
-
-
-
     fun UpdateValue(newValue: String){
 
     }
 }
+

@@ -9,6 +9,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
+import com.example.jetpackcompose.domain.usecase.AddMissedDayToHistoryUseCase
 import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.ui.screen.Home.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
@@ -28,6 +30,8 @@ import com.example.jetpackcompose.presentation.ui.screen.Home.SessionTrackingScr
 import com.example.jetpackcompose.presentation.ui.screen.Plan.NewWorkoutScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
+import com.example.jetpackcompose.util.dataStore
+import com.example.jetpackcompose.util.isSameDayAsLastDate
 
 @Composable
 fun BottomNavGraph(
@@ -49,6 +53,15 @@ fun BottomNavGraph(
         }
         else -> {
             Log.d("BottomNavGraph", "WorkoutDatabase initialized")
+
+            if (isSameDayAsLastDate(context)) {
+                Log.d("BottomNavGraph", "Same day as last date")
+            } else {
+                // on a different thread
+
+               // AddMissedDayToHistoryUseCase(WorkoutRepositoryImp(workoutDatabase, context)).invoke()
+            }
+
             // Proceed once the database is initialized
             NavHost(
                 navController = navController,
@@ -91,7 +104,7 @@ fun BottomNavGraph(
                     }
                 }
                 composable(route = Routes.wellDone) {
-                    WellDoneScreen(navController, sessionTrackingState)
+                    WellDoneScreen(navController, sessionTrackingState,workoutDatabase, context)
                 }
 
                 composable(

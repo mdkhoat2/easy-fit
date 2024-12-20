@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.data.database
 
 import android.content.Context
+import android.util.Log
 import com.example.jetpackcompose.data.dataModel.DayOfWeek
 import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.ExerciseName
@@ -100,10 +101,10 @@ class WorkoutDatabase private constructor() {
 
     fun getPatchHistory(): PatchHistory = cachedPatchHistory
 
-    suspend fun addWeekToHistory(context: Context, weekSummary: WeekSummary): Boolean {
-        cachedPatchHistory = PatchHistory(cachedPatchHistory.weeks + weekSummary)
+    suspend fun updatePatchHistory(context: Context, patchHistory: PatchHistory) {
+        cachedPatchHistory = patchHistory
         PersistentStorageManager.saveMissedWeeks(context, cachedPatchHistory)
-        return true
+        Log.d("WorkoutDatabase", "Updated patch history: $cachedPatchHistory")
     }
 
     /**     |
@@ -300,14 +301,14 @@ class WorkoutDatabase private constructor() {
                 WeekSummary(
                     startDate = "2024-10-21",
                     missedSessions = 0,
-                    totalTime = 45,
+                    totalTime = 45f,
                     sessionCount = 2,
                     missedDays = listOf(DayOfWeek.THURSDAY),
                 ),
                 WeekSummary(
                     startDate = "2024-11-04",
                     missedSessions = 1,
-                    totalTime = 72,
+                    totalTime = 72f,
                     sessionCount = 3,
                     missedDays = listOf(
                         DayOfWeek.WEDNESDAY,
@@ -317,7 +318,7 @@ class WorkoutDatabase private constructor() {
                 WeekSummary(
                     startDate = "2024-11-18",
                     missedSessions = 1,
-                    totalTime = 90,
+                    totalTime = 90f,
                     sessionCount = 4,
                     missedDays = listOf(
                         DayOfWeek.WEDNESDAY,
@@ -326,7 +327,7 @@ class WorkoutDatabase private constructor() {
                 WeekSummary(
                     startDate = "2024-12-02",
                     missedSessions = 2,
-                    totalTime = 123,
+                    totalTime = 123f,
                     sessionCount = 5,
                     missedDays = listOf(
                         DayOfWeek.MONDAY,
@@ -336,7 +337,7 @@ class WorkoutDatabase private constructor() {
                 WeekSummary(
                     startDate = "2024-12-16",
                     missedSessions = 0,
-                    totalTime = 157,
+                    totalTime = 157f,
                     sessionCount = 6,
                     missedDays = emptyList(),
                 ),

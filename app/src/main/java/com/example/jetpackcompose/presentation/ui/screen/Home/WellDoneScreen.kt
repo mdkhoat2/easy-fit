@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.presentation.ui.screen.Home
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +38,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
+import com.example.jetpackcompose.data.database.WorkoutDatabase
+import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
+import com.example.jetpackcompose.domain.usecase.AddDayToHistoryUseCase
 import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.ExerciseUIType
 import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
@@ -45,7 +50,21 @@ import com.example.jetpackcompose.ui.theme.Typography
 fun WellDoneScreen(
     navController: NavController,
     state: SessionTrackingUIState,
+    workoutDatabase: WorkoutDatabase,
+    context: Context
 ) {
+    val addDayToHistoryUseCase = AddDayToHistoryUseCase(
+        WorkoutRepositoryImp(
+            context = context,
+            database = workoutDatabase
+        )
+    )
+
+    // Add the day to the history
+    LaunchedEffect(Unit) {
+        addDayToHistoryUseCase(state.elapsedTime.toFloat())
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -163,7 +182,7 @@ fun WellDoneScreen(
                 )
             }
             OutlinedButton(
-                onClick = {
+                onClick = { // put extra data in the bundle
                     navController.navigate(BottomBarScreen.Home.route)
                 },
                 modifier = Modifier

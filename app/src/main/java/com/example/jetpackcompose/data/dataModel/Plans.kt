@@ -1,5 +1,7 @@
 package com.example.jetpackcompose.data.dataModel
 
+import java.time.LocalDate
+
 data class Plan(
     val name: String="",
     val dateWorkout: List<DayOfWeek>,
@@ -15,11 +17,24 @@ data class PatchHistory(
 data class WeekSummary(
     val startDate: String,
     val missedSessions: Int,
-    val totalTime: Int, // In minutes
+    val totalTime: Float, // In minutes
     val sessionCount: Int,
     val missedDays: List<DayOfWeek>
 )
 
 enum class DayOfWeek {
     MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+}
+
+fun dateToDayOfWeek(date: LocalDate): DayOfWeek {
+    return when (date.dayOfWeek.value) {
+        1 -> DayOfWeek.MONDAY
+        2 -> DayOfWeek.TUESDAY
+        3 -> DayOfWeek.WEDNESDAY
+        4 -> DayOfWeek.THURSDAY
+        5 -> DayOfWeek.FRIDAY
+        6 -> DayOfWeek.SATURDAY
+        7 -> DayOfWeek.SUNDAY
+        else -> DayOfWeek.SUNDAY
+    }
 }

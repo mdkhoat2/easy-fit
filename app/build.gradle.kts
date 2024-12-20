@@ -46,6 +46,9 @@ dependencies {
     implementation(libs.androidx.hilt.lifecycle.viewmodel)
     implementation(libs.gson)
 
+    //datastore-prefs
+    implementation(libs.androidx.datastore.preferences)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

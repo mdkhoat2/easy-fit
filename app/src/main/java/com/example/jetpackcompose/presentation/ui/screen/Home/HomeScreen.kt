@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -103,7 +104,7 @@ fun HomeScreen(
 
         if (uiState.isLoading){
             CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally).size(50.dp)
             )
         }
         else{
@@ -242,7 +243,7 @@ fun LineChartScreen(pointsData: List<Point>){
     val steps = 5
 
     val xAxisData = AxisData.Builder()
-        .axisStepSize(100.dp)
+        .axisStepSize(50.dp)
         .backgroundColor(colorFromResource(R.color.bottom_bar_background))
         .steps(pointsData.size - 1)
         .labelData { i -> i.toString() }
