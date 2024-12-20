@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.presentation.ui.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackcompose.data.dataModel.DayOfWeek
@@ -7,6 +8,7 @@ import com.example.jetpackcompose.data.dataModel.dateToDayOfWeek
 import com.example.jetpackcompose.domain.usecase.GetPatchHistoryUseCase
 import com.example.jetpackcompose.domain.usecase.GetPlanUseCase
 import com.example.jetpackcompose.presentation.ui.uiState.PlanUIState
+import com.example.jetpackcompose.util.getLastDate
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +20,8 @@ import javax.inject.Inject
 
 class PlanViewModel @Inject constructor(
     private val getPatchHistoryUseCase: GetPatchHistoryUseCase,
-    private val getPlanUseCase: GetPlanUseCase
+    private val getPlanUseCase: GetPlanUseCase,
+    private val lastDate: String
     ) : ViewModel() {
     private val _state = MutableStateFlow(PlanUIState())
     val state = _state.asStateFlow()
@@ -81,7 +84,7 @@ class PlanViewModel @Inject constructor(
                                     if (plan.dateWorkout.contains(dateToDayOfWeek(date))) 4 else 1
                                 date.isBefore(today) -> 2 // Past, not missed
                                 else -> // Today 5 mean completed, 6 mean not completed
-                                    if (plan.dateWorkout.contains(dateToDayOfWeek(date))) 6 else 5
+                                    if (lastDate==LocalDate.now().toString()) 5 else 6
                             }
                         }
                     }

@@ -11,25 +11,21 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.data.dataModel.Plan
@@ -39,6 +35,7 @@ import com.example.jetpackcompose.domain.usecase.GetPatchHistoryUseCase
 import com.example.jetpackcompose.domain.usecase.GetPlanUseCase
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.viewmodel.PlanViewModel
+import com.example.jetpackcompose.util.getLastDate
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -50,6 +47,17 @@ fun PlanScreen(
     context: Context = LocalContext.current,
     workoutDatabase: WorkoutDatabase
 ) {
+    val lastDateState = produceState<String?>(initialValue = null) {
+        value = getLastDate(context) // This runs in a coroutine
+    }
+
+    // If the last date is not yet loaded, show a loading indicator
+    if (lastDateState.value == null) {
+        CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+        return
+    }
+
+    // Initialize the ViewModel after lastDate is available
     val planViewModel = remember {
         val getPatchHistoryUseCase = GetPatchHistoryUseCase(
             WorkoutRepositoryImp(workoutDatabase, context)
@@ -57,7 +65,8 @@ fun PlanScreen(
         val getPlanUseCase = GetPlanUseCase(
             WorkoutRepositoryImp(workoutDatabase, context)
         )
-        PlanViewModel(getPatchHistoryUseCase, getPlanUseCase)
+
+        PlanViewModel(getPatchHistoryUseCase, getPlanUseCase, lastDateState.value!!)
     }
 
     val uiState by planViewModel.state.collectAsState()

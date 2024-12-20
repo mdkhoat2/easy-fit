@@ -11,6 +11,7 @@ import com.example.jetpackcompose.data.dataModel.Plan
 import com.example.jetpackcompose.data.dataModel.WeekSummary
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.data.persistentStorage.PersistentStorageManager
+import com.example.jetpackcompose.util.resetForFirstTimeUser
 
 class WorkoutDatabase private constructor() {
     // Local database implementation
@@ -42,6 +43,8 @@ class WorkoutDatabase private constructor() {
 //        PersistentStorageManager.saveWorkouts(context, cachedWorkouts)
 //        PersistentStorageManager.saveStreak(context, cachedStreak)
 //        PersistentStorageManager.savePlan(context, cachedPlan)
+
+//        resetForFirstTimeUser(context)
     }
 
     private var cachedPatchHistory: PatchHistory = PatchHistory(emptyList())

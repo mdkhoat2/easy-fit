@@ -5,6 +5,7 @@ import com.example.jetpackcompose.data.dataModel.PatchHistory
 import com.example.jetpackcompose.data.dataModel.Plan
 import com.example.jetpackcompose.data.dataModel.WeekSummary
 import com.example.jetpackcompose.data.dataModel.Workout
+import java.time.LocalDate
 
 
 interface WorkoutRepository {
@@ -23,7 +24,7 @@ interface WorkoutRepository {
 
     suspend fun getPatchHistory(cnt:Int=4, skip:Int=0): PatchHistory?
     suspend fun addSessionToHistory(duraMilis:Float): Boolean
-    suspend fun addMissedDayToHistory(): Boolean
+    suspend fun addMissedDaysToHistory(missedDates: List<LocalDate>)
 
     suspend fun getPlan(): Plan
     suspend fun updatePlan(plan: Plan): Boolean

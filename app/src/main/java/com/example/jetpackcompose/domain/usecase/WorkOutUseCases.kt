@@ -1,9 +1,14 @@
 package com.example.jetpackcompose.domain.usecase
 
+import android.content.Context
 import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.PatchHistory
 import com.example.jetpackcompose.data.dataModel.Workout
+import com.example.jetpackcompose.data.dataModel.dateToDayOfWeek
 import com.example.jetpackcompose.domain.repo.WorkoutRepository
+import com.example.jetpackcompose.util.getLastDate
+import com.example.jetpackcompose.util.saveLastDate
+import java.time.LocalDate
 
 
 class GetYourWorkoutsUseCase(private val repository: WorkoutRepository) {
@@ -55,27 +60,50 @@ class GetPatchHistoryUseCase(private val repository: WorkoutRepository) {
 
 class AddDayToHistoryUseCase(private val repository: WorkoutRepository) {
     suspend operator fun invoke(duraMilis:Float): Boolean {
+
         return repository.addSessionToHistory( duraMilis)
     }
 }
 
-class AddMissedDayToHistoryUseCase(private val repository: WorkoutRepository) {
-    suspend operator fun invoke(): Boolean {
-        return repository.addMissedDayToHistory()
-    }
-}
+class AddMissedDaysToHistoryUseCase(private val repository: WorkoutRepository) {
 
-class didMissDayUseCase(private val repository: WorkoutRepository) {
-    suspend operator fun invoke(): Boolean {
-        // get the plan
+    suspend operator fun invoke(context: Context) : Boolean {
+        // Get the last workout date
+        val lastWorkoutDate = getLastDate(context).takeIf { it.isNotBlank() }
+            ?.let { LocalDate.parse(it) } ?: LocalDate.now().minusDays(1)
 
+        // Calculate the range of dates to check
+        val yesterday = LocalDate.now().minusDays(1)
+        if (!lastWorkoutDate.isBefore(yesterday)) return false// No dates to check
+
+        // Get the plan
         val plan = repository.getPlan()
 
+        // Iterate over the date range
+        val missedDates = mutableListOf<LocalDate>()
+        var currentDate = lastWorkoutDate.plusDays(1)
+        while (!currentDate.isAfter(yesterday)) {
+            val toDate = dateToDayOfWeek(currentDate)
+            if (plan.dateWorkout.contains(toDate)) {
+                missedDates.add(currentDate)
+            }
+            currentDate = currentDate.plusDays(1)
+        }
 
-        //return repository.didMissDay()
-        return false
+        // Update missed days in history
+        if (missedDates.isNotEmpty()) {
+            repository.addMissedDaysToHistory(missedDates)
+        }
+
+        // Save the current date as the last workout date
+        saveLastDate(context,LocalDate.now().minusDays(1))
+
+        return missedDates.isNotEmpty()
     }
 }
+
+
+
 
 class GetPlanUseCase(private val repository: WorkoutRepository) {
     suspend operator fun invoke() = repository.getPlan()

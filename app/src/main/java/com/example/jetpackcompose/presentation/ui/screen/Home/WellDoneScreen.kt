@@ -45,6 +45,8 @@ import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.ExerciseUIType
 import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
 import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.util.saveLastDate
+import java.time.LocalDate
 
 @Composable
 fun WellDoneScreen(
@@ -63,6 +65,7 @@ fun WellDoneScreen(
     // Add the day to the history
     LaunchedEffect(Unit) {
         addDayToHistoryUseCase(state.elapsedTime.toFloat())
+        saveLastDate(context,LocalDate.now())
     }
 
     Column(

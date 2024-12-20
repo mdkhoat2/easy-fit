@@ -124,46 +124,35 @@ class WorkoutRepositoryImp(
         return true
     }
 
-    override suspend fun addMissedDayToHistory(): Boolean {
-        val fullHistory = database.getPatchHistory()
+    override suspend fun addMissedDaysToHistory(missedDates: List<LocalDate>) {
+        // Get the full history
+        val fullHistory = getPatchHistory()
 
-        // Calculate yesterday's date
-        val yesterday = LocalDate.now().minusDays(1)
-        val toDate = dateToDayOfWeek(yesterday)
+        // Group missed dates by the week they belong to
+        val missedDatesByWeek = missedDates.groupBy { getStartOfWeek(it) }
 
-        // Check if the week of yesterday is the current week
-        if (checkIfWeekIsCurrentWeek(fullHistory.weeks.last(), yesterday)) {
-            val currentWeek = fullHistory.weeks.last()
-            if (currentWeek.missedDays.contains(toDate)) return false
+        // Update the history
+        val updatedHistory = fullHistory.copy(
+            weeks = fullHistory.weeks.map { week ->
+                val startOfWeek = LocalDate.parse(week.startDate)
 
-            // Update the current week's missed sessions and days
-            val updatedWeek = currentWeek.copy(
-                missedSessions = currentWeek.missedSessions + 1,
-                missedDays = currentWeek.missedDays + toDate
-            )
+                // Check if this week's start date matches any of the missed dates' week
+                if (missedDatesByWeek.containsKey(startOfWeek)) {
+                    val missedDatesForWeek = missedDatesByWeek[startOfWeek] ?: emptyList()
+                    week.copy(
+                        missedSessions = week.missedSessions + missedDatesForWeek.size,
+                        missedDays = week.missedDays + missedDatesForWeek.map { dateToDayOfWeek(it) }
+                    )
+                } else {
+                    week
+                }
+            }
+        )
 
-            // Replace the last week with the updated week in the history
-            val updatedHistory = fullHistory.copy(
-                weeks = fullHistory.weeks.dropLast(1) + updatedWeek
-            )
-            database.updatePatchHistory(context, updatedHistory)
-            return true
-        } else {
-            val newWeek = WeekSummary(
-                startDate = getStartOfWeek(yesterday).toString(),
-                missedSessions = 1,
-                totalTime = 0f,
-                sessionCount = 0,
-                missedDays = listOf(toDate)
-            )
-
-            val updatedHistory = fullHistory.copy(
-                weeks = fullHistory.weeks + newWeek
-            )
-            database.updatePatchHistory(context, updatedHistory)
-            return true
-        }
+        database.updatePatchHistory(context, updatedHistory)
     }
+
+
 
 
     private fun checkIfWeekIsCurrentWeek(week: WeekSummary, theDate: LocalDate): Boolean {
