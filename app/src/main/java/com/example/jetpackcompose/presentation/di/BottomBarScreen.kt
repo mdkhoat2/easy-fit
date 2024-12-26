@@ -34,4 +34,5 @@ object Routes {
     var sessionTracking = "session_tracking/{workoutId}"
     var wellDone = "wellDone"
     var newWorkout = "newWorkout"
+    var CustomizeExercise = "CustomizeExercise"
 }

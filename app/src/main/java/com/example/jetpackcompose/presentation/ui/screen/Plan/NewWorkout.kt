@@ -1,7 +1,6 @@
 package com.example.jetpackcompose.presentation.ui.screen.Plan
 
-import android.content.Context
-import androidx.compose.foundation.ScrollState
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,14 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
@@ -28,8 +25,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,11 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
-import com.example.jetpackcompose.data.database.WorkoutDatabase
-import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
-import com.example.jetpackcompose.domain.usecase.CreateWorkoutUseCase
+import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.screen.Component.LineDivider
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
+import com.example.jetpackcompose.presentation.ui.uiState.WorkoutEditUIState
 import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
 import kotlinx.coroutines.launch
 
@@ -59,22 +56,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun NewWorkoutScreen(
     navController: NavController,
-    workoutDatabase: WorkoutDatabase,
-    context: Context
+    viewModel: NewWorkoutViewModel,
+    workoutEditUIState: WorkoutEditUIState,
+    onWorkoutEditStateChanged: (WorkoutEditUIState) -> Unit
 ) {
-    val viewModel = remember {
-        NewWorkoutViewModel(
-            CreateWorkoutUseCase(
-                WorkoutRepositoryImp(
-                    context = context,
-                    database = workoutDatabase
-                )
-            )
-        )
-    }
 
-    val uiState = viewModel.state.collectAsState()
+    val uiState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope() // Coroutine scope for composable
+
+    LaunchedEffect(uiState) {
+        onWorkoutEditStateChanged(uiState)
+    }
 
     Column(
         modifier = Modifier
@@ -135,7 +127,7 @@ fun NewWorkoutScreen(
                 )
 
                 OutlinedTextField(
-                    value = uiState.value.workoutName,
+                    value = uiState.workoutName,
                     onValueChange = { viewModel.onWorkoutNameChanged(it) },
                     placeholder = { Text("Name your new workout here", color = Color.Gray) },
                     modifier = Modifier.fillMaxWidth(), textStyle = TextStyle(color = Color.White, fontSize = 20.sp),
@@ -164,7 +156,7 @@ fun NewWorkoutScreen(
                     fontSize = 16.sp
                 )
                 Text(
-                    text = "Total: ${uiState.value.queueExercise.size}",
+                    text = "Total: ${uiState.queueExercise.size}",
                     color = colorFromResource(R.color.primary_teal),
                     fontSize = 12.sp
                 )
@@ -179,19 +171,24 @@ fun NewWorkoutScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.heightIn(max = 1800.dp) // Restrict height to avoid infinite scroll issues
             ) {
-                items(uiState.value.queueExercise.size) { index ->
-                    val exercise = uiState.value.queueExercise[index]
+                items(uiState.queueExercise.size) { index ->
+                    val exercise = uiState.queueExercise[index]
                     QueueItem(
                         number = index + 1,
                         name = exercise.first.name.toString(),
                         iconId = exercise.second,
                         onRemoveClick = {
                             viewModel.onExerciseRemoved(index)
+                        },
+                        onClick = {
+                            Log.d("NewWorkoutScreen", "Exercise clicked at index: $index")
+                            onWorkoutEditStateChanged(uiState)
+                            navController.navigate("${Routes.CustomizeExercise}/$index")
                         }
                     )
                 }
                 item {
-                    if (uiState.value.queueExercise.isEmpty())
+                    if (uiState.queueExercise.isEmpty())
                         AddExerciseButton()
                 }
             }
@@ -236,7 +233,8 @@ fun QueueItem(
     number: Int,
     name: String,
     iconId: Int = R.drawable.push_up,
-    onRemoveClick: () -> Unit // Callback for the minus icon click
+    onRemoveClick: () -> Unit, // Callback for the minus icon click,
+    onClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -248,7 +246,7 @@ fun QueueItem(
             modifier = Modifier.align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ExerciseItem(name = name, iconId = iconId)
+            ExerciseItem(name = name, iconId = iconId, onClick = onClick)
         }
         // Top-left number
         Text(
