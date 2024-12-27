@@ -33,4 +33,10 @@ object Routes {
     var selectWorkout = "selectWorkout"
     var sessionTracking = "session_tracking/{workoutId}"
     var wellDone = "wellDone"
+    var newWorkout = "newWorkout"
+    var login = "login"
+    var forgotEmail = "forgotEmail"
+    var forgotOTP = "forgotOTP"
+    var register = "register"
+    var CustomizeExercise = "CustomizeExercise"
 }

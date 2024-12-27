@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.data.persistentStorage
 
 import android.content.Context
+import android.util.Log
 import com.example.jetpackcompose.data.dataModel.DayOfWeek
 import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.ExerciseName
@@ -21,6 +22,7 @@ object PersistentStorageManager {
     private const val WORKOUTS_FILE_NAME = "workouts.json"
     private const val STREAK_FILE_NAME = "streak.json"
     private const val MISSED_WEEKS_FILE_NAME = "missed_weeks.json"
+    private const val PLAN_FILE_NAME = "plan.json"
     private val gson = Gson()
 
     // Generic save function
@@ -44,6 +46,7 @@ object PersistentStorageManager {
 
     suspend fun saveWorkouts(context: Context, workouts: List<Workout>) {
         saveToFile(context, WORKOUTS_FILE_NAME, workouts)
+        Log.d("PersistentStorageManager", "Saved workouts: $workouts")
     }
 
     suspend fun loadWorkouts(context: Context): List<Workout> {
@@ -64,5 +67,20 @@ object PersistentStorageManager {
 
     suspend fun loadMissedWeeks(context: Context): PatchHistory {
         return loadFromFile(context, MISSED_WEEKS_FILE_NAME, PatchHistory(emptyList()))
+    }
+
+    suspend fun savePlan(context: Context, plan: Plan) {
+        saveToFile(context, PLAN_FILE_NAME, plan)
+    }
+
+    suspend fun loadPlan(context: Context): Plan {
+        return loadFromFile(context, PLAN_FILE_NAME,
+            Plan(
+                name = "No Plan",
+                dateWorkout = listOf(),
+                maxMissDay = 0,
+                minSession = 0,
+                minHour = 0f
+            ))
     }
 }

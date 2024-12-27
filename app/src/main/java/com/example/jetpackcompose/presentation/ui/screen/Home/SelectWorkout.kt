@@ -21,11 +21,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -43,13 +44,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
-import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.GetYourWorkoutsUseCase
 import com.example.jetpackcompose.presentation.di.Routes
+import com.example.jetpackcompose.presentation.ui.screen.Component.BigButtonWithIcon
+import com.example.jetpackcompose.presentation.ui.screen.Component.ButtonAlign
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
 import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewModel
+import com.example.jetpackcompose.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,23 +116,15 @@ fun SelectWorkoutsScreen(
                     )
                 }
 
-                // Add the search bar as the last item
+                // Search Button
                 item {
-                    OutlinedTextField(
-                        value = state.searchQuery,
-                        onValueChange = { query ->
-                            searchQuery.value = query
-                            selectWorkoutViewModel.onSearchQueryChanged(query)
+                    BigButtonWithIcon(
+                        onClick = {
+                            navController.navigate(Routes.selectWorkout)
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 4.dp)
-                            .background(colorFromResource(R.color.bottom_bar_background))
-                        ,
-                        leadingIcon = {
-                            Icon(Icons.Default.Search, contentDescription = "Search")
-                        },
-                        placeholder = { Text("Search library") }
+                        icon = Icons.Default.Search,
+                        text = "Search",
+                        align = ButtonAlign.START
                     )
                 }
             }
@@ -177,7 +172,7 @@ fun WorkoutItem(workoutName: String,onClick: () -> Unit ) { //set onClickListene
                     imageVector = Icons.Default.Edit,
                     contentDescription = "Edit",
                     modifier = Modifier.size(24.dp),
-                    tint = colorFromResource(R.color.btn_back_color)
+                    tint = Color(0xFF9AC0D6)
                 )
             }
 
@@ -186,14 +181,51 @@ fun WorkoutItem(workoutName: String,onClick: () -> Unit ) { //set onClickListene
 
 }
 
+@Composable
+fun SearchButton(navController: NavController){
+    Box( // Replace Column with Box to control the size
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .clip(RoundedCornerShape(8))
+            .background(colorFromResource(R.color.bottom_bar_background)),
+        contentAlignment = Alignment.Center
+    ){
+        OutlinedButton(
+            onClick = {
+                navController.navigate(Routes.selectWorkout)
+            },
+            modifier = Modifier.fillMaxSize(),
+            colors = ButtonDefaults.buttonColors(
+                contentColor = colorFromResource(R.color.primary_teal),
+                containerColor = colorFromResource(R.color.primary_teal).copy(alpha = 0.1f)
+            ),shape = RoundedCornerShape(8)
+        ){
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Save",
+                    tint = colorFromResource(R.color.primary_teal)
+
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = "Search",
+                    style = Typography.bodyLarge,
+                    color = colorFromResource(R.color.primary_teal)
+                )
+            }
+        }
+    }
+}
+
 // preview
 @Preview
 @Composable
-fun SelectWorkoutsScreenPreview() {
-    //make a sample list of workouts
-    val workouts = listOf(
-        Workout("1", null, "Crunch", emptyList(), 30),
-        Workout("2", null, "Push Up", emptyList(), 45),
-        Workout("3", null, "Quay Tay", emptyList(), 60)
-    )
+fun SaveButton() {
+
 }
+

@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.data.database
 
 import android.content.Context
+import android.util.Log
 import com.example.jetpackcompose.data.dataModel.DayOfWeek
 import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.ExerciseName
@@ -10,6 +11,7 @@ import com.example.jetpackcompose.data.dataModel.Plan
 import com.example.jetpackcompose.data.dataModel.WeekSummary
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.data.persistentStorage.PersistentStorageManager
+import com.example.jetpackcompose.util.resetForFirstTimeUser
 
 class WorkoutDatabase private constructor() {
     // Local database implementation
@@ -34,10 +36,15 @@ class WorkoutDatabase private constructor() {
         cachedWorkouts = PersistentStorageManager.loadWorkouts(context)
         cachedStreak = PersistentStorageManager.loadStreak(context)
         cachedPatchHistory = PersistentStorageManager.loadMissedWeeks(context)
+        cachedPlan = PersistentStorageManager.loadPlan(context)
+        // for testing uncomment the line below and comment the line above
 //        fillWithSampleData()
 //        PersistentStorageManager.saveMissedWeeks(context, cachedPatchHistory)
 //        PersistentStorageManager.saveWorkouts(context, cachedWorkouts)
 //        PersistentStorageManager.saveStreak(context, cachedStreak)
+//        PersistentStorageManager.savePlan(context, cachedPlan)
+
+//        resetForFirstTimeUser(context)
     }
 
     private var cachedPatchHistory: PatchHistory = PatchHistory(emptyList())
@@ -45,7 +52,10 @@ class WorkoutDatabase private constructor() {
     private var cachedStreak: Int = 0
     private lateinit var cachedPlan: Plan
 
-    // Database here
+    /**
+     *  |  WORKOUTS
+     */
+
     fun getAllWorkouts(): List<Workout> = cachedWorkouts
 
     suspend fun addWorkout(context: Context, workout: Workout) {
@@ -61,9 +71,25 @@ class WorkoutDatabase private constructor() {
         return true
     }
 
+    suspend fun deleteWorkout(context: Context, workoutId: String): Boolean {
+        val index = cachedWorkouts.indexOfFirst { it.id == workoutId }
+        if (index == -1) return false
+        cachedWorkouts = cachedWorkouts.toMutableList().apply { removeAt(index) }
+        PersistentStorageManager.saveWorkouts(context, cachedWorkouts)
+        return true
+    }
+
+    fun getWorkoutById(workoutId: String): Workout? {
+        return cachedWorkouts.find { it.id == workoutId }
+    }
+
     fun getExerciseFromWorkout(workoutId: String): List<Exercise> {
         return cachedWorkouts.find { it.id == workoutId }?.exercises ?: emptyList()
     }
+
+    /**
+     *  |  STREAK
+     */
 
     fun getWorkoutStreak(): Int = cachedStreak
 
@@ -72,11 +98,28 @@ class WorkoutDatabase private constructor() {
         PersistentStorageManager.saveStreak(context, cachedStreak)
     }
 
+    /**
+     *  |  PATCH HISTORY
+     */
+
     fun getPatchHistory(): PatchHistory = cachedPatchHistory
 
-    fun getWorkoutById(workoutId: String): Workout? {
-        return cachedWorkouts.find { it.id == workoutId }
+    suspend fun updatePatchHistory(context: Context, patchHistory: PatchHistory) {
+        cachedPatchHistory = patchHistory
+        PersistentStorageManager.saveMissedWeeks(context, cachedPatchHistory)
+        Log.d("WorkoutDatabase", "Updated patch history: $cachedPatchHistory")
     }
+
+    /**     |
+     * PLAN V
+     */
+
+    suspend fun updatePlan(context: Context, plan: Plan): Boolean {
+        cachedPlan = plan
+        PersistentStorageManager.savePlan(context, cachedPlan)
+        return true
+    }
+    fun getPlan(): Plan = cachedPlan
 
     fun fillWithSampleData()
     {
@@ -261,14 +304,14 @@ class WorkoutDatabase private constructor() {
                 WeekSummary(
                     startDate = "2024-10-21",
                     missedSessions = 0,
-                    totalTime = 45,
+                    totalTime = 45f,
                     sessionCount = 2,
                     missedDays = listOf(DayOfWeek.THURSDAY),
                 ),
                 WeekSummary(
                     startDate = "2024-11-04",
                     missedSessions = 1,
-                    totalTime = 72,
+                    totalTime = 72f,
                     sessionCount = 3,
                     missedDays = listOf(
                         DayOfWeek.WEDNESDAY,
@@ -278,7 +321,7 @@ class WorkoutDatabase private constructor() {
                 WeekSummary(
                     startDate = "2024-11-18",
                     missedSessions = 1,
-                    totalTime = 90,
+                    totalTime = 90f,
                     sessionCount = 4,
                     missedDays = listOf(
                         DayOfWeek.WEDNESDAY,
@@ -287,7 +330,7 @@ class WorkoutDatabase private constructor() {
                 WeekSummary(
                     startDate = "2024-12-02",
                     missedSessions = 2,
-                    totalTime = 123,
+                    totalTime = 123f,
                     sessionCount = 5,
                     missedDays = listOf(
                         DayOfWeek.MONDAY,
@@ -297,14 +340,15 @@ class WorkoutDatabase private constructor() {
                 WeekSummary(
                     startDate = "2024-12-16",
                     missedSessions = 0,
-                    totalTime = 157,
+                    totalTime = 157f,
                     sessionCount = 6,
                     missedDays = emptyList(),
                 ),
             ),
         )
 
-        cachedPlan = Plan(name = "Beginner",dateWorkout = listOf(DayOfWeek.MONDAY,DayOfWeek.WEDNESDAY,DayOfWeek.FRIDAY,))
+        cachedPlan = Plan(name = "Beginner",dateWorkout = listOf(DayOfWeek.MONDAY,DayOfWeek.WEDNESDAY,DayOfWeek.FRIDAY,),
+            maxMissDay = 3,minSession = 10,minHour = 4f)
     }
 }
 

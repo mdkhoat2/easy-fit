@@ -5,8 +5,12 @@ import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -16,16 +20,27 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
+import com.example.jetpackcompose.domain.usecase.AddMissedDaysToHistoryUseCase
+import com.example.jetpackcompose.domain.usecase.CreateWorkoutUseCase
 import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.ui.screen.Home.WellDoneScreen
-import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
+import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
 import com.example.jetpackcompose.presentation.ui.screen.Account.AccountScreen
+import com.example.jetpackcompose.presentation.ui.screen.Authen.ForgotMail
+import com.example.jetpackcompose.presentation.ui.screen.Authen.ForgotOTP
+import com.example.jetpackcompose.presentation.ui.screen.Authen.LoginScreen
+import com.example.jetpackcompose.presentation.ui.screen.Authen.Register
 import com.example.jetpackcompose.presentation.ui.screen.Forum.ForumScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.HomeScreen
-import com.example.jetpackcompose.presentation.ui.screen.Plan.PlanScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SelectWorkoutsScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SessionTrackingScreen
+import com.example.jetpackcompose.presentation.ui.screen.Plan.CustomizeExercise
+import com.example.jetpackcompose.presentation.ui.screen.Plan.NewWorkoutScreen
+import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
+import com.example.jetpackcompose.presentation.ui.uiState.WorkoutEditUIState
+import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
+import com.example.jetpackcompose.util.initializeForFirstTimeUser
 
 @Composable
 fun BottomNavGraph(
@@ -33,11 +48,14 @@ fun BottomNavGraph(
     context: Context = LocalContext.current
 ){
     var sessionTrackingState = SessionTrackingUIState()
+    var workoutEditUIState by remember { mutableStateOf(WorkoutEditUIState()) }
+
 
     // Initialize WorkoutDatabase asynchronously
     val workoutDatabaseState = produceState<WorkoutDatabase?>(initialValue = null) {
         value = WorkoutDatabase.getInstance(context)
     }
+
 
     when (val workoutDatabase = workoutDatabaseState.value) {
         null -> {
@@ -47,16 +65,35 @@ fun BottomNavGraph(
         }
         else -> {
             Log.d("BottomNavGraph", "WorkoutDatabase initialized")
+
+            LaunchedEffect(workoutDatabase) {
+                // Initialize default values for first-time users
+                initializeForFirstTimeUser(context)
+                AddMissedDaysToHistoryUseCase(WorkoutRepositoryImp(workoutDatabase, context)).invoke(context)
+            }
+
             // Proceed once the database is initialized
             NavHost(
                 navController = navController,
-                startDestination = BottomBarScreen.Home.route
+                startDestination = Routes.login
             ) {
+                composable(route = Routes.login){
+                    LoginScreen(navController)
+                }
+                composable(route = Routes.forgotEmail){
+                    ForgotMail(navController)
+                }
+                composable(route = Routes.forgotOTP){
+                    ForgotOTP(navController)
+                }
+                composable(route = Routes.register){
+                    Register(navController)
+                }
                 composable(route = BottomBarScreen.Home.route) {
                     HomeScreen(navController, context, workoutDatabase)
                 }
                 composable(route = BottomBarScreen.Plan.route) {
-                    PlanScreen()
+                    PlanScreen(navController, context, workoutDatabase)
                 }
                 composable(route = BottomBarScreen.Forum.route) {
                     ForumScreen()
@@ -89,8 +126,45 @@ fun BottomNavGraph(
                     }
                 }
                 composable(route = Routes.wellDone) {
-                    WellDoneScreen(navController, sessionTrackingState)
+                    WellDoneScreen(navController, sessionTrackingState,workoutDatabase, context)
                 }
+
+                composable(route = Routes.newWorkout) {
+                    val viewModel = remember {
+                        NewWorkoutViewModel(
+                            CreateWorkoutUseCase(
+                                WorkoutRepositoryImp(context = context, database = workoutDatabase)
+                            )
+                        )
+                    }
+
+                    NewWorkoutScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        workoutEditUIState = workoutEditUIState,
+                        onWorkoutEditStateChanged = { newState ->
+                            workoutEditUIState = newState
+                        }
+                    )
+                }
+
+                composable(
+                    route = "${Routes.CustomizeExercise}/{exerciseIndex}",
+                    arguments = listOf(navArgument("exerciseIndex") { type = NavType.IntType })
+                ) { backStackEntry ->
+                    val exerciseIndex = backStackEntry.arguments?.getInt("exerciseIndex")
+                    requireNotNull(exerciseIndex) { "Exercise index must be provided" }
+
+                    CustomizeExercise(
+                        navController = navController,
+                        workoutEditUIState = workoutEditUIState,
+                        exerciseIndex = exerciseIndex,
+                        onWorkoutEditUIStateChanged = { newState ->
+                            workoutEditUIState = newState
+                        }
+                    )
+                }
+
             }
         }
     }

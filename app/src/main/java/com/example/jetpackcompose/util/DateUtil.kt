@@ -1,9 +1,69 @@
 package com.example.jetpackcompose.util
 
+import androidx.datastore.core.DataStore
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
+import android.content.Context
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 
-fun getStartOfCurrentWeek(): LocalDate {
-    return LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+// DataStore setup
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "DateStore")
+
+// Keys for DataStore
+// This key will store the last updated date the Last workout is always before or equal the last updated date
+private val LAST_DATE_KEY = stringPreferencesKey("last_updated_date")
+
+suspend fun isFirstTimeUser(context: Context): Boolean {
+    return context.dataStore.data.map { preferences ->
+        preferences[LAST_DATE_KEY] == null
+    }.first()
+}
+
+
+suspend fun getLastDate(context: Context): String {
+    return context.dataStore.data.map { preferences ->
+        preferences[LAST_DATE_KEY] ?: ""
+    }.first()
+}
+
+// Save a new date if it is after the current last date
+suspend fun saveLastDate(context: Context, date: LocalDate) {
+    val lastDate = getLastDate(context)
+
+    // Parse the last saved date, if available
+    val lastDateLocal = lastDate.takeIf { it.isNotEmpty() }?.let { LocalDate.parse(it) }
+
+    // Update the date only if it is newer
+    if (lastDateLocal == null || date.isAfter(lastDateLocal)) {
+        context.dataStore.edit { preferences ->
+            preferences[LAST_DATE_KEY] = date.toString()
+        }
+    }
+}
+
+// Initialize default values for first-time users
+suspend fun initializeForFirstTimeUser(context: Context) {
+    val isFirstTime = isFirstTimeUser(context)
+    if (isFirstTime) {
+        context.dataStore.edit { preferences ->
+            preferences[LAST_DATE_KEY] = LocalDate.now().toString()
+        }
+    }
+}
+
+suspend fun resetForFirstTimeUser(context: Context) {
+    context.dataStore.edit { preferences ->
+        preferences[LAST_DATE_KEY] = LocalDate.now().minusDays(3).toString()
+    }
+}
+
+// Utility: Get the start of the week
+fun getStartOfWeek(date: LocalDate): LocalDate {
+    return date.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
 }

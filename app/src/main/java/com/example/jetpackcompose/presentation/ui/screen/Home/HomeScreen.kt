@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -103,7 +104,7 @@ fun HomeScreen(
 
         if (uiState.isLoading){
             CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally).size(50.dp)
             )
         }
         else{
@@ -230,7 +231,7 @@ fun StatCard(title: String, value: String)
         )
         Text(
             text = value,
-            color = colorFromResource(R.color.line_color),
+            color = colorFromResource(R.color.primary_green),
             style = Typography.titleLarge,
             modifier = Modifier.align(Alignment.Center)
         )
@@ -242,7 +243,7 @@ fun LineChartScreen(pointsData: List<Point>){
     val steps = 5
 
     val xAxisData = AxisData.Builder()
-        .axisStepSize(100.dp)
+        .axisStepSize(50.dp)
         .backgroundColor(colorFromResource(R.color.bottom_bar_background))
         .steps(pointsData.size - 1)
         .labelData { i -> i.toString() }
@@ -268,18 +269,18 @@ fun LineChartScreen(pointsData: List<Point>){
                 Line(
                     dataPoints = pointsData,
                     LineStyle(
-                        color = colorFromResource(R.color.line_color),
+                        color = colorFromResource(R.color.primary_green),
                         lineType = LineType.Straight(isDotted = false)
                     ),
                     IntersectionPoint(
-                        color = colorFromResource(R.color.line_color)
+                        color = colorFromResource(R.color.primary_green)
                     ),
                     SelectionHighlightPoint(color = Color.Transparent),
                     ShadowUnderLine(
                         alpha = 0.5f,
                         brush = Brush.verticalGradient(
                             colors = listOf(
-                                colorFromResource(R.color.line_color),
+                                colorFromResource(R.color.primary_green),
                                 Color.Transparent
                             )
                         )

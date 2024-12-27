@@ -5,8 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.di.ExerciseItem
+import com.example.jetpackcompose.presentation.di.ExerciseUIType
 import com.example.jetpackcompose.presentation.di.toExerciseItem
-import com.example.jetpackcompose.presentation.ui.UIState.SessionTrackingUIState
+import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -43,8 +44,14 @@ class SessionTrackingViewModel @Inject constructor(
     private suspend fun  fetchData(): List<ExerciseItem> {
         // Fetch data from the database
         val exercises = getExerciseFromWorkoutUseCase.invoke(workoutId)
-        print(exercises)
-        return exercises.map { it.toExerciseItem() }
+
+        val exerciseItems = exercises.map { it.toExerciseItem() }
+        // how to get rid of the rest that have duration 0
+
+
+        return exerciseItems
+            .flatMap { listOf(it.first, it.second) }
+            .filter { it.name != "Delete"}
     }
 
     fun nextExercise(){

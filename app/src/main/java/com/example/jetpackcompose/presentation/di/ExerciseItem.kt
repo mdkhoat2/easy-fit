@@ -22,17 +22,30 @@ data class ExerciseItem(
     val type: ExerciseUIType
 )
 
-fun Exercise.toExerciseItem(): ExerciseItem {
+fun Exercise.toExerciseItem() : Pair<ExerciseItem,ExerciseItem> {
     val exerciseUIType: ExerciseUIType = if (this.type == ExerciseType.TIMED){
         ExerciseUIType.TimeBased(this.duration.toLong())
     }
     else ExerciseUIType.RepsBased(this.repetition)
 
+    val restName = if (this.restTime==0) {
+        "Delete"
+    } else {
+        "Rest"
+    }
 
-    return  ExerciseItem(
+    return  Pair(
+        ExerciseItem(
             name = getExerciseString(this),
             id = getExerciseIcon(this),
             description = this.description,
             type = exerciseUIType
+        ),
+        ExerciseItem(
+            name = restName,
+            id = R.drawable.heart_beat,
+            description = "Take a break",
+            type = ExerciseUIType.TimeBased(this.restTime.toLong())
         )
-    }
+    )
+}
