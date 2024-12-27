@@ -348,7 +348,7 @@ class WorkoutDatabase private constructor() {
         )
 
         cachedPlan = Plan(name = "Beginner",dateWorkout = listOf(DayOfWeek.MONDAY,DayOfWeek.WEDNESDAY,DayOfWeek.FRIDAY,),
-            maxMissDay = 3,minSession = 10,minHour = 4f)
+            timeWorkout = listOf("20:00","20:00","20:00"),maxMissDay = 3,minSession = 10,minHour = 4f)
     }
 }
 

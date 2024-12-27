@@ -152,9 +152,6 @@ class WorkoutRepositoryImp(
         database.updatePatchHistory(context, updatedHistory)
     }
 
-
-
-
     private fun checkIfWeekIsCurrentWeek(week: WeekSummary, theDate: LocalDate): Boolean {
         val startOfTheWeek = getStartOfWeek(theDate)
         return week.startDate == startOfTheWeek.toString()

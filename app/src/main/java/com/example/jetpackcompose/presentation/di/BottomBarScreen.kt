@@ -35,4 +35,5 @@ object Routes {
     var wellDone = "wellDone"
     var newWorkout = "newWorkout"
     var CustomizeExercise = "CustomizeExercise"
+    var editPlan = "EditPlan"
 }

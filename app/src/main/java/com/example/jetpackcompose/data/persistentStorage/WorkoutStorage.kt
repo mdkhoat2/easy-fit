@@ -78,6 +78,7 @@ object PersistentStorageManager {
             Plan(
                 name = "No Plan",
                 dateWorkout = listOf(),
+                timeWorkout = listOf(),
                 maxMissDay = 0,
                 minSession = 0,
                 minHour = 0f

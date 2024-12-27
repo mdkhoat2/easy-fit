@@ -6,11 +6,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -31,6 +28,7 @@ import com.example.jetpackcompose.presentation.ui.screen.Home.HomeScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SelectWorkoutsScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SessionTrackingScreen
 import com.example.jetpackcompose.presentation.ui.screen.Plan.CustomizeExercise
+import com.example.jetpackcompose.presentation.ui.screen.Plan.EditPlan
 import com.example.jetpackcompose.presentation.ui.screen.Plan.NewWorkoutScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
 import com.example.jetpackcompose.presentation.ui.uiState.WorkoutEditUIState
@@ -44,14 +42,11 @@ fun BottomNavGraph(
     context: Context = LocalContext.current
 ){
     var sessionTrackingState = SessionTrackingUIState()
-    var workoutEditUIState by remember { mutableStateOf(WorkoutEditUIState()) }
-
 
     // Initialize WorkoutDatabase asynchronously
     val workoutDatabaseState = produceState<WorkoutDatabase?>(initialValue = null) {
         value = WorkoutDatabase.getInstance(context)
     }
-
 
     when (val workoutDatabase = workoutDatabaseState.value) {
         null -> {
@@ -66,6 +61,14 @@ fun BottomNavGraph(
                 // Initialize default values for first-time users
                 initializeForFirstTimeUser(context)
                 AddMissedDaysToHistoryUseCase(WorkoutRepositoryImp(workoutDatabase, context)).invoke(context)
+            }
+
+            val workoutViewModel = remember {
+                NewWorkoutViewModel(
+                    CreateWorkoutUseCase(
+                        WorkoutRepositoryImp(context = context, database = workoutDatabase)
+                    )
+                )
             }
 
             // Proceed once the database is initialized
@@ -114,21 +117,10 @@ fun BottomNavGraph(
                 }
 
                 composable(route = Routes.newWorkout) {
-                    val viewModel = remember {
-                        NewWorkoutViewModel(
-                            CreateWorkoutUseCase(
-                                WorkoutRepositoryImp(context = context, database = workoutDatabase)
-                            )
-                        )
-                    }
 
                     NewWorkoutScreen(
                         navController = navController,
-                        viewModel = viewModel,
-                        workoutEditUIState = workoutEditUIState,
-                        onWorkoutEditStateChanged = { newState ->
-                            workoutEditUIState = newState
-                        }
+                        viewModel = workoutViewModel
                     )
                 }
 
@@ -141,12 +133,15 @@ fun BottomNavGraph(
 
                     CustomizeExercise(
                         navController = navController,
-                        workoutEditUIState = workoutEditUIState,
+                        viewModel = workoutViewModel,
                         exerciseIndex = exerciseIndex,
-                        onWorkoutEditUIStateChanged = { newState ->
-                            workoutEditUIState = newState
-                        }
                     )
+                }
+
+                composable(
+                    route = Routes.editPlan
+                ) {
+                    EditPlan(navController, workoutDatabase, context                    )
                 }
 
             }

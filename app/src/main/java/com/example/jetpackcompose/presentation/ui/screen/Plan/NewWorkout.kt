@@ -56,17 +56,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun NewWorkoutScreen(
     navController: NavController,
-    viewModel: NewWorkoutViewModel,
-    workoutEditUIState: WorkoutEditUIState,
-    onWorkoutEditStateChanged: (WorkoutEditUIState) -> Unit
+    viewModel: NewWorkoutViewModel
 ) {
 
     val uiState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope() // Coroutine scope for composable
 
-    LaunchedEffect(uiState) {
-        onWorkoutEditStateChanged(uiState)
-    }
 
     Column(
         modifier = Modifier
@@ -181,15 +176,17 @@ fun NewWorkoutScreen(
                             viewModel.onExerciseRemoved(index)
                         },
                         onClick = {
-                            Log.d("NewWorkoutScreen", "Exercise clicked at index: $index")
-                            onWorkoutEditStateChanged(uiState)
                             navController.navigate("${Routes.CustomizeExercise}/$index")
                         }
                     )
                 }
                 item {
                     if (uiState.queueExercise.isEmpty())
-                        AddExerciseButton()
+                        Box(
+                            modifier = Modifier
+                                .height(100.dp)
+                                .background(Color.Transparent)
+                        )
                 }
             }
 
@@ -274,19 +271,6 @@ fun QueueItem(
     }
 }
 
-
-@Composable
-fun AddExerciseButton() {
-    Box(
-        modifier = Modifier
-            .size(64.dp)
-            .background(Color.DarkGray, CircleShape)
-        ,
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "@", color = Color.White, fontSize = 12.sp)
-    }
-}
 
 @Composable
 fun ExerciseItem(
