@@ -95,7 +95,7 @@ class WorkoutRepositoryImp(
         val updatedHistory : PatchHistory
 
         // check if the last week is the current week
-        if (checkIfWeekIsCurrentWeek(fullHistory.weeks.last(), LocalDate.now()))
+        if (fullHistory.weeks.isNotEmpty() && checkIfWeekIsCurrentWeek(fullHistory.weeks.last(), LocalDate.now()))
         {
             val currentWeek = fullHistory.weeks.last()
             val updatedWeek = currentWeek.copy(

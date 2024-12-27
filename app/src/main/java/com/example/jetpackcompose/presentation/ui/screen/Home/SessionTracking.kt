@@ -59,7 +59,8 @@ import kotlin.coroutines.cancellation.CancellationException
 fun SessionTrackingScreen(
     navController: NavController,
     viewModel: SessionTrackingViewModel,
-    onFinishWorkout: () -> Unit){
+    onFinishWorkout: () -> Unit)
+{
     val uiState by viewModel.state.collectAsState()
     var showExitDialog by remember { mutableStateOf(false)}
     var shouldNavigate by remember { mutableStateOf(false)}

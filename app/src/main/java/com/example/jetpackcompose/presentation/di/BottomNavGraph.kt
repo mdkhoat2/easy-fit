@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -18,6 +21,7 @@ import androidx.navigation.navArgument
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.AddMissedDaysToHistoryUseCase
+import com.example.jetpackcompose.domain.usecase.CreateWorkoutUseCase
 import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.ui.screen.Home.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
@@ -30,10 +34,12 @@ import com.example.jetpackcompose.presentation.ui.screen.Forum.ForumScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.HomeScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SelectWorkoutsScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SessionTrackingScreen
+import com.example.jetpackcompose.presentation.ui.screen.Plan.CustomizeExercise
 import com.example.jetpackcompose.presentation.ui.screen.Plan.NewWorkoutScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
+import com.example.jetpackcompose.presentation.ui.uiState.WorkoutEditUIState
+import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
-import com.example.jetpackcompose.util.getLastDate
 import com.example.jetpackcompose.util.initializeForFirstTimeUser
 
 @Composable
@@ -42,6 +48,8 @@ fun BottomNavGraph(
     context: Context = LocalContext.current
 ){
     var sessionTrackingState = SessionTrackingUIState()
+    var workoutEditUIState by remember { mutableStateOf(WorkoutEditUIState()) }
+
 
     // Initialize WorkoutDatabase asynchronously
     val workoutDatabaseState = produceState<WorkoutDatabase?>(initialValue = null) {
@@ -121,16 +129,42 @@ fun BottomNavGraph(
                     WellDoneScreen(navController, sessionTrackingState,workoutDatabase, context)
                 }
 
-                composable(
-                    route = Routes.newWorkout
-                ) {
-                    NewWorkoutScreen(
-                        navController,
-                        workoutDatabase,
-                        context
-                    )
+                composable(route = Routes.newWorkout) {
+                    val viewModel = remember {
+                        NewWorkoutViewModel(
+                            CreateWorkoutUseCase(
+                                WorkoutRepositoryImp(context = context, database = workoutDatabase)
+                            )
+                        )
+                    }
 
+                    NewWorkoutScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        workoutEditUIState = workoutEditUIState,
+                        onWorkoutEditStateChanged = { newState ->
+                            workoutEditUIState = newState
+                        }
+                    )
                 }
+
+                composable(
+                    route = "${Routes.CustomizeExercise}/{exerciseIndex}",
+                    arguments = listOf(navArgument("exerciseIndex") { type = NavType.IntType })
+                ) { backStackEntry ->
+                    val exerciseIndex = backStackEntry.arguments?.getInt("exerciseIndex")
+                    requireNotNull(exerciseIndex) { "Exercise index must be provided" }
+
+                    CustomizeExercise(
+                        navController = navController,
+                        workoutEditUIState = workoutEditUIState,
+                        exerciseIndex = exerciseIndex,
+                        onWorkoutEditUIStateChanged = { newState ->
+                            workoutEditUIState = newState
+                        }
+                    )
+                }
+
             }
         }
     }

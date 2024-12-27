@@ -98,7 +98,7 @@ fun PlanScreen(
                 CircularIndicator(
                     label = "Missed",
                     value = uiState.missedCnt.toFloat(),
-                    maxValue = uiState.plan?.minSession?.toFloat() ?: 1f
+                    maxValue = uiState.plan?.maxMissDay?.toFloat() ?: 1f
                 )
                 CircularIndicator(
                     label = "Hour",
