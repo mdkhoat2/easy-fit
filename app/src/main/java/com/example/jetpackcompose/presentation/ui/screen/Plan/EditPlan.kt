@@ -35,6 +35,7 @@ import com.example.jetpackcompose.domain.usecase.GetPlanUseCase
 import com.example.jetpackcompose.domain.usecase.UpdatePlanUseCase
 import com.example.jetpackcompose.presentation.ui.screen.Component.LineDivider
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 /**
@@ -55,6 +56,7 @@ fun EditPlan(
 
     // Plan State
     var plan by remember { mutableStateOf<Plan?>(null) }
+    val coroutineScope = rememberCoroutineScope()
 
     // Fetch Plan
     LaunchedEffect(Unit) {
@@ -96,7 +98,12 @@ fun EditPlan(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = {
+                coroutineScope.launch {
+                    updatePlanUseCase(plan!!)
+                    navController.popBackStack()
+                }
+            }) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = "Save",
@@ -143,13 +150,11 @@ fun EditPlan(
                         .padding(horizontal = 16.dp)
                 ) {
                     if (isChecked) {
-
-                            Text(
-                                text = time,
-                                color = Color(0xFF9AC0D6),
-                                fontSize = 16.sp
-                            )
-
+                        Text(
+                            text = time,
+                            color = Color(0xFF9AC0D6),
+                            fontSize = 16.sp
+                        )
                     } else {
                         Text(
                             text = "No plan",
