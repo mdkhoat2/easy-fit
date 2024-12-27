@@ -39,4 +39,5 @@ object Routes {
     var forgotOTP = "forgotOTP"
     var register = "register"
     var CustomizeExercise = "CustomizeExercise"
+    var editPlan = "EditPlan"
 }

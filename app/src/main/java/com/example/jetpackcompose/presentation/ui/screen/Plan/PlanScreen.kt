@@ -255,7 +255,7 @@ fun LibrarySection( navController: NavController
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             LibraryButton("Edit Plan", Modifier.weight(1f),
-                onClick = { /* Handle click here */ },iconIm = Icons.Default.DateRange)
+                onClick = { navController.navigate(Routes.editPlan) },iconIm = Icons.Default.DateRange)
             LibraryButton("Create Workout ", Modifier.weight(1f),
                 onClick = { navController.navigate(Routes.newWorkout) }, iconIm = Icons.Default.Add)
         }

@@ -2,6 +2,7 @@ package com.example.jetpackcompose.presentation.ui.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.data.dataModel.generateWorkoutID
 import com.example.jetpackcompose.data.dataModel.getAllExercises
@@ -17,6 +18,7 @@ class NewWorkoutViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow(WorkoutEditUIState())
     val state = _state.asStateFlow()
+    val newOrEdit: Boolean = true
 
     init {
         _state.value = WorkoutEditUIState()
@@ -37,6 +39,7 @@ class NewWorkoutViewModel @Inject constructor(
 
     suspend fun onSavePressed() {
         // generate workout
+
         val workout = Workout(
             id = generateWorkoutID(),
             creatorId = null,
@@ -66,12 +69,20 @@ class NewWorkoutViewModel @Inject constructor(
 
     fun onExerciseRemoved(index: Int) {
         val newQueue = state.value.queueExercise.toMutableList()
-        newQueue.removeAt(index)
-        _state.value = state.value.copy(queueExercise = newQueue)
+        if (index < newQueue.size) {
+            newQueue.removeAt(index)
+            _state.value = state.value.copy(queueExercise = newQueue)
+        }
     }
 
     fun onWorkoutNameChanged(name: String) {
         if (name.length > 20) return
         _state.value = state.value.copy(workoutName = name)
+    }
+
+    fun updateExercise(exerciseIndex : Int, updatedExercise : Exercise){
+        val newQueue = state.value.queueExercise.toMutableList()
+        newQueue[exerciseIndex] = Pair(updatedExercise,newQueue[exerciseIndex].second)
+        _state.value = state.value.copy(queueExercise = newQueue)
     }
 }

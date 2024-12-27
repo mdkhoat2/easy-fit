@@ -3,6 +3,7 @@ package com.example.jetpackcompose.domain.usecase
 import android.content.Context
 import com.example.jetpackcompose.data.dataModel.Exercise
 import com.example.jetpackcompose.data.dataModel.PatchHistory
+import com.example.jetpackcompose.data.dataModel.Plan
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.data.dataModel.dateToDayOfWeek
 import com.example.jetpackcompose.domain.repo.WorkoutRepository
@@ -102,11 +103,12 @@ class AddMissedDaysToHistoryUseCase(private val repository: WorkoutRepository) {
     }
 }
 
-
-
-
 class GetPlanUseCase(private val repository: WorkoutRepository) {
     suspend operator fun invoke() = repository.getPlan()
+}
+
+class UpdatePlanUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(plan: Plan) = repository.updatePlan(plan)
 }
 
 
