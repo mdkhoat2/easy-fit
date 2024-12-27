@@ -22,6 +22,10 @@ import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.ui.screen.Home.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
 import com.example.jetpackcompose.presentation.ui.screen.Account.AccountScreen
+import com.example.jetpackcompose.presentation.ui.screen.Authen.ForgotMail
+import com.example.jetpackcompose.presentation.ui.screen.Authen.ForgotOTP
+import com.example.jetpackcompose.presentation.ui.screen.Authen.LoginScreen
+import com.example.jetpackcompose.presentation.ui.screen.Authen.Register
 import com.example.jetpackcompose.presentation.ui.screen.Forum.ForumScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.HomeScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SelectWorkoutsScreen
@@ -63,8 +67,20 @@ fun BottomNavGraph(
             // Proceed once the database is initialized
             NavHost(
                 navController = navController,
-                startDestination = BottomBarScreen.Home.route
+                startDestination = Routes.login
             ) {
+                composable(route = Routes.login){
+                    LoginScreen(navController)
+                }
+                composable(route = Routes.forgotEmail){
+                    ForgotMail(navController)
+                }
+                composable(route = Routes.forgotOTP){
+                    ForgotOTP(navController)
+                }
+                composable(route = Routes.register){
+                    Register(navController)
+                }
                 composable(route = BottomBarScreen.Home.route) {
                     HomeScreen(navController, context, workoutDatabase)
                 }

@@ -16,5 +16,6 @@
     <color name="primary_orange">#FFFFA500</color>
     <color name="btn_back_color">#9AC0D6</color>
     <color name="home_btn">#595959</color>
+    <color name="dialog_background">#2E2E2E</color>
 
 </resources>
