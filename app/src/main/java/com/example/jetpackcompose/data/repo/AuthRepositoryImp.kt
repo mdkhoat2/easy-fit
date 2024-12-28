@@ -17,7 +17,7 @@ class AuthRepositoryImp (
 ) : AuthRepository {
     override suspend fun login(email: String, password: String): Boolean {
         return withContext(Dispatchers.IO) {
-            saveRememberMeToken(context, "") // Clear the token
+            //saveRememberMeToken(context, "") // Clear the token
             if (getRememberMeToken(context).isNotEmpty()) {
                 Log.d("AuthRepositoryImp", "Already logged in")
                 return@withContext true

@@ -1,6 +1,8 @@
 package com.example.jetpackcompose.data.Api
 
 import com.example.jetpackcompose.data.dataModel.LoginRequest
+import com.example.jetpackcompose.data.dataModel.PasswordResetRequest
+import com.example.jetpackcompose.data.dataModel.RegistrationRequest
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -49,10 +51,66 @@ fun loginUser(email: String, password: String, onTokenReceived: (String) -> Unit
     })
 }
 
-fun registerUser(email: String, password: String, onResponseReceived: (String) -> Unit) {
-    val registerRequest = LoginRequest(email, password)
+fun registerUser(email: String, password: String,userName:String, onResponseReceived: (String) -> Unit) {
+    val registerRequest = RegistrationRequest(email,userName, password)
 
     apiService.register(registerRequest).enqueue(object : Callback<ResponseBody> {
+        override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                if (responseBody != null) {
+                    try {
+                        val json = JSONObject(responseBody)
+                        val message = json.getString("message") // Extract the message
+                        onResponseReceived(message)
+                    } catch (e: Exception) {
+                        println("Error parsing message: ${e.message}")
+                    }
+                } else {
+                    println("Error: Empty response body")
+                }
+            } else {
+                println("Error: ${response.errorBody()?.string()}")
+            }
+        }
+
+        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+            println("Failure: ${t.message}")
+        }
+    })
+}
+
+fun resetPassword(email: String, onResponseReceived: (String) -> Unit) {
+    val passwordResetRequest = PasswordResetRequest(email)
+
+    apiService.resetPassword(passwordResetRequest).enqueue(object : Callback<ResponseBody> {
+        override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+            if (response.isSuccessful) {
+                val responseBody = response.body()?.string()
+                if (responseBody != null) {
+                    try {
+                        val json = JSONObject(responseBody)
+                        val message = json.getString("message") // Extract the message
+                        onResponseReceived(message)
+                    } catch (e: Exception) {
+                        println("Error parsing message: ${e.message}")
+                    }
+                } else {
+                    println("Error: Empty response body")
+                }
+            } else {
+                println("Error: ${response.errorBody()?.string()}")
+            }
+        }
+
+        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+            println("Failure: ${t.message}")
+        }
+    })
+}
+
+fun verifyUser(onResponseReceived: (String) -> Unit) {
+    apiService.verify().enqueue(object : Callback<ResponseBody> {
         override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
