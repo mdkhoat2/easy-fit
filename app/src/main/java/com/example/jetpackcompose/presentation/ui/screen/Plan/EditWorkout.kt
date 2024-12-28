@@ -64,8 +64,8 @@ fun EditWorkoutScreen(
     val uiState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadWorkout(workoutId)
+    LaunchedEffect(workoutId) {
+        viewModel.loadWorkout(workoutId) // Will not reload if already loaded
     }
 
     Column(

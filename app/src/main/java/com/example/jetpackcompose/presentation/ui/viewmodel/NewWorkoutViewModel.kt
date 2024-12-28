@@ -15,9 +15,7 @@ import javax.inject.Inject
 
 class NewWorkoutViewModel @Inject constructor(
     private val createWorkoutUseCase: CreateWorkoutUseCase
-) : ViewModel(), WorkoutViewModel {
-    private val _state = MutableStateFlow(WorkoutEditUIState())
-    override val state = _state.asStateFlow()
+) : BaseWorkoutViewModel() {
 
     init {
         _state.value = WorkoutEditUIState()
@@ -56,32 +54,6 @@ class NewWorkoutViewModel @Inject constructor(
             )
         } catch (e: Exception) {
             Log.e("NewWorkoutViewModel", "Error saving workout", e)
-        }
-    }
-
-    fun onExerciseSelected(exercise: String) {
-        val newExercise = state.value.availableExercises.find { it.first.name.toString() == exercise } ?: return
-        val newQueue = state.value.queueExercise.toMutableList()
-        newQueue.add(newExercise)
-        _state.value = state.value.copy(queueExercise = newQueue)
-    }
-
-    fun onWorkoutNameChanged(name: String) {
-        if (name.length > 20) return
-        _state.value = state.value.copy(workoutName = name)
-    }
-
-    override fun updateExercise(exerciseIndex: Int, updatedExercise: Exercise) {
-        val newQueue = _state.value.queueExercise.toMutableList()
-        newQueue[exerciseIndex] = Pair(updatedExercise, newQueue[exerciseIndex].second)
-        _state.value = _state.value.copy(queueExercise = newQueue)
-    }
-
-    override fun onExerciseRemoved(index: Int) {
-        val newQueue = _state.value.queueExercise.toMutableList()
-        if (index < newQueue.size) {
-            newQueue.removeAt(index)
-            _state.value = _state.value.copy(queueExercise = newQueue)
         }
     }
 }
