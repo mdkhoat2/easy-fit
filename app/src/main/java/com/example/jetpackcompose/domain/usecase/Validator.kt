@@ -19,11 +19,6 @@ object Validator {
         if (!ValidationUtils.isValidEmail(email)) throw ValidationException(ErrorMessages.INVALID_EMAIL)
     }
 
-    fun validatePassword(password: String) {
-        validateNonEmpty(password, "Password")
-        if (password.length < 6) throw ValidationException(ErrorMessages.SHORT_PASSWORD)
-    }
-
     fun validateUsername(username: String) {
         if (username.isEmpty() || username.length < 3) {
             throw ValidationException(ErrorMessages.SHORT_USERNAME)

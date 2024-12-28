@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.presentation.ui.screen.Authen
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,9 +20,11 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,10 +41,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
+import com.example.jetpackcompose.data.Api.loginUser
+import com.example.jetpackcompose.data.repo.AuthRepositoryImp
+import com.example.jetpackcompose.domain.usecase.LoginUseCase
 import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.screen.BottomBar
 import com.example.jetpackcompose.ui.theme.Typography
+import kotlinx.coroutines.launch
 
 /**
  * Created by Duy on 29/11/2024
@@ -51,10 +58,12 @@ import com.example.jetpackcompose.ui.theme.Typography
 
 @Composable
 fun LoginScreen(
-    navController: NavController
+    navController: NavController,
+    context: android.content.Context
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("caynhat05062004@gmail.com") }
+    var password by remember { mutableStateOf("123") }
+    val coroutineScope = rememberCoroutineScope()
 
     // Get screen height
     val configuration = LocalConfiguration.current
@@ -125,8 +134,18 @@ fun LoginScreen(
 
         OutlinedButton(
             onClick = {
-                navController.navigate(BottomBarScreen.Home.route)
-            },
+                coroutineScope.launch {
+                    val loginUseCase = LoginUseCase(repository = AuthRepositoryImp(context))
+                    if (email.isNotEmpty() && password.isNotEmpty()) {
+                        // Login
+                        val isLoginSuccess = loginUseCase(email, password)
+                        Log.d("LoginScreen", "isLoginSuccess: $isLoginSuccess")
+                        if (isLoginSuccess) {
+                            navController.navigate(BottomBarScreen.Home.route)
+                    }
+                }
+                }
+                      },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
@@ -167,10 +186,4 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.weight(1f))
     }
-}
-
-@Composable
-@Preview
-fun LoginScreenPreview(){
-    LoginScreen(navController = NavController(LocalContext.current))
 }
