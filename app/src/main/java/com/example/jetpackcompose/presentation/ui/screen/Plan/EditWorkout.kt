@@ -40,9 +40,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
+import com.example.jetpackcompose.data.dataModel.Workout
+import com.example.jetpackcompose.domain.usecase.GetWorkoutByIdUseCase
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.screen.Component.LineDivider
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
+import com.example.jetpackcompose.presentation.ui.viewmodel.EditWorkoutViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
 import kotlinx.coroutines.launch
 
@@ -53,14 +56,17 @@ import kotlinx.coroutines.launch
  */
 
 @Composable
-fun NewWorkoutScreen(
+fun EditWorkoutScreen(
     navController: NavController,
-    viewModel: NewWorkoutViewModel
+    viewModel: EditWorkoutViewModel,
+    workoutId: String,
 ) {
-
     val uiState by viewModel.state.collectAsState()
-    val coroutineScope = rememberCoroutineScope() // Coroutine scope for composable
+    val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadWorkout(workoutId)
+    }
 
     Column(
         modifier = Modifier
@@ -84,7 +90,7 @@ fun NewWorkoutScreen(
             )
 
             Text(
-                text = "Create Workout",
+                text = "Edit Workout",
                 color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
@@ -105,65 +111,30 @@ fun NewWorkoutScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Scrollable Section
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()) // Makes the entire section scrollable
-        ) {
-            // Input Field for Workout Name
-            Column {
-                Text(
-                    modifier = Modifier.padding(4.dp),
-                    text = "Name",
-                    color = Color.Gray,
-                    fontSize = 14.sp
-                )
-
-                OutlinedTextField(
-                    value = uiState.workoutName,
-                    onValueChange = { viewModel.onWorkoutNameChanged(it) },
-                    placeholder = { Text("Name your new workout here", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(), textStyle = TextStyle(color = Color.White, fontSize = 20.sp),
-                    singleLine = true
-                )
-
-                Text(
-                    modifier = Modifier.padding(8.dp),
-                    text = "Maximum 20 letters",
-                    color = Color.Gray,
-                    fontSize = 12.sp
-                )
-            }
+        // Workout Details
+        Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+            // Workout Name
+            Text("Name", color = Color.Gray, fontSize = 14.sp)
+            OutlinedTextField(
+                value = uiState.workoutName,
+                onValueChange = viewModel::onWorkoutNameChanged,
+                modifier = Modifier.fillMaxWidth(),
+                textStyle = TextStyle(color = Color.White, fontSize = 20.sp),
+                singleLine = true,
+                placeholder = { Text("Edit workout name", color = Color.Gray) }
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Queue Section
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Queue",
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
-                Text(
-                    text = "Total: ${uiState.queueExercise.size}",
-                    color = colorFromResource(R.color.primary_teal),
-                    fontSize = 12.sp
-                )
-            }
-
+            Text("Queue", color = Color.White, fontSize = 16.sp)
             LineDivider()
 
-            // Queue Items Grid
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
+                modifier = Modifier.heightIn(max = 1800.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.heightIn(max = 1800.dp) // Restrict height to avoid infinite scroll issues
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(uiState.queueExercise.size) { index ->
                     val exercise = uiState.queueExercise[index]
@@ -171,21 +142,9 @@ fun NewWorkoutScreen(
                         number = index + 1,
                         name = exercise.first.name.toString(),
                         iconId = exercise.second,
-                        onRemoveClick = {
-                            viewModel.onExerciseRemoved(index)
-                        },
-                        onClick = {
-                            navController.navigate("${Routes.CustomizeExercise}/$index")
-                        }
+                        onRemoveClick = { viewModel.onExerciseRemoved(index) },
+                        onClick = { navController.navigate("${Routes.CustomizeExercise}/$index") }
                     )
-                }
-                item {
-                    if (uiState.queueExercise.isEmpty())
-                        Box(
-                            modifier = Modifier
-                                .height(100.dp)
-                                .background(Color.Transparent)
-                        )
                 }
             }
 
@@ -221,74 +180,3 @@ fun NewWorkoutScreen(
         }
     }
 }
-
-
-
-@Composable
-fun QueueItem(
-    number: Int,
-    name: String,
-    iconId: Int = R.drawable.push_up,
-    onRemoveClick: () -> Unit, // Callback for the minus icon click,
-    onClick: () -> Unit
-) {
-    Box(
-        modifier = Modifier
-            .size(100.dp) //
-            .background(Color.Transparent, CircleShape)
-    ) {
-        // Centered exercise item
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            ExerciseItem(name = name, iconId = iconId, onClick = onClick)
-        }
-        // Top-left number
-        Text(
-            text = number.toString(),
-            color = Color.White,
-            fontSize = 14.sp,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(4.dp)
-        )
-
-        // Top-right minus icon
-        Icon(
-            imageVector = Icons.Default.Clear,
-            contentDescription = "Remove Exercise",
-            tint = Color.White,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(7.dp)
-                .clickable { onRemoveClick() }
-                .background(Color.DarkGray, CircleShape)
-        )
-
-
-    }
-}
-
-
-@Composable
-fun ExerciseItem(
-    name: String, iconId: Int= R.drawable.push_up,
-    onClick: () -> Unit = {}
-) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier = Modifier
-                .size(64.dp)
-                .background(Color.DarkGray, CircleShape)
-                .clickable {    onClick()                },
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(imageVector = ImageVector.vectorResource(iconId), contentDescription = name, tint = colorFromResource(R.color.primary_green))
-        }
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(text = name, color = Color.White, fontSize = 11.sp)
-    }
-}
-
-

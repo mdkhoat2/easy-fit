@@ -8,55 +8,56 @@ import com.example.jetpackcompose.data.dataModel.generateWorkoutID
 import com.example.jetpackcompose.data.dataModel.getAllExercises
 import com.example.jetpackcompose.data.dataModel.getExerciseIcon
 import com.example.jetpackcompose.domain.usecase.CreateWorkoutUseCase
+import com.example.jetpackcompose.domain.usecase.EditWorkoutUseCase
+import com.example.jetpackcompose.domain.usecase.GetWorkoutByIdUseCase
 import com.example.jetpackcompose.presentation.ui.uiState.WorkoutEditUIState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-class NewWorkoutViewModel @Inject constructor(
-    private val createWorkoutUseCase: CreateWorkoutUseCase
+class EditWorkoutViewModel @Inject constructor(
+    private val editWorkoutUseCase: EditWorkoutUseCase,
+    private val getWorkoutByIdUseCase: GetWorkoutByIdUseCase
 ) : ViewModel(), WorkoutViewModel {
     private val _state = MutableStateFlow(WorkoutEditUIState())
     override val state = _state.asStateFlow()
 
-    init {
-        _state.value = WorkoutEditUIState()
-        loadData()
-    }
+    private var workoutId: String = ""
 
-    private fun loadData() {
-        val exercises = getAllExercises()
+    // Load workout data by ID
+    suspend fun loadWorkout(workoutId: String) {
+        try {
+            val workout = getWorkoutByIdUseCase(workoutId) ?: throw IllegalArgumentException("Workout not found")
+            this.workoutId = workoutId
 
-        val availableExercises = exercises.map { it to getExerciseIcon(it) }
+            val exercises = getAllExercises()
+            val availableExercises = exercises.map { it to getExerciseIcon(it) }
 
-        _state.value = state.value.copy(
-            queueExercise = emptyList(),
-            availableExercises = availableExercises,
-            workoutName = ""
-        )
+            _state.value = WorkoutEditUIState(
+                workoutName = workout.name,
+                queueExercise = workout.exercises.map { it to getExerciseIcon(it) },
+                availableExercises = availableExercises
+            )
+        } catch (e: Exception) {
+            Log.e("EditWorkoutViewModel", "Error loading workout", e)
+        }
     }
 
     suspend fun onSavePressed() {
-        // generate workout
+        val currentState = _state.value
 
-        val workout = Workout(
-            id = generateWorkoutID(),
+        val updatedWorkout = Workout(
+            id = workoutId,
             creatorId = null,
-            name = state.value.workoutName,
-            exercises = state.value.queueExercise.map { it.first },
-            duration = state.value.queueExercise.sumOf { it.first.duration }
+            name = currentState.workoutName,
+            exercises = currentState.queueExercise.map { it.first },
+            duration = currentState.queueExercise.sumOf { it.first.duration },
         )
 
-        // save workout
-        try {
-            createWorkoutUseCase.invoke(workout)
-            _state.value = _state.value.copy(
-                workoutName = "",
-                queueExercise = _state.value.queueExercise,
-            )
-        } catch (e: Exception) {
-            Log.e("NewWorkoutViewModel", "Error saving workout", e)
-        }
+        editWorkoutUseCase(workoutId,updatedWorkout)
+
+        // Clear the state after saving
+        _state.value = WorkoutEditUIState()
     }
 
     fun onExerciseSelected(exercise: String) {

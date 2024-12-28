@@ -18,14 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.jetpackcompose.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -35,12 +31,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.core.graphics.alpha
 import androidx.navigation.NavController
 import com.example.jetpackcompose.data.dataModel.ExerciseType
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
-import com.example.jetpackcompose.presentation.ui.uiState.WorkoutEditUIState
-import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
+import com.example.jetpackcompose.presentation.ui.viewmodel.WorkoutViewModel
 
 /**
  * Created by Duy on 29/11/2024
@@ -51,15 +45,15 @@ import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
 @Composable
 fun CustomizeExercise(
     navController: NavController,
-    viewModel: NewWorkoutViewModel,
+    viewModel: WorkoutViewModel,
     exerciseIndex: Int
 ) {
     val uiState by viewModel.state.collectAsState()
 
     if (exerciseIndex >= uiState.queueExercise.size || uiState.queueExercise.isEmpty()) {
         return
-    } else
-    {
+    }
+
         val exercise = uiState.queueExercise[exerciseIndex].first
         val exerciseIcon = uiState.queueExercise[exerciseIndex].second
 
@@ -224,7 +218,7 @@ fun CustomizeExercise(
                     Slider(
                         value = duration.toFloat(),
                         onValueChange = { duration = it.toInt() },
-                        valueRange = 5f..90f,
+                        valueRange = 0f..90f,
                         steps = 15,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -256,5 +250,4 @@ fun CustomizeExercise(
                 Text(text = "$restTime secs", color = Color.White)
             }
         }
-    }
 }
