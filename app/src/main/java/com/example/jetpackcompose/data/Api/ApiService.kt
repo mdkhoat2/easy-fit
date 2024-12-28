@@ -9,6 +9,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Headers
+import retrofit2.http.Path
 
 
 interface ApiService {
@@ -21,12 +22,12 @@ interface ApiService {
     fun register(@Body request: RegistrationRequest): Call<ResponseBody>
 
     @Headers("Content-Type: application/json")
-    @POST("user/reset-password")
+    @POST("/user/request-otp")
     fun resetPassword(@Body request: PasswordResetRequest): Call<ResponseBody>
 
     @Headers("Content-Type: application/json")
-    @GET("user/verify")
-    fun verify(): Call<ResponseBody>
+    @GET("user/confirm/{token}")
+    fun confirmUser(@Path("token") token: String): Call<ResponseBody>
 }
 
 

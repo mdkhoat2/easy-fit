@@ -109,19 +109,13 @@ fun resetPassword(email: String, onResponseReceived: (String) -> Unit) {
     })
 }
 
-fun verifyUser(onResponseReceived: (String) -> Unit) {
-    apiService.verify().enqueue(object : Callback<ResponseBody> {
+fun confirmUser(token: String, onResponseReceived: (String) -> Unit) {
+    apiService.confirmUser(token).enqueue(object : Callback<ResponseBody> {
         override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
             if (response.isSuccessful) {
                 val responseBody = response.body()?.string()
                 if (responseBody != null) {
-                    try {
-                        val json = JSONObject(responseBody)
-                        val message = json.getString("message") // Extract the message
-                        onResponseReceived(message)
-                    } catch (e: Exception) {
-                        println("Error parsing message: ${e.message}")
-                    }
+                    onResponseReceived(responseBody)
                 } else {
                     println("Error: Empty response body")
                 }
@@ -135,4 +129,7 @@ fun verifyUser(onResponseReceived: (String) -> Unit) {
         }
     })
 }
+
+
+
 
