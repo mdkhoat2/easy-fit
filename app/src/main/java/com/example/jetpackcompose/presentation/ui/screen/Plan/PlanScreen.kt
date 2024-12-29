@@ -36,6 +36,7 @@ import com.example.jetpackcompose.domain.usecase.GetPlanUseCase
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.viewmodel.PlanViewModel
 import com.example.jetpackcompose.util.getLastDate
+import okhttp3.Route
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.TextStyle
@@ -254,8 +255,8 @@ fun LibrarySection( navController: NavController
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            LibraryButton("Edit Plan", Modifier.weight(1f),
-                onClick = { navController.navigate(Routes.editPlan) },iconIm = Icons.Default.DateRange)
+            LibraryButton("Create Exercise", Modifier.weight(1f),
+                onClick = { navController.navigate(Routes.newExercise) }, iconIm = Icons.Default.Add)
             LibraryButton("Create Workout ", Modifier.weight(1f),
                 onClick = { navController.navigate(Routes.newWorkout) }, iconIm = Icons.Default.Add)
         }
@@ -264,8 +265,8 @@ fun LibrarySection( navController: NavController
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            LibraryButton("Edit Goal", Modifier.weight(1f),
-                onClick = { }, iconIm = Icons.Default.DateRange)
+            LibraryButton("Edit Plan", Modifier.weight(1f),
+                onClick = { navController.navigate(Routes.editPlan) },iconIm = Icons.Default.DateRange)
             Box(modifier = Modifier.weight(1f)) // Empty Box
         }
     }
@@ -362,7 +363,7 @@ fun CustomCalendar(
                             contentAlignment = Alignment.Center
                         ) {
                             if (day.isNotBlank()) {
-                                if (dayType[day.toInt() - 1] == 5 || dayType[day.toInt() - 1] == 6) {
+                                if (dayType[day.toInt() - 1] > 4) {
                                     Box(modifier = Modifier.size(17.dp).background(Color(0xEEFFFFFF),
                                         shape = CircleShape),
                                         contentAlignment = Alignment.Center){
@@ -381,26 +382,13 @@ fun CustomCalendar(
                                                 1,6 -> colorFromResource(R.color.grid_color)
                                                 2 -> colorFromResource(R.color.primary_green)
                                                 3 -> colorFromResource(R.color.primary_orange)
-                                                4 -> colorFromResource(R.color.primary_teal)
+                                                4,7 -> colorFromResource(R.color.primary_teal)
                                                 5 -> colorFromResource(R.color.success_green)
                                                 else -> Color.Transparent
                                             },
                                             shape = CircleShape
-                                        ),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "",
-                                        color = when (dayType[day.toInt() - 1]) {
-                                            1 -> Color.White
-                                            2, 3, 4, 5 -> Color.Black
-                                            else -> Color.White
-                                        },
-                                        fontSize = 10.sp,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-
+                                        )
+                                )
                             }
                         }
                     }

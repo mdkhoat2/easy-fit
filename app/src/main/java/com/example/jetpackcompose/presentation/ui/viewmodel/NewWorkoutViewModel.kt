@@ -1,37 +1,41 @@
 package com.example.jetpackcompose.presentation.ui.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
-import com.example.jetpackcompose.data.dataModel.Exercise
+import androidx.lifecycle.viewModelScope
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.data.dataModel.generateWorkoutID
 import com.example.jetpackcompose.data.dataModel.getAllExercises
 import com.example.jetpackcompose.data.dataModel.getExerciseIcon
 import com.example.jetpackcompose.domain.usecase.CreateWorkoutUseCase
+import com.example.jetpackcompose.domain.usecase.GetCustomExerciseUseCase
 import com.example.jetpackcompose.presentation.ui.uiState.WorkoutEditUIState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NewWorkoutViewModel @Inject constructor(
-    private val createWorkoutUseCase: CreateWorkoutUseCase
+    private val createWorkoutUseCase: CreateWorkoutUseCase,
+    private val getCustomExerciseUseCase: GetCustomExerciseUseCase
 ) : BaseWorkoutViewModel() {
 
     init {
         _state.value = WorkoutEditUIState()
-        loadData()
+        viewModelScope.launch {
+            refreshCustomExercises()
+        }
     }
 
-    private fun loadData() {
-        val exercises = getAllExercises()
+    suspend fun refreshCustomExercises() {
+        try {
+            val customExercises = getCustomExerciseUseCase()
+            val exercises = getAllExercises() + customExercises
+            val availableExercises = exercises.map { it to getExerciseIcon(it) }
 
-        val availableExercises = exercises.map { it to getExerciseIcon(it) }
-
-        _state.value = state.value.copy(
-            queueExercise = emptyList(),
-            availableExercises = availableExercises,
-            workoutName = ""
-        )
+            _state.value = _state.value.copy(
+                availableExercises = availableExercises
+            )
+        } catch (e: Exception) {
+            Log.e("NewWorkoutViewModel", "Error refreshing exercises", e)
+        }
     }
 
     suspend fun onSavePressed() {

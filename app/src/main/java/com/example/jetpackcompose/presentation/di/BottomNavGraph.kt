@@ -23,6 +23,7 @@ import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.AddMissedDaysToHistoryUseCase
 import com.example.jetpackcompose.domain.usecase.CreateWorkoutUseCase
 import com.example.jetpackcompose.domain.usecase.EditWorkoutUseCase
+import com.example.jetpackcompose.domain.usecase.GetCustomExerciseUseCase
 import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.domain.usecase.GetWorkoutByIdUseCase
 import com.example.jetpackcompose.presentation.ui.screen.Home.WellDoneScreen
@@ -39,6 +40,7 @@ import com.example.jetpackcompose.presentation.ui.screen.Home.SessionTrackingScr
 import com.example.jetpackcompose.presentation.ui.screen.Plan.CustomizeExercise
 import com.example.jetpackcompose.presentation.ui.screen.Plan.EditPlan
 import com.example.jetpackcompose.presentation.ui.screen.Plan.EditWorkoutScreen
+import com.example.jetpackcompose.presentation.ui.screen.Plan.NewExercise
 import com.example.jetpackcompose.presentation.ui.screen.Plan.NewWorkoutScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
 import com.example.jetpackcompose.presentation.ui.viewmodel.AccountViewModel
@@ -75,13 +77,15 @@ fun BottomNavGraph(
                 AddMissedDaysToHistoryUseCase(WorkoutRepositoryImp(workoutDatabase, context)).invoke(context)
             }
 
-            val newWorkoutViewModel = remember {NewWorkoutViewModel(CreateWorkoutUseCase(
-                        WorkoutRepositoryImp(context = context, database = workoutDatabase)))}
+            val newWorkoutViewModel = remember {
+                NewWorkoutViewModel(CreateWorkoutUseCase(
+                WorkoutRepositoryImp(context = context, database = workoutDatabase)),
+                GetCustomExerciseUseCase(WorkoutRepositoryImp(context = context, database = workoutDatabase)))}
 
             val editWorkoutViewModel = remember {EditWorkoutViewModel(
                 EditWorkoutUseCase(WorkoutRepositoryImp(context = context, database = workoutDatabase)),
-                GetWorkoutByIdUseCase(WorkoutRepositoryImp(context = context, database = workoutDatabase))
-            )}
+                GetWorkoutByIdUseCase(WorkoutRepositoryImp(context = context, database = workoutDatabase)),
+                GetCustomExerciseUseCase(WorkoutRepositoryImp(context = context, database = workoutDatabase)))}
 
             val accountViewModel = remember { AccountViewModel(context = context) }
 
@@ -180,6 +184,12 @@ fun BottomNavGraph(
                     route = Routes.editPlan
                 ) {
                     EditPlan(navController, workoutDatabase, context                    )
+                }
+
+                composable(
+                    route = Routes.newExercise
+                ) {
+                    NewExercise(navController, workoutDatabase,newWorkoutViewModel, editWorkoutViewModel, context)
                 }
 
             }

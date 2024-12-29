@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
+import com.example.jetpackcompose.data.dataModel.getExerciseString
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.screen.Component.LineDivider
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
@@ -169,7 +170,7 @@ fun NewWorkoutScreen(
                     val exercise = uiState.queueExercise[index]
                     QueueItem(
                         number = index + 1,
-                        name = exercise.first.name.toString(),
+                        name = getExerciseString(exercise.first),
                         iconId = exercise.second,
                         onRemoveClick = {
                             viewModel.onExerciseRemoved(index)
@@ -210,7 +211,7 @@ fun NewWorkoutScreen(
                 items(viewModel.state.value.availableExercises.size) { index ->
                     val exercise = viewModel.state.value.availableExercises[index]
                     ExerciseItem(
-                        name = exercise.first.name.toString(),
+                        name = getExerciseString(exercise.first),
                         iconId = exercise.second,
                         onClick = {
                             viewModel.onExerciseSelected(exercise.first.name.toString())
