@@ -84,7 +84,9 @@ class PlanViewModel @Inject constructor(
                                     if (plan.dateWorkout.contains(dateToDayOfWeek(date))) 4 else 1
                                 date.isBefore(today) -> 2 // Past, not missed
                                 else -> // Today 5 mean completed, 6 mean not completed
-                                    if (lastDate==LocalDate.now().toString()) 5 else 6
+                                    if (lastDate==LocalDate.now().toString()) 5 else
+                                        if (plan.dateWorkout.contains(dateToDayOfWeek(date))) 7 else
+                                            6
                             }
                         }
                     }

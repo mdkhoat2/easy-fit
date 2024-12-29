@@ -23,6 +23,7 @@ object PersistentStorageManager {
     private const val STREAK_FILE_NAME = "streak.json"
     private const val MISSED_WEEKS_FILE_NAME = "missed_weeks.json"
     private const val PLAN_FILE_NAME = "plan.json"
+    private const val CUSTOM_EXERCISES_FILE_NAME = "custom_exercises.json"
     private val gson = Gson()
 
     // Generic save function
@@ -83,5 +84,13 @@ object PersistentStorageManager {
                 minSession = 0,
                 minHour = 0f
             ))
+    }
+
+    suspend fun saveCustomExercises(context: Context, customExercises: List<Exercise>) {
+        saveToFile(context, CUSTOM_EXERCISES_FILE_NAME, customExercises)
+    }
+
+    suspend fun loadCustomExercises(context: Context): List<Exercise> {
+        return loadFromFile(context, CUSTOM_EXERCISES_FILE_NAME, emptyList())
     }
 }

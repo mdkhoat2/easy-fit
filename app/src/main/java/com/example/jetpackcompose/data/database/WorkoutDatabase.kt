@@ -37,6 +37,7 @@ class WorkoutDatabase private constructor() {
         cachedStreak = PersistentStorageManager.loadStreak(context)
         cachedPatchHistory = PersistentStorageManager.loadMissedWeeks(context)
         cachedPlan = PersistentStorageManager.loadPlan(context)
+
         // for testing uncomment the line below and comment the line above
 //        fillWithSampleData()
 //        PersistentStorageManager.saveMissedWeeks(context, cachedPatchHistory)
@@ -51,6 +52,7 @@ class WorkoutDatabase private constructor() {
     private var cachedWorkouts: List<Workout> = emptyList()
     private var cachedStreak: Int = 0
     private lateinit var cachedPlan: Plan
+    private var cachedCustomExercise: List<Exercise> = emptyList()
 
     /**
      *  |  WORKOUTS
@@ -120,6 +122,14 @@ class WorkoutDatabase private constructor() {
         return true
     }
     fun getPlan(): Plan = cachedPlan
+
+    fun getCustomAction(): List<Exercise> = cachedCustomExercise
+
+    suspend fun updateCustomExercise(context: Context, customAction: List<Exercise>) {
+        cachedCustomExercise = customAction
+        PersistentStorageManager.saveCustomExercises(context, cachedCustomExercise)
+    }
+
 
     fun fillWithSampleData()
     {

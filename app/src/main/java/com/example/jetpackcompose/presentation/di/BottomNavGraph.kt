@@ -39,6 +39,7 @@ import com.example.jetpackcompose.presentation.ui.screen.Home.SessionTrackingScr
 import com.example.jetpackcompose.presentation.ui.screen.Plan.CustomizeExercise
 import com.example.jetpackcompose.presentation.ui.screen.Plan.EditPlan
 import com.example.jetpackcompose.presentation.ui.screen.Plan.EditWorkoutScreen
+import com.example.jetpackcompose.presentation.ui.screen.Plan.NewExercise
 import com.example.jetpackcompose.presentation.ui.screen.Plan.NewWorkoutScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
 import com.example.jetpackcompose.presentation.ui.viewmodel.EditWorkoutViewModel
@@ -177,6 +178,12 @@ fun BottomNavGraph(
                     route = Routes.editPlan
                 ) {
                     EditPlan(navController, workoutDatabase, context                    )
+                }
+
+                composable(
+                    route = Routes.newExercise
+                ) {
+                    NewExercise(navController, workoutDatabase, context)
                 }
 
             }

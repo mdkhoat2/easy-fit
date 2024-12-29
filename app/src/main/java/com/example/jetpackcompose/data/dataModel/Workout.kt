@@ -10,7 +10,8 @@ enum class ExerciseName {
     SIT_UP,
     WEIGHTLIFTING,
     YOGA,
-    BREAK
+    BREAK,
+    CUSTOM
 }
 
 enum class ExerciseType {
@@ -43,6 +44,7 @@ fun getExerciseString(exercise:Exercise): String {
         ExerciseName.WEIGHTLIFTING -> "Weightlifting"
         ExerciseName.YOGA -> "Yoga"
         ExerciseName.BREAK -> "Break"
+        ExerciseName.CUSTOM -> "Custom Exercise"
     }
 }
 
@@ -55,6 +57,7 @@ fun getExerciseIcon(exercise:Exercise): Int {
         ExerciseName.WEIGHTLIFTING -> R.drawable.weightlifting
         ExerciseName.YOGA -> R.drawable.yoga
         ExerciseName.BREAK -> R.drawable.heart_beat
+        ExerciseName.CUSTOM -> R.drawable.custom_exercise
     }
 }
 
