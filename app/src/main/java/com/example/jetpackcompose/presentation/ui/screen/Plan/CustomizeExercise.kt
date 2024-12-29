@@ -57,9 +57,9 @@ fun CustomizeExercise(
         val exercise = uiState.queueExercise[exerciseIndex].first
         val exerciseIcon = uiState.queueExercise[exerciseIndex].second
 
-        var duration by rememberSaveable { mutableStateOf(exercise.duration) }
-        var repetitions by rememberSaveable { mutableStateOf(exercise.repetition) }
-        var restTime by rememberSaveable { mutableStateOf(exercise.restTime) }
+        var duration by rememberSaveable { mutableIntStateOf(exercise.duration) }
+        var repetitions by rememberSaveable { mutableIntStateOf(exercise.repetition) }
+        var restTime by rememberSaveable { mutableIntStateOf(exercise.restTime) }
         var isCountedMode by rememberSaveable { mutableStateOf(exercise.type == ExerciseType.COUNTED) }
 
         Column(

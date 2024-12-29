@@ -111,6 +111,23 @@ class UpdatePlanUseCase(private val repository: WorkoutRepository) {
     suspend operator fun invoke(plan: Plan) = repository.updatePlan(plan)
 }
 
+class GetCustomExerciseUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke() = repository.getCustomExercise()
+}
+
+class AddCustomExerciseUseCase(private val repository: WorkoutRepository) {
+    suspend operator fun invoke(exercise: Exercise)
+    {
+        val customExercise = repository.getCustomExercise()
+        // Check if the exercise already exists
+        if (customExercise.contains(exercise)) {
+            return
+        }
+        // Add the exercise
+        repository.updateCustomExercise(customExercise + exercise)
+    }
+}
+
 
 
 

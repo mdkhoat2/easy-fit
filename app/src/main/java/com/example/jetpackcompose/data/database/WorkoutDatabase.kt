@@ -34,23 +34,20 @@ class WorkoutDatabase private constructor() {
     // **Initialize the database asynchronously**
     private suspend fun initialize(context: Context) {
         cachedWorkouts = PersistentStorageManager.loadWorkouts(context)
-        cachedStreak = PersistentStorageManager.loadStreak(context)
         cachedPatchHistory = PersistentStorageManager.loadMissedWeeks(context)
         cachedPlan = PersistentStorageManager.loadPlan(context)
-
+        cachedCustomExercise = PersistentStorageManager.loadCustomExercises(context)
         // for testing uncomment the line below and comment the line above
 //        fillWithSampleData()
 //        PersistentStorageManager.saveMissedWeeks(context, cachedPatchHistory)
 //        PersistentStorageManager.saveWorkouts(context, cachedWorkouts)
-//        PersistentStorageManager.saveStreak(context, cachedStreak)
 //        PersistentStorageManager.savePlan(context, cachedPlan)
-
+//        PersistentStorageManager.saveCustomExercises(context, cachedCustomExercise)
 //        resetForFirstTimeUser(context)
     }
 
     private var cachedPatchHistory: PatchHistory = PatchHistory(emptyList())
     private var cachedWorkouts: List<Workout> = emptyList()
-    private var cachedStreak: Int = 0
     private lateinit var cachedPlan: Plan
     private var cachedCustomExercise: List<Exercise> = emptyList()
 
@@ -90,17 +87,6 @@ class WorkoutDatabase private constructor() {
     }
 
     /**
-     *  |  STREAK
-     */
-
-    fun getWorkoutStreak(): Int = cachedStreak
-
-    suspend fun updateWorkoutStreak(context: Context, newStreak: Int) {
-        cachedStreak = newStreak
-        PersistentStorageManager.saveStreak(context, cachedStreak)
-    }
-
-    /**
      *  |  PATCH HISTORY
      */
 
@@ -123,15 +109,21 @@ class WorkoutDatabase private constructor() {
     }
     fun getPlan(): Plan = cachedPlan
 
-    fun getCustomAction(): List<Exercise> = cachedCustomExercise
+    /**
+     *  |  CUSTOM EXERCISE
+     */
 
-    suspend fun updateCustomExercise(context: Context, customAction: List<Exercise>) {
+    fun getCustomExercise(): List<Exercise> = cachedCustomExercise
+
+    suspend fun updateCustomExercise(context: Context, customAction: List<Exercise>): Boolean {
         cachedCustomExercise = customAction
         PersistentStorageManager.saveCustomExercises(context, cachedCustomExercise)
+        Log.d("WorkoutDatabase", "Updated custom exercises: $cachedCustomExercise")
+        return true
     }
 
 
-    fun fillWithSampleData()
+    private fun fillWithSampleData()
     {
         cachedWorkouts+=(0..4).map {
             when (it) {
@@ -263,51 +255,45 @@ class WorkoutDatabase private constructor() {
                     duration = 30,
                     creatorId = null,
                 )
-                4 -> Workout(
+                4 -> Workout( // custom
                     id = "workout_1415",
-                    name = "Cardio",
+                    name = "Custom Workout",
                     exercises = listOf(
                         Exercise(
-                            name = ExerciseName.JUMPING_ROPE,
-                            type = ExerciseType.TIMED,
-                            repetition = 0,
-                            duration = 30,
-                            restTime = 10,
-                            description = "Go for a run"
+                            name = ExerciseName.CUSTOM,
+                            type = ExerciseType.COUNTED,
+                            repetition = 10,
+                            duration = 0,
+                            restTime = 5,
+                            description = "Custom exercise 1",
+                            customName = "Duck Sicking"
                         ),
                         Exercise(
-                            name = ExerciseName.SIT_UP,
-                            type = ExerciseType.TIMED,
-                            repetition = 0,
-                            duration = 30,
-                            restTime = 10,
-                            description = "Go for a run"
+                            name = ExerciseName.CUSTOM,
+                            type = ExerciseType.COUNTED,
+                            repetition = 10,
+                            duration = 0,
+                            restTime = 5,
+                            description = "Custom exercise 2",
+                            customName = "Back Flip"
                         ),
                         Exercise(
-                            name = ExerciseName.JUMPING_ROPE,
-                            type = ExerciseType.TIMED,
-                            repetition = 0,
-                            duration = 30,
-                            restTime = 10,
-                            description = "Go for a run"
-                        ),
-                        Exercise(
-                            name = ExerciseName.JUMPING_ROPE,
-                            type = ExerciseType.TIMED,
-                            repetition = 0,
-                            duration = 30,
-                            restTime = 10,
-                            description = "Go for a run"
+                            name = ExerciseName.CUSTOM,
+                            type = ExerciseType.COUNTED,
+                            repetition = 10,
+                            duration = 0,
+                            restTime = 5,
+                            description = "Custom exercise 3",
+                            customName = "Hand Stand"
                         ),
                     ),
-                    duration = 90,
+                    duration = 30,
                     creatorId = null,
+
                 )
                 else -> throw IllegalStateException("Unexpected index: $it")
             }
         }
-
-        cachedStreak = 5
 
         cachedPatchHistory =PatchHistory(
             weeks = listOf(
@@ -359,6 +345,24 @@ class WorkoutDatabase private constructor() {
 
         cachedPlan = Plan(name = "Beginner",dateWorkout = listOf(DayOfWeek.MONDAY,DayOfWeek.WEDNESDAY,DayOfWeek.FRIDAY,),
             timeWorkout = listOf("20:00","20:00","20:00"),maxMissDay = 3,minSession = 10,minHour = 4f)
+
+        cachedCustomExercise = listOf(
+            Exercise(
+                name = ExerciseName.CUSTOM,
+                description = "Custom exercise 1",
+                customName = "Duck Sicking"
+            ),
+            Exercise(
+                name = ExerciseName.CUSTOM,
+                description = "Custom exercise 2",
+                customName = "Back Flip"
+            ),
+            Exercise(
+                name = ExerciseName.CUSTOM,
+                description = "Custom exercise 3",
+                customName = "Hand Stand"
+            ),
+        )
     }
 }
 

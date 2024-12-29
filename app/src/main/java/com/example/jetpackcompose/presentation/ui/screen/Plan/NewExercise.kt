@@ -1,9 +1,7 @@
 package com.example.jetpackcompose.presentation.ui.screen.Plan
 
-import android.app.TimePickerDialog
 import android.content.Context
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,21 +22,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import com.example.jetpackcompose.R
-import com.example.jetpackcompose.data.dataModel.DayOfWeek
-import com.example.jetpackcompose.data.dataModel.Plan
+import com.example.jetpackcompose.data.dataModel.Exercise
+import com.example.jetpackcompose.data.dataModel.ExerciseName
 import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
-import com.example.jetpackcompose.domain.usecase.GetPlanUseCase
-import com.example.jetpackcompose.domain.usecase.UpdatePlanUseCase
-import com.example.jetpackcompose.presentation.ui.screen.Component.LineDivider
-import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
+import com.example.jetpackcompose.domain.usecase.AddCustomExerciseUseCase
+import com.example.jetpackcompose.presentation.ui.viewmodel.EditWorkoutViewModel
+import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 /**
  * Created by Duy on 29/11/2024
@@ -51,10 +47,11 @@ import java.util.Calendar
 fun NewExercise(
     navController: NavController,
     workoutDatabase: WorkoutDatabase,
+    newWorkoutViewModel: NewWorkoutViewModel,
+    editWorkoutViewModel: EditWorkoutViewModel,
     context: Context,
 ) {
     val repository = remember { WorkoutRepositoryImp(workoutDatabase, context) }
-    val updatePlanUseCase = remember { UpdatePlanUseCase(repository) }
     val coroutineScope = rememberCoroutineScope()
 
     // States for name and description
@@ -63,6 +60,9 @@ fun NewExercise(
 
     // Validation or UI Loading State
     val isSaveEnabled = exerciseName.isNotBlank() && exerciseName.length <= 15
+
+    //update custom exercise AddCustomExerciseUseCase
+    val addCustomExerciseUseCase = remember { AddCustomExerciseUseCase(repository)}
 
     Column(
         modifier = Modifier
@@ -81,7 +81,7 @@ fun NewExercise(
         ) {
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
                     tint = Color.White
                 )
@@ -95,7 +95,14 @@ fun NewExercise(
             IconButton(
                 onClick = {
                     coroutineScope.launch {
-                        // Save the new action (if connected to DB or logic here)
+                        val customExercise = Exercise(
+                            name = ExerciseName.CUSTOM,
+                            description = exerciseDescription,
+                            customName = exerciseName
+                        )
+                        addCustomExerciseUseCase(customExercise)
+                        editWorkoutViewModel.refreshCustomExercises()
+                        newWorkoutViewModel.refreshCustomExercises()
                         navController.popBackStack()
                     }
                 },

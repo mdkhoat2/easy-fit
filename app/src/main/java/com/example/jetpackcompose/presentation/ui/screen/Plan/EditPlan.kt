@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.presentation.ui.screen.Plan
 
+import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import android.content.Context
 import androidx.compose.foundation.background
@@ -22,7 +23,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.data.dataModel.DayOfWeek
@@ -85,7 +86,7 @@ fun EditPlan(
         ) {
             IconButton(onClick = { navController.popBackStack() }) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
                     tint = Color.White
                 )
@@ -124,7 +125,7 @@ fun EditPlan(
 
         // Days List
         DayOfWeek.entries.forEachIndexed { index, day ->
-            val isChecked = plan!!.dateWorkout.contains(day) ?: false
+            val isChecked = plan!!.dateWorkout.contains(day)
             val time = plan!!.timeWorkout.getOrNull(index) ?: "No plan"
 
             Row(
@@ -196,6 +197,7 @@ fun EditPlan(
     }
 }
 
+@SuppressLint("DefaultLocale")
 fun showTimePicker(
     context: Context,
     currentTime: String,
