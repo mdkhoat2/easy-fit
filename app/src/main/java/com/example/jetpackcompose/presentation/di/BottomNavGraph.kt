@@ -131,7 +131,7 @@ fun BottomNavGraph(
                     }
 
                     val viewModel = remember {
-                        SessionTrackingViewModel(getExerciseFromWorkoutUseCase, workoutId)
+                        SessionTrackingViewModel(getExerciseFromWorkoutUseCase, workoutId, context)
                     }
 
                     SessionTrackingScreen(navController, viewModel = viewModel) {
