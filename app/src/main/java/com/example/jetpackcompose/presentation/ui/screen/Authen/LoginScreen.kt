@@ -1,6 +1,5 @@
 package com.example.jetpackcompose.presentation.ui.screen.Authen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,12 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,25 +28,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
-import com.example.jetpackcompose.data.Api.loginUser
-import com.example.jetpackcompose.data.repo.AuthRepositoryImp
-import com.example.jetpackcompose.domain.usecase.LoginUseCase
 import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.Routes
-import com.example.jetpackcompose.presentation.ui.screen.BottomBar
+import com.example.jetpackcompose.presentation.ui.viewmodel.AccountViewModel
 import com.example.jetpackcompose.ui.theme.Typography
 import kotlinx.coroutines.launch
 
@@ -59,15 +58,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     navController: NavController,
-    context: android.content.Context
+    viewModel: AccountViewModel
 ) {
     var email by remember { mutableStateOf("caynhat05062004@gmail.com") }
     var password by remember { mutableStateOf("123") }
-    val coroutineScope = rememberCoroutineScope()
+    var passwordVisible by remember { mutableStateOf(false) }
 
     // Get screen height
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
+
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -108,14 +109,24 @@ fun LoginScreen(
             onValueChange = { password = it },
             label = { Text("Password") },
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
                 imeAction = ImeAction.Done
-            )
+            ),
+            trailingIcon = {
+                IconButton(onClick = {passwordVisible = !passwordVisible}){
+                    Icon(
+                        imageVector = if (passwordVisible) ImageVector.vectorResource(R.drawable.visibility)
+                        else ImageVector.vectorResource(R.drawable.visibility_off),
+                        tint = Color.White,
+                        contentDescription = if (passwordVisible) "Show password" else "Hide Password"
+                    )
+                }
+            }
         )
 
         TextButton(
@@ -135,17 +146,12 @@ fun LoginScreen(
         OutlinedButton(
             onClick = {
                 coroutineScope.launch {
-                    val loginUseCase = LoginUseCase(repository = AuthRepositoryImp(context))
-                    if (email.isNotEmpty() && password.isNotEmpty()) {
-                        // Login
-                        val isLoginSuccess = loginUseCase(email, password)
-                        Log.d("LoginScreen", "isLoginSuccess: $isLoginSuccess")
-                        if (isLoginSuccess) {
-                            navController.navigate(BottomBarScreen.Home.route)
+                    val isLoginSuccess = viewModel.login(email, password)
+                    if (isLoginSuccess) {
+                        navController.navigate(BottomBarScreen.Home.route)
                     }
                 }
-                }
-                      },
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
@@ -186,4 +192,11 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.weight(1f))
     }
+}
+
+@Preview
+@Composable
+fun LoginScreenPreview() {
+    val viewModel = AccountViewModel(LocalContext.current)
+    LoginScreen(navController = NavController(LocalContext.current), viewModel)
 }

@@ -84,12 +84,10 @@ fun ForgotOTP(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .background(Color.Black),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
             Spacer(modifier = Modifier.height(screenHeight / 8))
 
             Image(

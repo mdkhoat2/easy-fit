@@ -41,6 +41,7 @@ import com.example.jetpackcompose.presentation.ui.screen.Plan.EditPlan
 import com.example.jetpackcompose.presentation.ui.screen.Plan.EditWorkoutScreen
 import com.example.jetpackcompose.presentation.ui.screen.Plan.NewWorkoutScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
+import com.example.jetpackcompose.presentation.ui.viewmodel.AccountViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.EditWorkoutViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
@@ -82,13 +83,15 @@ fun BottomNavGraph(
                 GetWorkoutByIdUseCase(WorkoutRepositoryImp(context = context, database = workoutDatabase))
             )}
 
+            val accountViewModel = remember { AccountViewModel(context = context) }
+
             // Proceed once the database is initialized
             NavHost(
                 navController = navController,
                 startDestination = Routes.login
             ) {
                 composable(route = Routes.login){
-                    LoginScreen(navController,context)
+                    LoginScreen(navController, accountViewModel)
                 }
                 composable(route = Routes.forgotEmail){
                     ForgotMail(navController)
