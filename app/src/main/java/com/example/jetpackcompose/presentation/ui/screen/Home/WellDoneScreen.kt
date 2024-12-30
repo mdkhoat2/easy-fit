@@ -103,7 +103,10 @@ fun WellDoneScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text("Exercises", color = Color.White, style = Typography.titleLarge)
-                    Text("${state.exercises.size}", color = Color(0xFFB4FF00), style = Typography.titleLarge)
+                    // filter out the rest exercise
+                    Text("${
+                        state.exercises.filter { it.name != "Rest" }.size
+                    }", color = Color(0xFFB4FF00), style = Typography.titleLarge)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
