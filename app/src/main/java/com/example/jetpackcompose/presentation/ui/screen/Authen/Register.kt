@@ -183,6 +183,7 @@ fun Register(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(54.dp)
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(

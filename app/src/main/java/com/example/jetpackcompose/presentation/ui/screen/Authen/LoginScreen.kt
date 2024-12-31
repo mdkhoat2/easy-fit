@@ -154,6 +154,7 @@ fun LoginScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .height(54.dp)
                 .padding(horizontal = 16.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
@@ -170,14 +171,15 @@ fun LoginScreen(
 
         Row(
             modifier = Modifier
-                .padding(top = 16.dp),
+                .padding(top = 16.dp)
+                .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Don't have an account? ",
-                color = colorResource(R.color.btn_back_color),
-                style = Typography.titleSmall
+                color = Color.White,
+                style = Typography.titleMedium
             )
             TextButton(onClick = {
                 navController.navigate(Routes.register)
@@ -185,7 +187,7 @@ fun LoginScreen(
                 Text(
                     "Register now",
                     color = colorResource(R.color.btn_back_color),
-                    style = Typography.titleSmall
+                    style = Typography.titleMedium
                 )
             }
         }
