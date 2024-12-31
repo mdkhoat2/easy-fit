@@ -180,11 +180,11 @@ fun WellDoneScreen(
                     style = Typography.titleSmall,
                     color = Color(0xFF9AC0D6)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.save),
                     contentDescription = "Arrow",
-                    tint = Color(0xFF9AC0D6)
+                    tint = Color(0xFF9AC0D6),
+                    modifier = Modifier.size(24.dp)
                 )
             }
             OutlinedButton(
@@ -205,13 +205,10 @@ fun WellDoneScreen(
                     style = Typography.titleSmall,
                     color = Color(0xFF9AC0D6)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = "Arrow",
-                    tint = Color(0xFF9AC0D6),
-                    modifier = Modifier
-                        .size(24.dp)
+                    tint = Color(0xFF9AC0D6)
                 )
             }
         }
@@ -219,13 +216,12 @@ fun WellDoneScreen(
 }
 
 
-//@Preview(showBackground = true)
+//@Preview
 //@Composable
 //fun WellDoneScreenPreview() {
-//    val viewModel = SessionTrackingViewModel()
-//    val uiState by viewModel.state.collectAsState()
+//    val state = SessionTrackingUIState()
 //    WellDoneScreen(
 //        navController = NavController(LocalContext.current),
-//        uiState
+//        state = state
 //    )
 //}

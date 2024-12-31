@@ -44,6 +44,16 @@ class SessionTrackingViewModel @Inject constructor(
         }
     }
 
+    private val completePlayer: MediaPlayer by lazy {
+        MediaPlayer().apply {
+            // Initialize with an audio file (e.g., from raw folder or external source)
+            val descriptor = context.resources.openRawResourceFd(R.raw.congrat)
+            setDataSource(descriptor.fileDescriptor, descriptor.startOffset, descriptor.length)
+            descriptor.close()
+            prepare()
+        }
+    }
+
     init {
         // Load data asynchronously
         viewModelScope.launch {
@@ -78,7 +88,22 @@ class SessionTrackingViewModel @Inject constructor(
         else{
             endTimer()
         }
-        playMedia()
+        playMedia(mediaPlayer)
+    }
+
+    fun playStartMedia(){
+        playMedia(mediaPlayer)
+    }
+
+    fun exitWorkout(isPaused: Boolean){
+        _state.value = _state.value.copy(isPaused = isPaused)
+        if (_state.value.isPaused){
+            lastTimestamp = 0
+        }
+    }
+
+    fun finishWorkout(){
+        playMedia(completePlayer)
     }
 
     fun isEnd(): Boolean{
@@ -118,7 +143,7 @@ class SessionTrackingViewModel @Inject constructor(
     }
 
     // Play media using MediaPlayer
-    private fun playMedia() {
+    private fun playMedia(mediaPlayer : MediaPlayer) {
         if (mediaPlayer.isPlaying) {
             mediaPlayer.seekTo(0) // Restart the audio if it's already playing
         } else {
@@ -131,5 +156,6 @@ class SessionTrackingViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         mediaPlayer.release()
+        completePlayer.release()
     }
 }

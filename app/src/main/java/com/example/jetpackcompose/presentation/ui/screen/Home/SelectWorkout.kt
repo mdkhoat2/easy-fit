@@ -149,7 +149,8 @@ fun WorkoutItem(workoutName: String,onClick: () -> Unit,onEditClick: () -> Unit)
     ) {
         Text(
             text = workoutName,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White
         )
         Row(
             verticalAlignment = Alignment.CenterVertically
