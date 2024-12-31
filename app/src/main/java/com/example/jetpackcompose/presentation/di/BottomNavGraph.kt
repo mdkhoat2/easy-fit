@@ -29,6 +29,8 @@ import com.example.jetpackcompose.domain.usecase.GetWorkoutByIdUseCase
 import com.example.jetpackcompose.presentation.ui.screen.Home.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
 import com.example.jetpackcompose.presentation.ui.screen.Account.AccountScreen
+import com.example.jetpackcompose.presentation.ui.screen.Account.ChangePassword
+import com.example.jetpackcompose.presentation.ui.screen.Account.NotificationSetting
 import com.example.jetpackcompose.presentation.ui.screen.Authen.ForgotMail
 import com.example.jetpackcompose.presentation.ui.screen.Authen.ForgotOTP
 import com.example.jetpackcompose.presentation.ui.screen.Authen.LoginScreen
@@ -116,7 +118,13 @@ fun BottomNavGraph(
                     ForumScreen()
                 }
                 composable(route = BottomBarScreen.Account.route) {
-                    AccountScreen()
+                    AccountScreen(navController)
+                }
+                composable(route = Routes.changePassword){
+                    ChangePassword(navController)
+                }
+                composable(route = Routes.notificationSetting){
+                    NotificationSetting(navController)
                 }
                 composable(route = Routes.selectWorkout) {
                     SelectWorkoutsScreen(navController, workoutDatabase, context)

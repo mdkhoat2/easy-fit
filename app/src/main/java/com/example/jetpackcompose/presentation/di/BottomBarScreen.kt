@@ -42,4 +42,6 @@ object Routes {
     var EditWorkout = "EditWorkout"
     var editPlan = "EditPlan"
     var newExercise = "NewExercise"
+    var changePassword = "ChangePassword"
+    var notificationSetting = "NotificationSetting"
 }
