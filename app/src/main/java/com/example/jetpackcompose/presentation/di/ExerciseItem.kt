@@ -3,7 +3,6 @@ package com.example.jetpackcompose.presentation.di
 
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.data.dataModel.Exercise
-import com.example.jetpackcompose.data.dataModel.ExerciseName
 import com.example.jetpackcompose.data.dataModel.ExerciseType
 import com.example.jetpackcompose.data.dataModel.getExerciseIcon
 import com.example.jetpackcompose.data.dataModel.getExerciseString

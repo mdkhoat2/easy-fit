@@ -5,7 +5,7 @@ import com.example.jetpackcompose.domain.repo.AuthRepository
 class LoginUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(email: String, password: String): Boolean {
         Validator.validateEmail(email)
-        Validator.validatePassword(password)
+        Validator.validateNonEmpty(password, "Password")
 
         return repository.login(email, password)
     }
@@ -14,7 +14,7 @@ class LoginUseCase(private val repository: AuthRepository) {
 class RegisterUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(email: String, username: String, password: String): Boolean {
         Validator.validateEmail(email)
-        Validator.validatePassword(password)
+        Validator.validateNonEmpty(password, "Password")
         Validator.validateUsername(username)
 
         return repository.register(email, username, password)

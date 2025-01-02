@@ -84,7 +84,6 @@ fun ForgotMail(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .background(Color.Black),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -136,6 +135,7 @@ fun ForgotMail(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(54.dp)
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(

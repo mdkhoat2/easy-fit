@@ -44,8 +44,12 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.presentation.di.ExerciseItem
@@ -53,6 +57,7 @@ import com.example.jetpackcompose.presentation.di.ExerciseUIType
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
 import com.example.jetpackcompose.ui.theme.AppTypo
+import com.example.jetpackcompose.ui.theme.JakartaSans
 import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
@@ -64,6 +69,7 @@ fun SessionTrackingScreen(
     val uiState by viewModel.state.collectAsState()
     var showExitDialog by remember { mutableStateOf(false)}
     var shouldNavigate by remember { mutableStateOf(false)}
+    var shouldStart by remember { mutableStateOf(false)}
 
     BackHandler {
         showExitDialog = true
@@ -80,7 +86,7 @@ fun SessionTrackingScreen(
         }
     }
 
-    if (!shouldNavigate){
+    if (!shouldNavigate && shouldStart){
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -91,7 +97,9 @@ fun SessionTrackingScreen(
                 time = uiState.elapsedTime,
                 isPaused = uiState.isPaused,
                 onPauseClick = { viewModel.togglePause() },
-                onCloseClick = { showExitDialog = true }
+                onCloseClick = {
+                    showExitDialog = true
+                }
             )
 
             Spacer(modifier = Modifier.weight(1f))
@@ -103,6 +111,7 @@ fun SessionTrackingScreen(
                     onCycleComplete = {
                         if (viewModel.isEnd()) {
                             onFinishWorkout()
+                            viewModel.finishWorkout()
                             shouldNavigate = true
                         }
                         else{
@@ -121,14 +130,32 @@ fun SessionTrackingScreen(
         }
 
         if (showExitDialog) {
+            viewModel.exitWorkout(true)
             ExitWorkoutDialog(
                 onConfirm = {
                     navController.navigateUp()
                 },
                 onDismiss = {
                     showExitDialog = false
+                    viewModel.exitWorkout(false)
                 }
             )
+        }
+    }
+
+    if (!shouldStart) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Spacer(modifier = Modifier.weight(1f))
+            countdownStart(3) {
+                shouldStart = true
+                viewModel.playStartMedia()
+            }
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }
@@ -424,9 +451,73 @@ fun BottomListExercises(
     }
 }
 
+@Composable
+fun countdownStart(
+    totalSeconds: Long,
+    onComplete: () -> Unit
+){
+    val animatedSweepAngle = remember { Animatable(0f) }
+    var lastValue by remember { mutableFloatStateOf(0f) }
+    var displaySecond by remember { mutableLongStateOf(totalSeconds) }
 
-//@Composable
-//@Preview
-//fun SessionTrackingPreview(){
-//    SessionTrackingScreen(navController = NavController(LocalContext.current), viewModel = SessionTrackingViewModel()) {}
-//}
+    LaunchedEffect(Unit){
+        try {
+            animatedSweepAngle.animateTo(
+                targetValue = 360f,
+                animationSpec = tween(
+                    durationMillis = (totalSeconds * 1000 * (1 - lastValue / 360f)).toInt(),
+                    easing = LinearEasing
+                )
+            ){
+                val progress = this.value / 360f
+                displaySecond = ((1 - progress) * totalSeconds).toLong()
+            }
+            onComplete()
+            lastValue = 0f
+            animatedSweepAngle.snapTo(0f)
+        }
+        catch (e : CancellationException){
+            lastValue = animatedSweepAngle.value
+        }
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(180.dp)
+    ){
+        Canvas(modifier = Modifier.size(170.dp)){
+            drawArc(
+                color = Color(0xFFD5FF5F),
+                startAngle = -90f,
+                sweepAngle = animatedSweepAngle.value,
+                useCenter = true,
+                style = Fill
+            )
+        }
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(150.dp)
+                .background(color = colorResource(R.color.home_btn), shape = CircleShape)
+        ){
+            Text(
+                text = displaySecond.toString(),
+                style = TextStyle(
+                    fontFamily = JakartaSans,         // Use JakartaSans
+                    fontWeight = FontWeight.Normal,   // Regular weight
+                    fontSize = 32.sp,
+                    lineHeight = 48.sp,
+                    letterSpacing = 0.sp
+                ),
+                color = colorResource(R.color.line_color)
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun SessionTrackingPreview(){
+    countdownStart(3) { }
+}

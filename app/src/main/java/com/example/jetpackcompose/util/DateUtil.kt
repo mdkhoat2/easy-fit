@@ -14,17 +14,19 @@ import kotlinx.coroutines.flow.map
 
 // DataStore setup
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "DateStore")
+// need one for login remember me
+
 
 // Keys for DataStore
 // This key will store the last updated date the Last workout is always before or equal the last updated date
 private val LAST_DATE_KEY = stringPreferencesKey("last_updated_date")
+private val REMEMBER_ME_KEY = stringPreferencesKey("remember_me_token")
 
 suspend fun isFirstTimeUser(context: Context): Boolean {
     return context.dataStore.data.map { preferences ->
         preferences[LAST_DATE_KEY] == null
     }.first()
 }
-
 
 suspend fun getLastDate(context: Context): String {
     return context.dataStore.data.map { preferences ->
@@ -60,6 +62,18 @@ suspend fun initializeForFirstTimeUser(context: Context) {
 suspend fun resetForFirstTimeUser(context: Context) {
     context.dataStore.edit { preferences ->
         preferences[LAST_DATE_KEY] = LocalDate.now().minusDays(3).toString()
+    }
+}
+
+suspend fun getRememberMeToken(context: Context): String {
+    return context.dataStore.data.map { preferences ->
+        preferences[REMEMBER_ME_KEY] ?: ""
+    }.first()
+}
+
+suspend fun saveRememberMeToken(context: Context, token: String) {
+    context.dataStore.edit { preferences ->
+        preferences[REMEMBER_ME_KEY] = token
     }
 }
 

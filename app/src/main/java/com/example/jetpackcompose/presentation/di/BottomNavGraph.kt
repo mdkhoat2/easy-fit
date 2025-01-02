@@ -22,10 +22,15 @@ import com.example.jetpackcompose.data.database.WorkoutDatabase
 import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.AddMissedDaysToHistoryUseCase
 import com.example.jetpackcompose.domain.usecase.CreateWorkoutUseCase
+import com.example.jetpackcompose.domain.usecase.EditWorkoutUseCase
+import com.example.jetpackcompose.domain.usecase.GetCustomExerciseUseCase
 import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
+import com.example.jetpackcompose.domain.usecase.GetWorkoutByIdUseCase
 import com.example.jetpackcompose.presentation.ui.screen.Home.WellDoneScreen
 import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
 import com.example.jetpackcompose.presentation.ui.screen.Account.AccountScreen
+import com.example.jetpackcompose.presentation.ui.screen.Account.ChangePassword
+import com.example.jetpackcompose.presentation.ui.screen.Account.NotificationSetting
 import com.example.jetpackcompose.presentation.ui.screen.Authen.ForgotMail
 import com.example.jetpackcompose.presentation.ui.screen.Authen.ForgotOTP
 import com.example.jetpackcompose.presentation.ui.screen.Authen.LoginScreen
@@ -35,9 +40,13 @@ import com.example.jetpackcompose.presentation.ui.screen.Home.HomeScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SelectWorkoutsScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SessionTrackingScreen
 import com.example.jetpackcompose.presentation.ui.screen.Plan.CustomizeExercise
+import com.example.jetpackcompose.presentation.ui.screen.Plan.EditPlan
+import com.example.jetpackcompose.presentation.ui.screen.Plan.EditWorkoutScreen
+import com.example.jetpackcompose.presentation.ui.screen.Plan.NewExercise
 import com.example.jetpackcompose.presentation.ui.screen.Plan.NewWorkoutScreen
 import com.example.jetpackcompose.presentation.ui.screen.PlanScreen
-import com.example.jetpackcompose.presentation.ui.uiState.WorkoutEditUIState
+import com.example.jetpackcompose.presentation.ui.viewmodel.AccountViewModel
+import com.example.jetpackcompose.presentation.ui.viewmodel.EditWorkoutViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
 import com.example.jetpackcompose.util.initializeForFirstTimeUser
@@ -48,14 +57,12 @@ fun BottomNavGraph(
     context: Context = LocalContext.current
 ){
     var sessionTrackingState = SessionTrackingUIState()
-    var workoutEditUIState by remember { mutableStateOf(WorkoutEditUIState()) }
-
+    var isEditing by remember { mutableStateOf(false) }
 
     // Initialize WorkoutDatabase asynchronously
     val workoutDatabaseState = produceState<WorkoutDatabase?>(initialValue = null) {
         value = WorkoutDatabase.getInstance(context)
     }
-
 
     when (val workoutDatabase = workoutDatabaseState.value) {
         null -> {
@@ -72,13 +79,25 @@ fun BottomNavGraph(
                 AddMissedDaysToHistoryUseCase(WorkoutRepositoryImp(workoutDatabase, context)).invoke(context)
             }
 
+            val newWorkoutViewModel = remember {
+                NewWorkoutViewModel(CreateWorkoutUseCase(
+                WorkoutRepositoryImp(context = context, database = workoutDatabase)),
+                GetCustomExerciseUseCase(WorkoutRepositoryImp(context = context, database = workoutDatabase)))}
+
+            val editWorkoutViewModel = remember {EditWorkoutViewModel(
+                EditWorkoutUseCase(WorkoutRepositoryImp(context = context, database = workoutDatabase)),
+                GetWorkoutByIdUseCase(WorkoutRepositoryImp(context = context, database = workoutDatabase)),
+                GetCustomExerciseUseCase(WorkoutRepositoryImp(context = context, database = workoutDatabase)))}
+
+            val accountViewModel = remember { AccountViewModel(context = context) }
+
             // Proceed once the database is initialized
             NavHost(
                 navController = navController,
                 startDestination = Routes.login
             ) {
                 composable(route = Routes.login){
-                    LoginScreen(navController)
+                    LoginScreen(navController, accountViewModel)
                 }
                 composable(route = Routes.forgotEmail){
                     ForgotMail(navController)
@@ -99,7 +118,13 @@ fun BottomNavGraph(
                     ForumScreen()
                 }
                 composable(route = BottomBarScreen.Account.route) {
-                    AccountScreen()
+                    AccountScreen(navController)
+                }
+                composable(route = Routes.changePassword){
+                    ChangePassword(navController)
+                }
+                composable(route = Routes.notificationSetting){
+                    NotificationSetting(navController)
                 }
                 composable(route = Routes.selectWorkout) {
                     SelectWorkoutsScreen(navController, workoutDatabase, context)
@@ -118,7 +143,7 @@ fun BottomNavGraph(
                     }
 
                     val viewModel = remember {
-                        SessionTrackingViewModel(getExerciseFromWorkoutUseCase, workoutId)
+                        SessionTrackingViewModel(getExerciseFromWorkoutUseCase, workoutId, context)
                     }
 
                     SessionTrackingScreen(navController, viewModel = viewModel) {
@@ -130,21 +155,10 @@ fun BottomNavGraph(
                 }
 
                 composable(route = Routes.newWorkout) {
-                    val viewModel = remember {
-                        NewWorkoutViewModel(
-                            CreateWorkoutUseCase(
-                                WorkoutRepositoryImp(context = context, database = workoutDatabase)
-                            )
-                        )
-                    }
-
+                    isEditing = false
                     NewWorkoutScreen(
                         navController = navController,
-                        viewModel = viewModel,
-                        workoutEditUIState = workoutEditUIState,
-                        onWorkoutEditStateChanged = { newState ->
-                            workoutEditUIState = newState
-                        }
+                        viewModel = newWorkoutViewModel
                     )
                 }
 
@@ -154,15 +168,36 @@ fun BottomNavGraph(
                 ) { backStackEntry ->
                     val exerciseIndex = backStackEntry.arguments?.getInt("exerciseIndex")
                     requireNotNull(exerciseIndex) { "Exercise index must be provided" }
-
+                    Log.d("BottomNavGraph", "CustomizeExercise: exerciseIndex=$exerciseIndex")
+                    //is editing
+                    Log.d("BottomNavGraph", "CustomizeExercise: isEditing=$isEditing")
                     CustomizeExercise(
                         navController = navController,
-                        workoutEditUIState = workoutEditUIState,
-                        exerciseIndex = exerciseIndex,
-                        onWorkoutEditUIStateChanged = { newState ->
-                            workoutEditUIState = newState
-                        }
+                        viewModel = if (isEditing) editWorkoutViewModel else newWorkoutViewModel,
+                        exerciseIndex = exerciseIndex
                     )
+                }
+
+                composable(route = "${Routes.EditWorkout}/{workoutId}") { backStackEntry ->
+                    val workoutId = backStackEntry.arguments?.getString("workoutId") ?: return@composable
+                    isEditing = true
+                    EditWorkoutScreen(
+                        navController = navController,
+                        viewModel = editWorkoutViewModel,
+                        workoutId = workoutId
+                    )
+                }
+
+                composable(
+                    route = Routes.editPlan
+                ) {
+                    EditPlan(navController, workoutDatabase, context                    )
+                }
+
+                composable(
+                    route = Routes.newExercise
+                ) {
+                    NewExercise(navController, workoutDatabase,newWorkoutViewModel, editWorkoutViewModel, context)
                 }
 
             }

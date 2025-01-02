@@ -1,42 +1,46 @@
 package com.example.jetpackcompose.presentation.ui.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.jetpackcompose.data.dataModel.Workout
 import com.example.jetpackcompose.data.dataModel.generateWorkoutID
 import com.example.jetpackcompose.data.dataModel.getAllExercises
 import com.example.jetpackcompose.data.dataModel.getExerciseIcon
 import com.example.jetpackcompose.domain.usecase.CreateWorkoutUseCase
+import com.example.jetpackcompose.domain.usecase.GetCustomExerciseUseCase
 import com.example.jetpackcompose.presentation.ui.uiState.WorkoutEditUIState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NewWorkoutViewModel @Inject constructor(
-    private val createWorkoutUseCase: CreateWorkoutUseCase
-) : ViewModel() {
-    private val _state = MutableStateFlow(WorkoutEditUIState())
-    val state = _state.asStateFlow()
+    private val createWorkoutUseCase: CreateWorkoutUseCase,
+    private val getCustomExerciseUseCase: GetCustomExerciseUseCase
+) : BaseWorkoutViewModel() {
 
     init {
         _state.value = WorkoutEditUIState()
-        loadData()
+        viewModelScope.launch {
+            refreshCustomExercises()
+        }
     }
 
-    private fun loadData() {
-        val exercises = getAllExercises()
+    suspend fun refreshCustomExercises() {
+        try {
+            val customExercises = getCustomExerciseUseCase()
+            val exercises = getAllExercises() + customExercises
+            val availableExercises = exercises.map { it to getExerciseIcon(it) }
 
-        val availableExercises = exercises.map { it to getExerciseIcon(it) }
-
-        _state.value = state.value.copy(
-            queueExercise = emptyList(),
-            availableExercises = availableExercises,
-            workoutName = ""
-        )
+            _state.value = _state.value.copy(
+                availableExercises = availableExercises
+            )
+        } catch (e: Exception) {
+            Log.e("NewWorkoutViewModel", "Error refreshing exercises", e)
+        }
     }
 
     suspend fun onSavePressed() {
         // generate workout
+
         val workout = Workout(
             id = generateWorkoutID(),
             creatorId = null,
@@ -55,23 +59,5 @@ class NewWorkoutViewModel @Inject constructor(
         } catch (e: Exception) {
             Log.e("NewWorkoutViewModel", "Error saving workout", e)
         }
-    }
-
-    fun onExerciseSelected(exercise: String) {
-        val newExercise = state.value.availableExercises.find { it.first.name.toString() == exercise } ?: return
-        val newQueue = state.value.queueExercise.toMutableList()
-        newQueue.add(newExercise)
-        _state.value = state.value.copy(queueExercise = newQueue)
-    }
-
-    fun onExerciseRemoved(index: Int) {
-        val newQueue = state.value.queueExercise.toMutableList()
-        newQueue.removeAt(index)
-        _state.value = state.value.copy(queueExercise = newQueue)
-    }
-
-    fun onWorkoutNameChanged(name: String) {
-        if (name.length > 20) return
-        _state.value = state.value.copy(workoutName = name)
     }
 }

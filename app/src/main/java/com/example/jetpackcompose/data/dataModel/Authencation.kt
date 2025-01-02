@@ -8,8 +8,11 @@ data class LoginRequest(
 data class RegistrationRequest(
     val email: String,
     val username: String,
-    val password: String,
-    val confirmPassword: String
+    val password: String
+)
+
+data class PasswordResetRequest(
+    val email: String
 )
 
 data class TokenResponse(

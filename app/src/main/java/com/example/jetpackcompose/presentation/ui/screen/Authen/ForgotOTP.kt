@@ -83,12 +83,10 @@ fun ForgotOTP(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .background(Color.Black),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-
             Spacer(modifier = Modifier.height(screenHeight / 8))
 
             Image(
@@ -130,6 +128,7 @@ fun ForgotOTP(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(54.dp)
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(

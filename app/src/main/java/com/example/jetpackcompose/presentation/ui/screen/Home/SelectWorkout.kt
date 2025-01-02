@@ -112,6 +112,9 @@ fun SelectWorkoutsScreen(
                         workoutName = workout.name,
                         onClick = {
                             navController.navigate("${Routes.sessionTracking}/${workout.id}")
+                        },
+                        onEditClick = {
+                            navController.navigate("${Routes.EditWorkout}/${workout.id}")
                         }
                     )
                 }
@@ -133,7 +136,7 @@ fun SelectWorkoutsScreen(
 }
 
 @Composable
-fun WorkoutItem(workoutName: String,onClick: () -> Unit ) { //set onClickListener to the item
+fun WorkoutItem(workoutName: String,onClick: () -> Unit,onEditClick: () -> Unit) { //set onClickListener to the item
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -146,7 +149,8 @@ fun WorkoutItem(workoutName: String,onClick: () -> Unit ) { //set onClickListene
     ) {
         Text(
             text = workoutName,
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White
         )
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -162,11 +166,7 @@ fun WorkoutItem(workoutName: String,onClick: () -> Unit ) { //set onClickListene
             Spacer(modifier = Modifier.width(8.dp)) // Space between line and icon
 
             IconButton(
-                onClick =
-                {
-                    /* Handle edit button click */
-
-                }
+                onClick ={onEditClick()}
             ) {
                 Icon(
                     imageVector = Icons.Default.Edit,

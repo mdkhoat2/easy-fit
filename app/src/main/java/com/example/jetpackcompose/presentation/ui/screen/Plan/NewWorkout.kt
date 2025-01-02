@@ -40,10 +40,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
+import com.example.jetpackcompose.data.dataModel.getExerciseString
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.screen.Component.LineDivider
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
-import com.example.jetpackcompose.presentation.ui.uiState.WorkoutEditUIState
 import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
 import kotlinx.coroutines.launch
 
@@ -56,17 +56,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun NewWorkoutScreen(
     navController: NavController,
-    viewModel: NewWorkoutViewModel,
-    workoutEditUIState: WorkoutEditUIState,
-    onWorkoutEditStateChanged: (WorkoutEditUIState) -> Unit
+    viewModel: NewWorkoutViewModel
 ) {
 
     val uiState by viewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope() // Coroutine scope for composable
 
-    LaunchedEffect(uiState) {
-        onWorkoutEditStateChanged(uiState)
-    }
 
     Column(
         modifier = Modifier
@@ -175,21 +170,23 @@ fun NewWorkoutScreen(
                     val exercise = uiState.queueExercise[index]
                     QueueItem(
                         number = index + 1,
-                        name = exercise.first.name.toString(),
+                        name = getExerciseString(exercise.first),
                         iconId = exercise.second,
                         onRemoveClick = {
                             viewModel.onExerciseRemoved(index)
                         },
                         onClick = {
-                            Log.d("NewWorkoutScreen", "Exercise clicked at index: $index")
-                            onWorkoutEditStateChanged(uiState)
                             navController.navigate("${Routes.CustomizeExercise}/$index")
                         }
                     )
                 }
                 item {
                     if (uiState.queueExercise.isEmpty())
-                        AddExerciseButton()
+                        Box(
+                            modifier = Modifier
+                                .height(100.dp)
+                                .background(Color.Transparent)
+                        )
                 }
             }
 
@@ -214,7 +211,7 @@ fun NewWorkoutScreen(
                 items(viewModel.state.value.availableExercises.size) { index ->
                     val exercise = viewModel.state.value.availableExercises[index]
                     ExerciseItem(
-                        name = exercise.first.name.toString(),
+                        name = getExerciseString(exercise.first),
                         iconId = exercise.second,
                         onClick = {
                             viewModel.onExerciseSelected(exercise.first.name.toString())
@@ -274,19 +271,6 @@ fun QueueItem(
     }
 }
 
-
-@Composable
-fun AddExerciseButton() {
-    Box(
-        modifier = Modifier
-            .size(64.dp)
-            .background(Color.DarkGray, CircleShape)
-        ,
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "@", color = Color.White, fontSize = 12.sp)
-    }
-}
 
 @Composable
 fun ExerciseItem(

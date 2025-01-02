@@ -1,8 +1,12 @@
 package com.example.jetpackcompose.presentation.ui.viewmodel
 
+import android.content.Context
+import android.media.MediaPlayer
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.jetpackcompose.R
 import com.example.jetpackcompose.domain.usecase.GetExerciseFromWorkoutUseCase
 import com.example.jetpackcompose.presentation.di.ExerciseItem
 import com.example.jetpackcompose.presentation.di.ExerciseUIType
@@ -20,13 +24,35 @@ import javax.inject.Inject
 @HiltViewModel
 class SessionTrackingViewModel @Inject constructor(
     private val getExerciseFromWorkoutUseCase: GetExerciseFromWorkoutUseCase,
-    private val workoutId: String
+    private val workoutId: String,
+    context: Context
 ): ViewModel(){
     private val _state = MutableStateFlow(SessionTrackingUIState())
     val state = _state.asStateFlow()
 
     private var timerJob: Job? = null
     private var lastTimestamp = 0L
+
+    // MediaPlayer instance
+    private val mediaPlayer: MediaPlayer by lazy {
+        MediaPlayer().apply {
+            // Initialize with an audio file (e.g., from raw folder or external source)
+            val descriptor = context.resources.openRawResourceFd(R.raw.complete)
+            setDataSource(descriptor.fileDescriptor, descriptor.startOffset, descriptor.length)
+            descriptor.close()
+            prepare()
+        }
+    }
+
+    private val completePlayer: MediaPlayer by lazy {
+        MediaPlayer().apply {
+            // Initialize with an audio file (e.g., from raw folder or external source)
+            val descriptor = context.resources.openRawResourceFd(R.raw.congrat)
+            setDataSource(descriptor.fileDescriptor, descriptor.startOffset, descriptor.length)
+            descriptor.close()
+            prepare()
+        }
+    }
 
     init {
         // Load data asynchronously
@@ -62,6 +88,22 @@ class SessionTrackingViewModel @Inject constructor(
         else{
             endTimer()
         }
+        playMedia(mediaPlayer)
+    }
+
+    fun playStartMedia(){
+        playMedia(mediaPlayer)
+    }
+
+    fun exitWorkout(isPaused: Boolean){
+        _state.value = _state.value.copy(isPaused = isPaused)
+        if (_state.value.isPaused){
+            lastTimestamp = 0
+        }
+    }
+
+    fun finishWorkout(){
+        playMedia(completePlayer)
     }
 
     fun isEnd(): Boolean{
@@ -99,6 +141,21 @@ class SessionTrackingViewModel @Inject constructor(
     fun setExerciseIndex(index: Int){
         _state.value = _state.value.copy(currentExerciseIndex = index)
     }
-    // clear the model
 
+    // Play media using MediaPlayer
+    private fun playMedia(mediaPlayer : MediaPlayer) {
+        if (mediaPlayer.isPlaying) {
+            mediaPlayer.seekTo(0) // Restart the audio if it's already playing
+        } else {
+            mediaPlayer.start()
+            Log.d("MediaPlayer", "MediaPlayer started")
+        }
+    }
+
+    // Release MediaPlayer when the ViewModel is cleared
+    override fun onCleared() {
+        super.onCleared()
+        mediaPlayer.release()
+        completePlayer.release()
+    }
 }

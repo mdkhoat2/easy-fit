@@ -20,10 +20,6 @@ class WorkoutRepositoryImp(
         return database.getExerciseFromWorkout(workoutId)
     }
 
-    override suspend fun getWorkoutStreak(): Int {return database.getWorkoutStreak()}
-    override suspend fun resetWorkoutStreak(){database.updateWorkoutStreak(context,0)}
-    override suspend fun addWorkoutStreak(){database.updateWorkoutStreak(context,database.getWorkoutStreak() + 1)}
-
     override suspend fun updateWorkout(
         workoutId: String,
         updatedWorkout: Workout,
@@ -152,9 +148,6 @@ class WorkoutRepositoryImp(
         database.updatePatchHistory(context, updatedHistory)
     }
 
-
-
-
     private fun checkIfWeekIsCurrentWeek(week: WeekSummary, theDate: LocalDate): Boolean {
         val startOfTheWeek = getStartOfWeek(theDate)
         return week.startDate == startOfTheWeek.toString()
@@ -166,5 +159,13 @@ class WorkoutRepositoryImp(
 
     override suspend fun updatePlan(plan: Plan): Boolean {
         return database.updatePlan(context,plan)
+    }
+
+    override suspend fun getCustomExercise(): List<Exercise> {
+        return database.getCustomExercise()
+    }
+
+    override suspend fun updateCustomExercise(exercise: List<Exercise>): Boolean {
+        return database.updateCustomExercise(context,exercise)
     }
 }

@@ -102,8 +102,11 @@ fun WellDoneScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Exercises", color = Color.White, style = AppTypo.titleLarge)
-                    Text("${state.exercises.size}", color = Color(0xFFB4FF00), style = AppTypo.titleLarge)
+                    Text("Exercises", color = Color.White, style = Typography.titleLarge)
+                    // filter out the rest exercise
+                    Text("${
+                        state.exercises.filter { it.name != "Rest" }.size
+                    }", color = Color(0xFFB4FF00), style = Typography.titleLarge)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
@@ -177,11 +180,11 @@ fun WellDoneScreen(
                     style = AppTypo.titleSmall,
                     color = Color(0xFF9AC0D6)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.save),
                     contentDescription = "Arrow",
-                    tint = Color(0xFF9AC0D6)
+                    tint = Color(0xFF9AC0D6),
+                    modifier = Modifier.size(24.dp)
                 )
             }
             OutlinedButton(
@@ -202,13 +205,10 @@ fun WellDoneScreen(
                     style = AppTypo.titleSmall,
                     color = Color(0xFF9AC0D6)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = "Arrow",
-                    tint = Color(0xFF9AC0D6),
-                    modifier = Modifier
-                        .size(24.dp)
+                    tint = Color(0xFF9AC0D6)
                 )
             }
         }
@@ -216,13 +216,12 @@ fun WellDoneScreen(
 }
 
 
-//@Preview(showBackground = true)
+//@Preview
 //@Composable
 //fun WellDoneScreenPreview() {
-//    val viewModel = SessionTrackingViewModel()
-//    val uiState by viewModel.state.collectAsState()
+//    val state = SessionTrackingUIState()
 //    WellDoneScreen(
 //        navController = NavController(LocalContext.current),
-//        uiState
+//        state = state
 //    )
 //}

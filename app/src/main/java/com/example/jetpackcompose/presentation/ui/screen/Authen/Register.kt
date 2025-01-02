@@ -95,11 +95,10 @@ fun Register(
                 )
             )
         }
-    ){paddingValues ->
+    ){_ ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .background(Color.Black),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -169,7 +168,7 @@ fun Register(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = 32.dp),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
@@ -184,6 +183,7 @@ fun Register(
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .height(54.dp)
                     .padding(horizontal = 16.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
@@ -201,7 +201,7 @@ fun Register(
             Spacer(modifier = Modifier.weight(1f))
         }
         if (showConfirmDialog) {
-            ConfirmDialog(){
+            ConfirmDialog{
                 navController.navigateUp()
             }
         }

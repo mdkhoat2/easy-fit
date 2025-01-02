@@ -5,6 +5,7 @@ import java.time.LocalDate
 data class Plan(
     val name: String="",
     val dateWorkout: List<DayOfWeek>,
+    val timeWorkout: List<String>,
     val maxMissDay: Int=0,
     val minSession: Int=0,
     val minHour: Float=0f,
