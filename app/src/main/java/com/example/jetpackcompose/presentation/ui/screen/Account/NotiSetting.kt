@@ -29,10 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
-import com.example.jetpackcompose.ui.theme.Black
-import com.example.jetpackcompose.ui.theme.Blue
-import com.example.jetpackcompose.ui.theme.Purple40
-import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.ui.theme.Colors
+import com.example.jetpackcompose.ui.theme.AppTypo
 import org.hamcrest.core.StringEndsWith
 
 /**
@@ -83,7 +81,7 @@ fun SwitchRow(label: String, isChecked: Boolean, onCheckedChange: (Boolean) -> U
         Text(
             text = label,
             color = Color.White,
-            style = Typography.bodyLarge
+            style = AppTypo.bodyLarge
         )
         Switch(
             checked = isChecked,
@@ -91,10 +89,10 @@ fun SwitchRow(label: String, isChecked: Boolean, onCheckedChange: (Boolean) -> U
                 onCheckedChange(it)
             },
             colors = SwitchDefaults.colors(
-                checkedThumbColor = Purple40,
-                checkedTrackColor = Blue,
-                uncheckedThumbColor = Blue,
-                uncheckedTrackColor = Purple40
+                checkedThumbColor = Color.White,
+                checkedTrackColor = Colors.Blue,
+                uncheckedThumbColor = Colors.Blue,
+                uncheckedTrackColor = Color.Transparent
             )
         )
     }

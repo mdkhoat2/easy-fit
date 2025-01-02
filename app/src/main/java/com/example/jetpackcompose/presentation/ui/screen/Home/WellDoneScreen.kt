@@ -78,7 +78,7 @@ fun WellDoneScreen(
         Spacer(modifier = Modifier.height(64.dp))
         Text(
             text = "Well done!",
-            style = MaterialTheme.typography.headlineLarge,
+            style = AppTypo.titleLarge,
             color = Color.White,
             modifier = Modifier.padding(top = 32.dp)
         )
@@ -102,11 +102,11 @@ fun WellDoneScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Exercises", color = Color.White, style = Typography.titleLarge)
+                    Text("Exercises", color = Color.White, style = AppTypo.titleLarge)
                     // filter out the rest exercise
                     Text("${
                         state.exercises.filter { it.name != "Rest" }.size
-                    }", color = Color(0xFFB4FF00), style = Typography.titleLarge)
+                    }", color = Color(0xFFB4FF00), style = AppTypo.titleLarge)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(

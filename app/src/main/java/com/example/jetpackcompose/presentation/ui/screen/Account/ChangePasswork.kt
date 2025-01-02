@@ -34,7 +34,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.ui.theme.AppTypo
 
 /**
  * Created by Duy on 29/11/2024
@@ -123,7 +123,7 @@ fun ChangePassword(
         ){
             Text(
                 text = "Save",
-                style = Typography.titleLarge,
+                style = AppTypo.titleLarge,
                 color = Color(0xFF9AC0D6)
             )
         }
@@ -142,7 +142,7 @@ fun TopBar(title: String, onBackClick: () -> Unit) {
         Text(
             text = title,
             color = Color.White,
-            style = Typography.bodyLarge,
+            style = AppTypo.bodyLarge,
             modifier = Modifier.align(Alignment.Center) // Center both horizontally and vertically
         )
 

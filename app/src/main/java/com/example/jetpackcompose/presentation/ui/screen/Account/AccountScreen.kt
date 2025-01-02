@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.presentation.di.Routes
-import com.example.jetpackcompose.ui.theme.Orange
-import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.ui.theme.Colors
+import com.example.jetpackcompose.ui.theme.AppTypo
 
 /**
  * Created by Duy on 29/11/2024
@@ -68,7 +68,7 @@ fun AccountScreen(
         ){
             Text(
                 text = "Change password",
-                style = Typography.titleLarge,
+                style = AppTypo.titleLarge,
                 color = Color(0xFF9AC0D6)
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -94,7 +94,7 @@ fun AccountScreen(
         ){
             Text(
                 text = "Notification setting",
-                style = Typography.titleLarge,
+                style = AppTypo.titleLarge,
                 color = Color(0xFF9AC0D6)
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -114,15 +114,15 @@ fun AccountScreen(
                 .padding(horizontal = 16.dp),
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = Orange, // Text and icon color
-                containerColor = Orange.copy(alpha = 0.2f), // Background color
+                contentColor = Colors.Orange, // Text and icon color
+                containerColor = Colors.Orange.copy(alpha = 0.2f), // Background color
             ),
-            border = BorderStroke(1.dp, Orange)
+            border = BorderStroke(1.dp, Colors.Orange)
         ){
             Text(
                 text = "Log out",
-                style = Typography.titleLarge,
-                color = Orange
+                style = AppTypo.titleLarge,
+                color = Colors.Orange
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(
