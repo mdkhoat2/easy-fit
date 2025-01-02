@@ -54,14 +54,14 @@ suspend fun initializeForFirstTimeUser(context: Context) {
     val isFirstTime = isFirstTimeUser(context)
     if (isFirstTime) {
         context.dataStore.edit { preferences ->
-            preferences[LAST_DATE_KEY] = LocalDate.now().toString()
+            preferences[LAST_DATE_KEY] = LocalDate.now().minusDays(1).toString()
         }
     }
 }
 
 suspend fun resetForFirstTimeUser(context: Context) {
     context.dataStore.edit { preferences ->
-        preferences[LAST_DATE_KEY] = LocalDate.now().minusDays(3).toString()
+        preferences[LAST_DATE_KEY] = LocalDate.now().minusDays(1).toString()
     }
 }
 

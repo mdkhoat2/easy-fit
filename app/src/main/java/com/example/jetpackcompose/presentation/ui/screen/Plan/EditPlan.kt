@@ -100,6 +100,7 @@ fun EditPlan(
             IconButton(onClick = {
                 coroutineScope.launch {
                     updatePlanUseCase(plan!!)
+
                     navController.popBackStack()
                 }
             }) {
