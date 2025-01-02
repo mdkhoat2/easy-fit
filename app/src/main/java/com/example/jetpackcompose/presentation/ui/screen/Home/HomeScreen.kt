@@ -59,7 +59,7 @@ import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.di.StatData
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
 import com.example.jetpackcompose.presentation.ui.viewmodel.HomeViewModel
-import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.ui.theme.AppTypo
 
 /**
  * Created by Duy on 29/11/2024
@@ -128,7 +128,7 @@ fun HistoryBar(){
         Text(
             text = "History",
             color = Color.White,
-            style = Typography.titleLarge
+            style = AppTypo.titleLarge
         )
         Spacer(modifier = Modifier.width(5.dp))
         Icon(
@@ -147,7 +147,7 @@ fun WeeklyStat(listData: List<StatData>){
             .padding(16.dp),
         text = "This week",
         color = Color.White,
-        style = Typography.titleLarge
+        style = AppTypo.titleLarge
     )
     // Scrollable Stats Row
     LazyRow(
@@ -184,7 +184,7 @@ fun StartSessionButton(navController: NavController){
         {
             Text(
                 text = "Start session",
-                style = Typography.titleSmall,
+                style = AppTypo.titleSmall,
                 color = Color(0xFF9AC0D6)
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -232,7 +232,7 @@ fun StatCard(title: String, value: String)
         Text(
             text = value,
             color = colorFromResource(R.color.primary_green),
-            style = Typography.titleLarge,
+            style = AppTypo.titleLarge,
             modifier = Modifier.align(Alignment.Center)
         )
     }

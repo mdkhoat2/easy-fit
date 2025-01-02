@@ -16,8 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.CheckCircle
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -55,9 +53,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
-import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
-import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.ui.theme.AppTypo
 
 /**
  * Created by Duy on 29/11/2024
@@ -196,7 +193,7 @@ fun Register(
             ){
                 Text(
                     text = "REGISTER",
-                    style = Typography.titleLarge,
+                    style = AppTypo.titleLarge,
                     color = Color(0xFF9AC0D6)
                 )
             }
@@ -276,7 +273,7 @@ fun ConfirmDialog(
                         Text(
                             text = "Return",
                             color = colorResource(R.color.dialog_background),
-                            style = Typography.titleMedium
+                            style = AppTypo.titleMedium
                         )
                     }
                 }

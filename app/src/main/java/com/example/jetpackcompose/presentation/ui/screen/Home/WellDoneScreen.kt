@@ -44,7 +44,7 @@ import com.example.jetpackcompose.domain.usecase.AddDayToHistoryUseCase
 import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.ExerciseUIType
 import com.example.jetpackcompose.presentation.ui.uiState.SessionTrackingUIState
-import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.ui.theme.AppTypo
 import com.example.jetpackcompose.util.saveLastDate
 import java.time.LocalDate
 
@@ -102,16 +102,16 @@ fun WellDoneScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Exercises", color = Color.White, style = Typography.titleLarge)
-                    Text("${state.exercises.size}", color = Color(0xFFB4FF00), style = Typography.titleLarge)
+                    Text("Exercises", color = Color.White, style = AppTypo.titleLarge)
+                    Text("${state.exercises.size}", color = Color(0xFFB4FF00), style = AppTypo.titleLarge)
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Duration", color = Color.White, style = Typography.titleLarge)
-                    Text(formatTime(state.elapsedTime), color = Color(0xFFB4FF00), style = Typography.titleLarge)
+                    Text("Duration", color = Color.White, style = AppTypo.titleLarge)
+                    Text(formatTime(state.elapsedTime), color = Color(0xFFB4FF00), style = AppTypo.titleLarge)
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 HorizontalDivider(thickness = 1.dp, color = Color.Gray)
@@ -129,8 +129,8 @@ fun WellDoneScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text(exercise.name, color = Color.White, style = Typography.titleMedium)
-                                    Text("${exercise.type.totalReps}x", color = Color.White, style = Typography.titleMedium)
+                                    Text(exercise.name, color = Color.White, style = AppTypo.titleMedium)
+                                    Text("${exercise.type.totalReps}x", color = Color.White, style = AppTypo.titleMedium)
                                 }
                             }
                             is ExerciseUIType.TimeBased -> {
@@ -139,8 +139,8 @@ fun WellDoneScreen(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text(exercise.name, color = Color.White, style = Typography.titleMedium)
-                                    Text("${exercise.type.totalSeconds} sec", color = Color.White, style = Typography.titleMedium)
+                                    Text(exercise.name, color = Color.White, style = AppTypo.titleMedium)
+                                    Text("${exercise.type.totalSeconds} sec", color = Color.White, style = AppTypo.titleMedium)
                                 }
                             }
                         }
@@ -174,7 +174,7 @@ fun WellDoneScreen(
             ){
                 Text(
                     text = "Save Receipt",
-                    style = Typography.titleSmall,
+                    style = AppTypo.titleSmall,
                     color = Color(0xFF9AC0D6)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
@@ -199,7 +199,7 @@ fun WellDoneScreen(
             ){
                 Text(
                     text = "Return Home",
-                    style = Typography.titleSmall,
+                    style = AppTypo.titleSmall,
                     color = Color(0xFF9AC0D6)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
