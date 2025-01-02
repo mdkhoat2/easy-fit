@@ -80,7 +80,6 @@ class PlanViewModel @Inject constructor(
                 daysList.forEachIndexed { index, date ->
                     if (daysList[index].monthValue == currentMonth) {
                         if (dayType[index] == 0) { // Only set if not already missed
-                            Log.d("date", date.toString())
                             dayType[index] = when {
                                 date.isAfter(today) ->
                                     if (plan.dateWorkout.contains(dateToDayOfWeek(date))) 4 else 1

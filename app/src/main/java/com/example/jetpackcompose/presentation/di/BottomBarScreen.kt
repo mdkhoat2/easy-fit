@@ -47,4 +47,5 @@ object Routes {
     var forumNotifications = "ForumNotifications"
     var forumReply = "ForumReplyScreen"
     var forumReportDetail = "ForumReportDetail?postContent={postContent}&timestamp={timestamp}"
+    var guidance = "Guidance"
 }

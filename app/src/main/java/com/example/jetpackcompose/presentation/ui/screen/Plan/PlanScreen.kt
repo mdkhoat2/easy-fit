@@ -246,7 +246,7 @@ fun LibrarySection( navController: NavController
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             LibraryButton("Guides & Notes", Modifier.weight(1f),
-                onClick = { Log.d("PlanScreen", "Guides & Notes clicked") })
+                onClick = { navController.navigate(Routes.guidance)})
             LibraryButton("Workout library", Modifier.weight(1f),
                 onClick = { /* Handle click here */ })
         }

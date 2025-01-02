@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.presentation.di
 
+import GuidanceScreen
 import ReportDetailScreen
 import android.content.Context
 import android.util.Log
@@ -224,6 +225,11 @@ fun BottomNavGraph(
                     ForumNotifications(navController) {
                         navController.navigateUp()
                     }
+                }
+
+                composable(route = Routes.guidance)
+                {
+                    GuidanceScreen(onBackClick = { navController.navigateUp() })
                 }
 
             }
