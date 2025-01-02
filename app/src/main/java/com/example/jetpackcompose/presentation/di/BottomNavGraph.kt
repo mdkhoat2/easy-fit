@@ -101,7 +101,7 @@ fun BottomNavGraph(
                 startDestination = Routes.login
             ) {
                 composable(route = Routes.login){
-                    LoginScreen(navController, accountViewModel)
+                    LoginScreen(navController, accountViewModel, context)
                 }
                 composable(route = Routes.forgotEmail){
                     ForgotMail(navController)
