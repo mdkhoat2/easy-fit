@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val FixedDarkColorScheme = darkColorScheme(
-    primary = Colors.Green,            // For primary buttons or active elements
-    secondary = Colors.Blue,           // For secondary buttons or highlights
+    primary = Colors.Blue,            // For primary buttons or active elements
+    secondary = Colors.Green,           // For secondary buttons or highlights
     onPrimary = Colors.Black,          // Text/icons on primary color
     background = Colors.Black,         // App background
     surface = Colors.DarkGrey,         // Cards or other surfaces

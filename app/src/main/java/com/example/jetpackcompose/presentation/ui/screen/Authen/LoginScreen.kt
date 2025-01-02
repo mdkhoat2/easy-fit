@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,6 +48,7 @@ import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.ui.theme.AppTypo
 import com.example.jetpackcompose.presentation.ui.viewmodel.AccountViewModel
+import com.example.jetpackcompose.ui.theme.Colors
 import kotlinx.coroutines.launch
 
 /**
@@ -101,6 +103,16 @@ fun LoginScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
+            ),
+            colors = OutlinedTextFieldDefaults.colors(
+                //setting the text field background when it is focused
+                focusedTextColor = Colors.Blue,
+                unfocusedTextColor = Colors.LightGrey,
+                focusedBorderColor = Colors.Blue,
+                unfocusedBorderColor = Colors.LightGrey,
+                cursorColor = Colors.Blue,
+                focusedLabelColor = Colors.Blue,
+                unfocusedLabelColor = Colors.LightGrey
             )
         )
 
@@ -126,7 +138,17 @@ fun LoginScreen(
                         contentDescription = if (passwordVisible) "Show password" else "Hide Password"
                     )
                 }
-            }
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                //setting the text field background when it is focused
+                focusedTextColor = Colors.Blue,
+                unfocusedTextColor = Colors.LightGrey,
+                focusedBorderColor = Colors.Blue,
+                unfocusedBorderColor = Colors.LightGrey,
+                cursorColor = Colors.Blue,
+                focusedLabelColor = Colors.Blue,
+                unfocusedLabelColor = Colors.LightGrey
+            )
         )
 
         TextButton(
@@ -139,7 +161,7 @@ fun LoginScreen(
             Text(
                 text = "Forgot Password?",
                 color = colorResource(R.color.btn_back_color),
-                style = AppTypo.titleMedium
+                style = AppTypo.titleSmall
             )
         }
 
@@ -179,7 +201,7 @@ fun LoginScreen(
             Text(
                 text = "Don't have an account? ",
                 color = Color.White,
-                style = Typography.titleMedium
+                style = AppTypo.bodyMedium
             )
             TextButton(onClick = {
                 navController.navigate(Routes.register)

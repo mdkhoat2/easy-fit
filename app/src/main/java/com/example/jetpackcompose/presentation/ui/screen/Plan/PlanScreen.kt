@@ -164,11 +164,11 @@ fun CircularIndicator(label: String, value: Float, maxValue: Float=1f) {
 
 fun getColorFromProgress(progress: Float): Color {
     return when (progress) {
-        in 0.0..0.25 -> Color(0xFF9AC0D6)
-        in 0.25..0.5 -> Color(0xFFD5FFAF)
+        in 0.0..0.25 -> Color(0xFFD5FF5F)
+        in 0.25..0.5 -> Color(0xFFD5FF5F)
         in 0.5..0.99 -> Color(0xFFD5FF5F) // light green
-        in 0.99..1.0 -> Color(0xFF4FAF4F) // green
-        else -> Color(0xFF4FAF4F)
+        in 0.99..1.0 -> Color(0xFFD5FF5F) // green
+        else -> Color(0xFFD5FF5F)
     }
 }
 

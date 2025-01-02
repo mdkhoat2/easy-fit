@@ -24,6 +24,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.BottomNavGraph
+import com.example.jetpackcompose.ui.theme.AppTypo
+import com.example.jetpackcompose.ui.theme.Colors
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -83,7 +85,7 @@ fun RowScope.AddItem(
 ){
     NavigationBarItem(
         label = {
-            Text(text = screen.title)
+            Text(text = screen.title,style=AppTypo.titleSmall)
         },
         icon = {
             Icon(
@@ -104,8 +106,8 @@ fun RowScope.AddItem(
             }
         },
         colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = Color.Green,
-            selectedTextColor = Color.Green,
+            selectedIconColor = Colors.Green,
+            selectedTextColor = Colors.Green,
             unselectedIconColor = Color.White,
             unselectedTextColor = Color.White,
             indicatorColor = colorFromResource(R.color.bottom_bar_background)
