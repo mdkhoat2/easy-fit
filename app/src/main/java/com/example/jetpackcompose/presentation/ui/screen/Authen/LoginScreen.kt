@@ -45,8 +45,8 @@ import androidx.navigation.NavController
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.Routes
+import com.example.jetpackcompose.ui.theme.AppTypo
 import com.example.jetpackcompose.presentation.ui.viewmodel.AccountViewModel
-import com.example.jetpackcompose.ui.theme.Typography
 import kotlinx.coroutines.launch
 
 /**
@@ -139,7 +139,7 @@ fun LoginScreen(
             Text(
                 text = "Forgot Password?",
                 color = colorResource(R.color.btn_back_color),
-                style = Typography.titleMedium
+                style = AppTypo.titleMedium
             )
         }
 
@@ -164,7 +164,7 @@ fun LoginScreen(
         ){
             Text(
                 text = "LOG IN",
-                style = Typography.titleLarge,
+                style = AppTypo.titleLarge,
                 color = Color(0xFF9AC0D6)
             )
         }
@@ -187,7 +187,8 @@ fun LoginScreen(
                 Text(
                     "Register now",
                     color = colorResource(R.color.btn_back_color),
-                    style = Typography.titleMedium
+                    style = AppTypo.titleSmall
+
                 )
             }
         }

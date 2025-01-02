@@ -52,7 +52,7 @@ import com.example.jetpackcompose.presentation.ui.screen.Component.BigButtonWith
 import com.example.jetpackcompose.presentation.ui.screen.Component.ButtonAlign
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
 import com.example.jetpackcompose.presentation.ui.viewmodel.SelectWorkoutViewModel
-import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.ui.theme.AppTypo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -214,7 +214,7 @@ fun SearchButton(navController: NavController){
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Search",
-                    style = Typography.bodyLarge,
+                    style = AppTypo.bodyLarge,
                     color = colorFromResource(R.color.primary_teal)
                 )
             }

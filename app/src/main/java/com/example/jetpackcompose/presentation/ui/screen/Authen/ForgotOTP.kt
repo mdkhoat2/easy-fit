@@ -41,9 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.jetpackcompose.R
-import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
-import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.ui.theme.AppTypo
 
 /**
  * Created by Duy on 29/11/2024
@@ -117,7 +116,7 @@ fun ForgotOTP(
             Text(
                 text = "Enter the OTP and log in. You can also see your current password we sent to your mail.",
                 color = Color.White,
-                style = Typography.labelSmall,
+                style = AppTypo.labelSmall,
                 modifier = Modifier
                     .padding(bottom = 64.dp)
                     .padding(horizontal = 24.dp)
@@ -139,7 +138,7 @@ fun ForgotOTP(
             ) {
                 Text(
                     text = "LOG IN",
-                    style = Typography.titleLarge,
+                    style = AppTypo.titleLarge,
                     color = Color(0xFF9AC0D6)
                 )
             }

@@ -56,8 +56,8 @@ import com.example.jetpackcompose.presentation.di.ExerciseItem
 import com.example.jetpackcompose.presentation.di.ExerciseUIType
 import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.presentation.ui.viewmodel.SessionTrackingViewModel
+import com.example.jetpackcompose.ui.theme.AppTypo
 import com.example.jetpackcompose.ui.theme.JakartaSans
-import com.example.jetpackcompose.ui.theme.Typography
 import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
@@ -185,7 +185,7 @@ fun WorkoutTopBar(
         Text(
             text = formatTime(time),
             color = Color.White,
-            style = Typography.bodyLarge
+            style = AppTypo.bodyLarge
         )
 
         IconButton(onClick = onPauseClick) {
@@ -216,7 +216,7 @@ private fun ExitWorkoutDialog(
                 Text(
                     text = "Exit",
                     color = Color(0xFF9AC0D6), 
-                    style = Typography.titleLarge
+                    style = AppTypo.titleLarge
                 )
             }
         },
@@ -225,7 +225,7 @@ private fun ExitWorkoutDialog(
                 Text(
                     text = "Continue",
                     color = Color(0xFF9AC0D6),
-                    style = Typography.titleLarge
+                    style = AppTypo.titleLarge
                 )
             }
         }
@@ -257,7 +257,7 @@ fun CurrentExercise(
                 Text(
                     text = "${exerciseItem.type.totalReps}x reps",
                     color = Color.White,
-                    style = Typography.headlineLarge
+                    style = AppTypo.headlineLarge
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -272,7 +272,7 @@ fun CurrentExercise(
                 Text(
                     text = exerciseItem.name,
                     color = Color.White,
-                    style = Typography.labelLarge
+                    style = AppTypo.labelLarge
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -280,7 +280,7 @@ fun CurrentExercise(
                 Text(
                     text = "Tap the circle once you have completed this exercise.",
                     color = Color.White.copy(alpha = 0.4f),
-                    style = Typography.bodyLarge,
+                    style = AppTypo.bodyLarge,
                     textAlign = TextAlign.Center,  // Add this for center alignment
                     modifier = Modifier
                         .fillMaxWidth()  // Add this to make text take full width
@@ -293,7 +293,7 @@ fun CurrentExercise(
                 Text(
                     text = formatTime(remainingSeconds),
                     color = Color.White,
-                    style = Typography.bodyLarge
+                    style = AppTypo.bodyLarge
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -311,7 +311,7 @@ fun CurrentExercise(
                 Text(
                     text = exerciseItem.name,
                     color = Color.White,
-                    style = Typography.labelLarge
+                    style = AppTypo.labelLarge
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -319,7 +319,7 @@ fun CurrentExercise(
                 Text(
                     text = "Keep doing this exercise until it's completed.",
                     color = Color.White.copy(alpha = 0.4f),
-                    style = Typography.bodyLarge,
+                    style = AppTypo.bodyLarge,
                     textAlign = TextAlign.Center,  // Add this for center alignment
                     modifier = Modifier
                         .fillMaxWidth()  // Add this to make text take full width
