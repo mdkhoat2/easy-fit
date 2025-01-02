@@ -44,4 +44,7 @@ object Routes {
     var newExercise = "NewExercise"
     var changePassword = "ChangePassword"
     var notificationSetting = "NotificationSetting"
+    var forumNotifications = "ForumNotifications"
+    var forumReply = "ForumReplyScreen"
+    var forumReportDetail = "ForumReportDetail?postContent={postContent}&timestamp={timestamp}"
 }

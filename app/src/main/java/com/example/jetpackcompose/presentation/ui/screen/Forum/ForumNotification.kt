@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.presentation.ui.screen.Forum
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -33,12 +34,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.jetpackcompose.ui.theme.AppTypo
 import com.example.jetpackcompose.ui.theme.Colors
 import com.example.jetpackcompose.data.dataModel.ForumNotification
+import com.example.jetpackcompose.presentation.di.Routes
 
 @Composable
-fun ForumNotifications(onBackClick: () -> Unit) {
+fun ForumNotifications(
+    navController: NavController,
+    onBackClick: () -> Unit) {
     val notifications = listOf(
         Notification(
             type = 1, // Reply to post
@@ -102,14 +107,14 @@ fun ForumNotifications(onBackClick: () -> Unit) {
                 .fillMaxSize()
         ) {
             items(notifications) { notification ->
-                NotificationItem(notification)
+                NotificationItem(notification, navController)
             }
         }
     }
 }
 
 @Composable
-fun NotificationItem(notification: Notification) {
+fun NotificationItem(notification: Notification, navController: NavController) {
     HorizontalDivider(thickness = 1.dp, color = Colors.LightGrey)
     Spacer(modifier = Modifier.height(4.dp))
 
@@ -146,7 +151,18 @@ fun NotificationItem(notification: Notification) {
         Row(
             modifier = Modifier
                 //.fillMaxHeight() // Ensures the Row fills the height of its parent
-                .clickable { }
+                .clickable {
+                    // depending on the notification type, navigate to the appropriate screen
+                    // 1 -> forumReply , 2 -> postReportDetail
+                    if (notification.type == 1) {
+                        navController.navigate(Routes.forumReply)
+                    } else {
+                        val encodedPostContent =
+                            Uri.encode("You're all so dumb for thinking this app works! Only idiots would use something so broken. Go use a real app, losers! \uD83D\uDE02")
+                        val encodedTimestamp = Uri.encode(notification.time)
+                        navController.navigate("ForumReportDetail?postContent=$encodedPostContent&timestamp=$encodedTimestamp")
+                    }
+                }
                 .border(
                     width = 0.5.dp,
                     color = Colors.LightGrey,
@@ -161,6 +177,7 @@ fun NotificationItem(notification: Notification) {
                 modifier = Modifier
                     .padding(start = 6.dp, top = 2.dp, end = 2.dp, bottom = 2.dp)
                     .wrapContentHeight(Alignment.CenterVertically) // Ensures the text is centered vertically within itself
+
             )
         }
 
@@ -176,8 +193,8 @@ data class Notification(
     val time: String
 )
 
-@Composable
-@Preview
-fun ForumNotificationsPreview() {
-    ForumNotifications({/*finish activity*/})
-}
+//@Composable
+//@Preview
+//fun ForumNotificationsPreview() {
+//    ForumNotifications({/*finish activity*/})
+//}

@@ -52,7 +52,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.jetpackcompose.R
+import com.example.jetpackcompose.presentation.di.Routes
 import com.example.jetpackcompose.ui.theme.AppTypo
 import com.example.jetpackcompose.ui.theme.Colors
 
@@ -63,7 +65,9 @@ import com.example.jetpackcompose.ui.theme.Colors
  */
 
 @Composable
-fun ForumScreen() {
+fun ForumScreen(
+    navController: NavController
+) {
     // State for managing selected tab
     val tabs = listOf("All", "PushUp", "WeightLift", "Crunges", "RopeJump", "HandGrip", "Hoop")
     var selectedTab by remember { mutableStateOf("All") }
@@ -88,7 +92,9 @@ fun ForumScreen() {
                 tint = Colors.Blue,
                 modifier = Modifier
                     .size(24.dp)
-                    .clickable { showDialog = true }
+                    .clickable {
+                        navController.navigate("forumNotifications")
+                    }
             )
             Spacer(modifier = Modifier.width(16.dp))
             Icon(
@@ -129,9 +135,11 @@ fun ForumScreen() {
                     content = post.content,
                     tag = post.tag,
                     initialUpvotes = post.upvotes,
+                    onViewCommentClick = {
+                        navController.navigate(Routes.forumReply)
+                    },
                     comments = post.comments
                 )
-
             }
         }
     }
@@ -246,6 +254,7 @@ fun ForumPostCard(
     content: String,
     tag: String,
     initialUpvotes: Int,
+    onViewCommentClick : () -> Unit = {},
     comments: Int
 ) {
     // Local state to manage upvotes and user choice
@@ -378,7 +387,9 @@ fun ForumPostCard(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .clickable { /* Handle comments click */ }
+                        .clickable {
+                            onViewCommentClick()
+                        }
                         .border(
                             width = 0.5.dp,
                             color = Colors.LightGrey,
@@ -408,8 +419,10 @@ fun ForumPostCard(
 
 
 
-@Composable
-@Preview
-fun ForumScreenPreview(){
-    ForumScreen()
-}
+//@Composable
+//@Preview
+//fun ForumScreenPreview(){
+//    ForumScreen(
+//        navController = NavController()
+//    )
+//}
