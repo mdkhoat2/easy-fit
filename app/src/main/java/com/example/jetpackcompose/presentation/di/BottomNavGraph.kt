@@ -1,5 +1,7 @@
 package com.example.jetpackcompose.presentation.di
 
+import GuidanceScreen
+import ReportDetailScreen
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,6 +37,8 @@ import com.example.jetpackcompose.presentation.ui.screen.Authen.ForgotMail
 import com.example.jetpackcompose.presentation.ui.screen.Authen.ForgotOTP
 import com.example.jetpackcompose.presentation.ui.screen.Authen.LoginScreen
 import com.example.jetpackcompose.presentation.ui.screen.Authen.Register
+import com.example.jetpackcompose.presentation.ui.screen.Forum.ForumNotifications
+import com.example.jetpackcompose.presentation.ui.screen.Forum.ForumReplyScreen
 import com.example.jetpackcompose.presentation.ui.screen.Forum.ForumScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.HomeScreen
 import com.example.jetpackcompose.presentation.ui.screen.Home.SelectWorkoutsScreen
@@ -97,7 +101,7 @@ fun BottomNavGraph(
                 startDestination = Routes.login
             ) {
                 composable(route = Routes.login){
-                    LoginScreen(navController, accountViewModel)
+                    LoginScreen(navController, accountViewModel, context)
                 }
                 composable(route = Routes.forgotEmail){
                     ForgotMail(navController)
@@ -115,7 +119,7 @@ fun BottomNavGraph(
                     PlanScreen(navController, context, workoutDatabase)
                 }
                 composable(route = BottomBarScreen.Forum.route) {
-                    ForumScreen()
+                    ForumScreen(navController = navController)
                 }
                 composable(route = BottomBarScreen.Account.route) {
                     AccountScreen(navController)
@@ -168,9 +172,6 @@ fun BottomNavGraph(
                 ) { backStackEntry ->
                     val exerciseIndex = backStackEntry.arguments?.getInt("exerciseIndex")
                     requireNotNull(exerciseIndex) { "Exercise index must be provided" }
-                    Log.d("BottomNavGraph", "CustomizeExercise: exerciseIndex=$exerciseIndex")
-                    //is editing
-                    Log.d("BottomNavGraph", "CustomizeExercise: isEditing=$isEditing")
                     CustomizeExercise(
                         navController = navController,
                         viewModel = if (isEditing) editWorkoutViewModel else newWorkoutViewModel,
@@ -198,6 +199,37 @@ fun BottomNavGraph(
                     route = Routes.newExercise
                 ) {
                     NewExercise(navController, workoutDatabase,newWorkoutViewModel, editWorkoutViewModel, context)
+                }
+
+                composable(route = Routes.forumReply) {
+                    ForumReplyScreen {
+                        navController.navigateUp()
+                    }
+                }
+
+                composable(
+                    route = Routes.forumReportDetail,
+                    arguments = listOf(
+                        navArgument("postContent") { type = NavType.StringType },
+                        navArgument("timestamp") { type = NavType.StringType }
+                    )
+                ) { backStackEntry ->
+                    val postContent = backStackEntry.arguments?.getString("postContent") ?: return@composable
+                    val timestamp = backStackEntry.arguments?.getString("timestamp") ?: return@composable
+                    ReportDetailScreen(postContent, timestamp, onReassessRequest = {   } ) {
+                        navController.navigateUp()
+                    }
+                }
+
+                composable(route = Routes.forumNotifications) {
+                    ForumNotifications(navController) {
+                        navController.navigateUp()
+                    }
+                }
+
+                composable(route = Routes.guidance)
+                {
+                    GuidanceScreen(onBackClick = { navController.navigateUp() })
                 }
 
             }

@@ -340,6 +340,15 @@ class WorkoutDatabase private constructor() {
                     sessionCount = 6,
                     missedDays = emptyList(),
                 ),
+                // Add more weeks here of this week
+                WeekSummary(
+                    startDate = "2024-12-30",
+                    missedSessions = 0,
+                    totalTime = 157f,
+                    sessionCount = 6,
+                    missedDays = listOf(DayOfWeek.MONDAY,DayOfWeek.WEDNESDAY),
+                ),
+
             ),
         )
 

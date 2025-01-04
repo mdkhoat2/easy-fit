@@ -164,11 +164,11 @@ fun CircularIndicator(label: String, value: Float, maxValue: Float=1f) {
 
 fun getColorFromProgress(progress: Float): Color {
     return when (progress) {
-        in 0.0..0.25 -> Color(0xFF9AC0D6)
-        in 0.25..0.5 -> Color(0xFFD5FFAF)
+        in 0.0..0.25 -> Color(0xFFD5FF5F)
+        in 0.25..0.5 -> Color(0xFFD5FF5F)
         in 0.5..0.99 -> Color(0xFFD5FF5F) // light green
-        in 0.99..1.0 -> Color(0xFF4FAF4F) // green
-        else -> Color(0xFF4FAF4F)
+        in 0.99..1.0 -> Color(0xFFD5FF5F) // green
+        else -> Color(0xFFD5FF5F)
     }
 }
 
@@ -246,7 +246,7 @@ fun LibrarySection( navController: NavController
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             LibraryButton("Guides & Notes", Modifier.weight(1f),
-                onClick = { Log.d("PlanScreen", "Guides & Notes clicked") })
+                onClick = { navController.navigate(Routes.guidance)})
             LibraryButton("Workout library", Modifier.weight(1f),
                 onClick = { /* Handle click here */ })
         }
@@ -311,21 +311,22 @@ fun CustomCalendar(
     dayType: List<Int> = List(42) { 0 }
 ) {
     val today = LocalDate.now()
-    val currentMonth = today.plusMonths(0)
-    val firstDayOfMonth = currentMonth.withDayOfMonth(1)
-    val daysInMonth = YearMonth.from(firstDayOfMonth).lengthOfMonth()
-    val dayOfWeekOffset = firstDayOfMonth.dayOfWeek.value - 1 // 1 = Monday, 7 = Sunday
+    val currentMonth = today.withDayOfMonth(1)
+    val daysInMonth = YearMonth.from(currentMonth).lengthOfMonth()
 
-    // Generate a list of days (including blanks for leading days)
+    // Adjust for Sunday as the first day of the week
+    val firstDayOffset = (currentMonth.dayOfWeek.value % 7)
+
+    // Generate a list of days (including blanks for leading and trailing days)
     val daysList = buildList {
-        repeat(dayOfWeekOffset) { add("") } // Blank days
-        for (day in 1..daysInMonth) { add(day.toString()) } // Actual days
-        val remainingBlanks = 7 - (size % 7) // Trailing blank spaces to fill the row
-        if (remainingBlanks < 7) repeat(remainingBlanks) { add("") }
+        repeat(firstDayOffset) { add("") } // Add leading blanks
+        for (day in 1..daysInMonth) add(day.toString()) // Add days of the month
+        while (size < 42) add("") // Add trailing blanks
     }
+
     Box(
         modifier = Modifier.width(200.dp),
-        contentAlignment = Alignment.Center // Centers the calendar horizontally
+        contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -333,13 +334,15 @@ fun CustomCalendar(
             // Month and Year Title
             Text(
                 text = "${today.month.getDisplayName(TextStyle.FULL, Locale.getDefault())} ${today.year}",
-                fontSize = 12.sp,fontWeight = FontWeight.Bold,color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
                 modifier = Modifier.align(Alignment.End)
             )
 
             // Weekday Headers
-            Row(modifier = Modifier) {
-                listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun").forEach { day ->
+            Row(modifier = Modifier.fillMaxWidth()) {
+                listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat").forEach { day ->
                     Text(
                         text = day,
                         modifier = Modifier.weight(1f),
@@ -353,36 +356,47 @@ fun CustomCalendar(
 
             // Calendar Grid
             val rows = daysList.chunked(7)
-            rows.forEach { week ->
+            rows.forEachIndexed { rowIndex, week ->
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    week.forEach { day ->
+                    week.forEachIndexed { columnIndex, day ->
+                        val absoluteIndex = rowIndex * 7 + columnIndex
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .aspectRatio(1.5f), // Reduced padding
+                                .aspectRatio(1.5f),
                             contentAlignment = Alignment.Center
                         ) {
                             if (day.isNotBlank()) {
-                                if (dayType[day.toInt() - 1] > 4) {
-                                    Box(modifier = Modifier.size(17.dp).background(Color(0xEEFFFFFF),
-                                        shape = CircleShape),
-                                        contentAlignment = Alignment.Center){
-                                        Box(modifier = Modifier
-                                            .size(15.dp).background(
-                                                colorFromResource(R.color.bottom_bar_background)
-                                                ,shape = CircleShape)
+                                val type = dayType.getOrElse(absoluteIndex) { 0 }
+                                if (type > 4) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(17.dp)
+                                            .background(
+                                                Color(0xEEFFFFFF),
+                                                shape = CircleShape
+                                            ),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(15.dp)
+                                                .background(
+                                                    colorFromResource(R.color.bottom_bar_background),
+                                                    shape = CircleShape
+                                                )
                                         )
                                     }
                                 }
                                 Box(
                                     modifier = Modifier
-                                        .size(14.dp) // Consistent circle size
+                                        .size(14.dp)
                                         .background(
-                                            when (dayType[day.toInt() - 1]) {
-                                                1,6 -> colorFromResource(R.color.grid_color)
+                                            when (type) {
+                                                1, 6 -> colorFromResource(R.color.grid_color)
                                                 2 -> colorFromResource(R.color.primary_green)
                                                 3 -> colorFromResource(R.color.primary_orange)
-                                                4,7 -> colorFromResource(R.color.primary_teal)
+                                                4, 7 -> colorFromResource(R.color.primary_teal)
                                                 5 -> colorFromResource(R.color.success_green)
                                                 else -> Color.Transparent
                                             },
@@ -394,7 +408,6 @@ fun CustomCalendar(
                     }
                 }
             }
-    }
+        }
     }
 }
-

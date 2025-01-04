@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.presentation.ui.screen.colorFromResource
-import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.ui.theme.AppTypo
 
 @Composable
 fun BigButtonWithIcon(
@@ -63,7 +63,7 @@ fun BigButtonWithIcon(
 
             Text(
                 text = text,
-                style = Typography.bodyLarge,
+                style = AppTypo.bodyLarge,
                 color = colorFromResource(R.color.primary_teal)
             )
 

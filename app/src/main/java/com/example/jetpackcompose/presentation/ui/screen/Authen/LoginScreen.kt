@@ -1,5 +1,6 @@
 package com.example.jetpackcompose.presentation.ui.screen.Authen
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,9 +19,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,8 +48,10 @@ import androidx.navigation.NavController
 import com.example.jetpackcompose.R
 import com.example.jetpackcompose.presentation.di.BottomBarScreen
 import com.example.jetpackcompose.presentation.di.Routes
+import com.example.jetpackcompose.ui.theme.AppTypo
 import com.example.jetpackcompose.presentation.ui.viewmodel.AccountViewModel
-import com.example.jetpackcompose.ui.theme.Typography
+import com.example.jetpackcompose.ui.theme.Colors
+import com.example.jetpackcompose.util.isInternetConnected
 import kotlinx.coroutines.launch
 
 /**
@@ -58,7 +63,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun LoginScreen(
     navController: NavController,
-    viewModel: AccountViewModel
+    viewModel: AccountViewModel,
+    context: Context
 ) {
     var email by remember { mutableStateOf("caynhat05062004@gmail.com") }
     var password by remember { mutableStateOf("123") }
@@ -69,6 +75,13 @@ fun LoginScreen(
     val screenHeight = configuration.screenHeightDp.dp
 
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = true) {
+        val isWifi = isInternetConnected(context)
+        if (!isWifi) {
+            navController.navigate(BottomBarScreen.Home.route)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -101,6 +114,16 @@ fun LoginScreen(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
+            ),
+            colors = OutlinedTextFieldDefaults.colors(
+                //setting the text field background when it is focused
+                focusedTextColor = Colors.Blue,
+                unfocusedTextColor = Colors.LightGrey,
+                focusedBorderColor = Colors.Blue,
+                unfocusedBorderColor = Colors.LightGrey,
+                cursorColor = Colors.Blue,
+                focusedLabelColor = Colors.Blue,
+                unfocusedLabelColor = Colors.LightGrey
             )
         )
 
@@ -126,7 +149,17 @@ fun LoginScreen(
                         contentDescription = if (passwordVisible) "Show password" else "Hide Password"
                     )
                 }
-            }
+            },
+            colors = OutlinedTextFieldDefaults.colors(
+                //setting the text field background when it is focused
+                focusedTextColor = Colors.Blue,
+                unfocusedTextColor = Colors.LightGrey,
+                focusedBorderColor = Colors.Blue,
+                unfocusedBorderColor = Colors.LightGrey,
+                cursorColor = Colors.Blue,
+                focusedLabelColor = Colors.Blue,
+                unfocusedLabelColor = Colors.LightGrey
+            )
         )
 
         TextButton(
@@ -139,7 +172,7 @@ fun LoginScreen(
             Text(
                 text = "Forgot Password?",
                 color = colorResource(R.color.btn_back_color),
-                style = Typography.titleMedium
+                style = AppTypo.titleSmall
             )
         }
 
@@ -164,7 +197,7 @@ fun LoginScreen(
         ){
             Text(
                 text = "LOG IN",
-                style = Typography.titleLarge,
+                style = AppTypo.titleLarge,
                 color = Color(0xFF9AC0D6)
             )
         }
@@ -179,7 +212,7 @@ fun LoginScreen(
             Text(
                 text = "Don't have an account? ",
                 color = Color.White,
-                style = Typography.titleMedium
+                style = AppTypo.bodyMedium
             )
             TextButton(onClick = {
                 navController.navigate(Routes.register)
@@ -187,7 +220,8 @@ fun LoginScreen(
                 Text(
                     "Register now",
                     color = colorResource(R.color.btn_back_color),
-                    style = Typography.titleMedium
+                    style = AppTypo.titleSmall
+
                 )
             }
         }
@@ -196,9 +230,9 @@ fun LoginScreen(
     }
 }
 
-@Preview
-@Composable
-fun LoginScreenPreview() {
-    val viewModel = AccountViewModel(LocalContext.current)
-    LoginScreen(navController = NavController(LocalContext.current), viewModel)
-}
+//@Preview
+//@Composable
+//fun LoginScreenPreview() {
+//    val viewModel = AccountViewModel(LocalContext.current)
+//    LoginScreen(navController = NavController(LocalContext.current), viewModel)
+//}

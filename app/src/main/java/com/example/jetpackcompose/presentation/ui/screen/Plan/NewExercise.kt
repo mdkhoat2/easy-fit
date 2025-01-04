@@ -34,6 +34,7 @@ import com.example.jetpackcompose.data.repo.WorkoutRepositoryImp
 import com.example.jetpackcompose.domain.usecase.AddCustomExerciseUseCase
 import com.example.jetpackcompose.presentation.ui.viewmodel.EditWorkoutViewModel
 import com.example.jetpackcompose.presentation.ui.viewmodel.NewWorkoutViewModel
+import com.example.jetpackcompose.ui.theme.Colors
 import kotlinx.coroutines.launch
 
 /**
@@ -152,10 +153,13 @@ fun NewExercise(
             textStyle = LocalTextStyle.current.copy(color = Color.White),
             modifier = Modifier
                 .fillMaxWidth(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = Color.White
+            colors = OutlinedTextFieldDefaults.colors(
+                //setting the text field background when it is focused
+                focusedTextColor = Colors.Blue,
+                unfocusedTextColor = Colors.LightGrey,
+                focusedBorderColor = Colors.Blue,
+                unfocusedBorderColor = Colors.LightGrey,
+                cursorColor = Colors.Blue
             )
         )
         Text(
@@ -177,10 +181,13 @@ fun NewExercise(
             textStyle = LocalTextStyle.current.copy(color = Color.White),
             modifier = Modifier
                 .fillMaxWidth(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                focusedBorderColor = Color.White,
-                unfocusedBorderColor = Color.Gray,
-                cursorColor = Color.White
+            colors = OutlinedTextFieldDefaults.colors(
+                //setting the text field background when it is focused
+                focusedTextColor = Colors.Blue,
+                unfocusedTextColor = Colors.LightGrey,
+                focusedBorderColor = Colors.Blue,
+                unfocusedBorderColor = Colors.LightGrey,
+                cursorColor = Colors.Blue
             )
         )
     }

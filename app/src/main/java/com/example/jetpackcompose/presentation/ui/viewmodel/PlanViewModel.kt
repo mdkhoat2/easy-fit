@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.presentation.ui.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.jetpackcompose.data.dataModel.DayOfWeek
@@ -37,17 +38,17 @@ class PlanViewModel @Inject constructor(
                 val patch = getPatchHistoryUseCase.invoke()
                 val plan = getPlanUseCase.invoke()
 
-                val latestWeek = patch?.weeks?.lastOrNull()
-                val currentYearMonth = latestWeek?.startDate?.substring(0, 7) // "YYYY-MM"
+                val today = LocalDate.now()
 
-                val currentYear = currentYearMonth?.substring(0, 4)?.toInt() ?: LocalDate.now().year
-                val currentMonth = currentYearMonth?.substring(5, 7)?.toInt() ?: LocalDate.now().monthValue
+                val currentYear = today.year
+                val currentMonth = today.monthValue
 
                 // Generate a 6x7 grid (42 days)
                 val firstDayOfMonth = LocalDate.of(currentYear, currentMonth, 1)
                 val firstDayOffset = firstDayOfMonth.dayOfWeek.value % 7 // Adjust for Monday = 0
                 val totalDaysInMonth = YearMonth.of(currentYear, currentMonth).lengthOfMonth()
-                val today = LocalDate.now()
+
+
 
                 val dayType = MutableList(42) { 0 } // Default: 0 = Out of month
                 val daysList = mutableListOf<LocalDate>()
@@ -92,14 +93,33 @@ class PlanViewModel @Inject constructor(
                     }
                 }
 
-                val mappedDays = daysList.mapIndexed { index, date ->
-                    date.format(DateTimeFormatter.ISO_DATE) to dayType[index]
+                val filteredWeeks = patch?.weeks?.filter { week ->
+                    val weekStartDate = LocalDate.parse(week.startDate)
+                    val weekEndDate = weekStartDate.plusDays(6)
+                    weekStartDate.monthValue == currentMonth || weekEndDate.monthValue == currentMonth
+                } ?: emptyList()
+
+                var missedCnt = 0
+                var totalHour = 0f
+                var totalSession = 0
+
+                filteredWeeks.forEach { week ->
+                    val weekStartDate = LocalDate.parse(week.startDate)
+
+                    // Iterate through each day in the week
+                    for (dayOffset in 0..6) {
+                        val currentDate = weekStartDate.plusDays(dayOffset.toLong())
+                        if (currentDate.year == currentYear && currentDate.monthValue == currentMonth) {
+                            val customDayOfWeek = dateToDayOfWeek(currentDate)
+
+                            if (week.missedDays.contains(customDayOfWeek)) {
+                                missedCnt += 1
+                            }
+                        }
+                    }
+                    totalHour += (week.totalTime / 60)
+                    totalSession += week.sessionCount
                 }
-
-                val missedCnt = patch?.weeks?.sumOf { it.missedSessions } ?: 0
-                val totalHour = patch?.weeks?.sumOf { (it.totalTime/60).toInt() }?.toFloat() ?: 0f
-                val totalSession = patch?.weeks?.sumOf { it.sessionCount } ?: 0
-
 
                 _state.value = _state.value.copy(
                     missedCnt = missedCnt,
@@ -117,10 +137,6 @@ class PlanViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    fun UpdateValue(newValue: String){
-
     }
 }
 

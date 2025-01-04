@@ -11,11 +11,11 @@ import com.example.jetpackcompose.R
 // Define JakartaSans FontFamily with specific weights
 val JakartaSans = FontFamily(
     Font(R.font.jakarta, FontWeight.Normal), // Regular
-    Font(R.font.jakarta, FontWeight.Medium)  // Medium
+    Font(R.font.medium, FontWeight.Medium)  // Medium
 )
 
 // Set of Material typography styles
-val Typography = Typography(
+val AppTypo = Typography(
     bodyLarge = TextStyle(
         fontFamily = JakartaSans,         // Use JakartaSans
         fontWeight = FontWeight.Normal,   // Regular weight
@@ -32,12 +32,19 @@ val Typography = Typography(
     ),
     titleSmall = TextStyle(
         fontFamily = JakartaSans,         // Use JakartaSans
-        fontWeight = FontWeight.Normal,   // Regular weight
+        fontWeight = FontWeight.Medium,   // Regular weight
         fontSize = 16.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.sp
     ),
     bodySmall = TextStyle(
+        fontFamily = JakartaSans,         // Use JakartaSans
+        fontWeight = FontWeight.Normal,   // Regular weight
+        fontSize = 12.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.sp
+    ),
+    bodyMedium = TextStyle(
         fontFamily = JakartaSans,         // Use JakartaSans
         fontWeight = FontWeight.Normal,   // Regular weight
         fontSize = 16.sp,
@@ -59,10 +66,16 @@ val Typography = Typography(
         letterSpacing = 0.sp
     ),
     displayMedium = TextStyle(
-        fontFamily = FontFamily.Default,
+        fontFamily = JakartaSans,
         fontWeight = FontWeight.Normal,
         fontSize = 20.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.sp
+    ),
+    displaySmall = TextStyle(
+        fontFamily = JakartaSans,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
+        lineHeight = 16.sp
     )
 )

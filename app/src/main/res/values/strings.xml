@@ -11,4 +11,5 @@
         <item>High Knees</item>
         <item>Burpee</item>
     </string-array>
+    <string name="title_activity_forum_reply">ForumReply</string>
 </resources>
