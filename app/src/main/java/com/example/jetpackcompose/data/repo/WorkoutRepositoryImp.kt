@@ -88,7 +88,7 @@ class WorkoutRepositoryImp(
         val fullHistory = database.getPatchHistory()
         val duraMin = duraMilis/60000f
 
-        val updatedHistory : PatchHistory
+        var updatedHistory : PatchHistory
 
         // check if the last week is the current week
         if (fullHistory.weeks.isNotEmpty() && checkIfWeekIsCurrentWeek(fullHistory.weeks.last(), LocalDate.now()))
@@ -113,6 +113,13 @@ class WorkoutRepositoryImp(
 
             updatedHistory = fullHistory.copy(
                 weeks = fullHistory.weeks + newWeek
+            )
+        }
+
+        // we limit the history to 12 weeks
+        while (updatedHistory.weeks.size > 12) {
+            updatedHistory = updatedHistory.copy(
+                weeks = updatedHistory.weeks.drop(1)
             )
         }
         database.updatePatchHistory(context,updatedHistory)
