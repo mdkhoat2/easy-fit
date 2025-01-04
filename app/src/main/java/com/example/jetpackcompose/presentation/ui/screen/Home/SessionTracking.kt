@@ -1,6 +1,7 @@
 package com.example.jetpackcompose.presentation.ui.screen.Home
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -106,6 +107,7 @@ fun SessionTrackingScreen(
 
             uiState.currentExercise?.let { exercise ->
                 CurrentExercise(
+                    index = uiState.currentExerciseIndex,
                     isPaused = uiState.isPaused,
                     exerciseItem = exercise,
                     onCycleComplete = {
@@ -243,6 +245,7 @@ fun formatTime(timeInMillis: Long): String {
 
 @Composable
 fun CurrentExercise(
+    index: Int,
     isPaused: Boolean,
     exerciseItem: ExerciseItem,
     onCycleComplete: () -> Unit = {}
@@ -290,6 +293,8 @@ fun CurrentExercise(
             is ExerciseUIType.TimeBased -> {
                 var remainingSeconds by remember { mutableLongStateOf(exerciseItem.type.totalSeconds) }
 
+                Log.d("TimeBased", exerciseItem.type.totalSeconds.toString())
+
                 Text(
                     text = formatTime(remainingSeconds),
                     color = Color.White,
@@ -299,11 +304,13 @@ fun CurrentExercise(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 TimeBasedExercise(
+                    index = index,
                     isPaused = isPaused,
                     exerciseItem = exerciseItem,
                     totalSeconds = exerciseItem.type.totalSeconds,
                     onTimeUpdate = { remainingSeconds = it },
                     onComplete = onCycleComplete
+
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -332,6 +339,7 @@ fun CurrentExercise(
 
 @Composable
 fun TimeBasedExercise(
+    index: Int,
     isPaused: Boolean,
     exerciseItem: ExerciseItem,
     totalSeconds: Long,
@@ -341,7 +349,9 @@ fun TimeBasedExercise(
     val animatedSweepAngle = remember { Animatable(0f) }
     var lastValue by remember { mutableFloatStateOf(0f) }
 
-    LaunchedEffect(isPaused){
+    Log.d("Error", isPaused.toString())
+
+    LaunchedEffect(index){
         if (!isPaused){
             try {
                 animatedSweepAngle.animateTo(
@@ -355,9 +365,9 @@ fun TimeBasedExercise(
                     val remainingTime = ((1 - progress) * totalSeconds).toLong() * 1000
                     onTimeUpdate(remainingTime)
                 }
-                onComplete()
                 lastValue = 0f
                 animatedSweepAngle.snapTo(0f)
+                onComplete()
             }
             catch (e : CancellationException){
                 lastValue = animatedSweepAngle.value
