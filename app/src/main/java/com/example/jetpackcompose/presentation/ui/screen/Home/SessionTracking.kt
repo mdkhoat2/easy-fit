@@ -347,11 +347,12 @@ fun TimeBasedExercise(
     onComplete: () -> Unit
 ) {
     val animatedSweepAngle = remember { Animatable(0f) }
+    val isPausedInt = if (isPaused) 1 else 0
     var lastValue by remember { mutableFloatStateOf(0f) }
 
     Log.d("Error", isPaused.toString())
 
-    LaunchedEffect(index){
+    LaunchedEffect(index + isPausedInt){
         if (!isPaused){
             try {
                 animatedSweepAngle.animateTo(
