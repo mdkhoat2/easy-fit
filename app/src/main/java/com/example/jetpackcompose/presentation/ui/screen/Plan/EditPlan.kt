@@ -49,7 +49,7 @@ fun EditPlan(
     workoutDatabase: WorkoutDatabase,
     context: Context,
 ) {
-    val repository = remember { WorkoutRepositoryImp( workoutDatabase,context) }
+    val repository = remember { WorkoutRepositoryImp(workoutDatabase, context) }
     val getPlanUseCase = remember { GetPlanUseCase(repository) }
     val updatePlanUseCase = remember { UpdatePlanUseCase(repository) }
 
@@ -61,6 +61,7 @@ fun EditPlan(
     LaunchedEffect(Unit) {
         plan = getPlanUseCase()
     }
+
     // UI Loading State
     if (plan == null) {
         Box(
@@ -100,7 +101,6 @@ fun EditPlan(
             IconButton(onClick = {
                 coroutineScope.launch {
                     updatePlanUseCase(plan!!)
-
                     navController.popBackStack()
                 }
             }) {
@@ -143,60 +143,96 @@ fun EditPlan(
                     fontSize = 16.sp
                 )
 
-                // Time or "No plan"
-                Row(
-                    modifier = Modifier
-                        .background(Color.Black)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    if (isChecked) {
-                        Text(
-                            text = time,
-                            color = Color(0xFF9AC0D6),
-                            fontSize = 16.sp
-                        )
-                    } else {
-                        Text(
-                            text = "No plan",
-                            color = Color.Gray,
-                            fontSize = 16.sp
-                        )
-                    }
-
-                    // Checkbox
-                    Checkbox(
-                        checked = isChecked,
-                        onCheckedChange = { checked ->
-                            if (checked) {
-                                // Show Time Picker Dialog
-                                showTimePicker(context, time) { selectedTime ->
-                                    val updatedDates = plan!!.dateWorkout.toMutableList().apply { add(day) }
-                                    val updatedTimes = plan!!.timeWorkout.toMutableList().apply {
-                                        if (index < size) set(index, selectedTime) else add(selectedTime)
-                                    }
-                                    plan = plan!!.copy(dateWorkout = updatedDates, timeWorkout = updatedTimes)
-                                }
-                            } else {
-                                // Remove Day and Reset Time
-                                val updatedDates = plan!!.dateWorkout.toMutableList().apply { remove(day) }
-                                val updatedTimes = plan!!.timeWorkout.toMutableList().apply {
-                                    if (index < size) set(index, "No plan")
-                                }
-                                plan = plan!!.copy(dateWorkout = updatedDates, timeWorkout = updatedTimes)
-                            }
-                        },
-                        colors = CheckboxDefaults.colors(
-                            checkmarkColor = Color.White,
-                            uncheckedColor = Color.Gray,
-                            checkedColor = Color(0xFF9AC0D6)
-                        )
-                    )
-                }
+                EditablePlanRow(
+                    day = day,
+                    isChecked = isChecked,
+                    time = time,
+                    plan = plan!!,
+                    index = index,
+                    context = context,
+                    onPlanUpdate = { updatedPlan -> plan = updatedPlan }
+                )
             }
         }
         LineDivider()
     }
 }
+
+
+@Composable
+fun EditablePlanRow(
+    day: DayOfWeek,
+    isChecked: Boolean,
+    time: String,
+    plan: Plan,
+    index: Int,
+    context: Context,
+    onPlanUpdate: (Plan) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        // Display time or "No plan"
+        Text(
+            text = if (isChecked) time else "No plan",
+            color = if (isChecked) Color(0xFF9AC0D6) else Color.Gray,
+            fontSize = 16.sp
+        )
+
+        // Checkbox
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = { checked ->
+                if (checked) {
+                    // Show Time Picker Dialog
+                    showTimePicker(context, time) { selectedTime ->
+                        if (selectedTime.isNotEmpty()) {
+                            // Update Plan with Selected Time
+                            updatePlan(day, selectedTime, true, plan, index, onPlanUpdate)
+                        }
+                    }
+                } else {
+                    // Uncheck and reset time
+                    updatePlan(day, "No plan", false, plan, index, onPlanUpdate)
+                }
+            },
+            colors = CheckboxDefaults.colors(
+                checkmarkColor = Color.White,
+                uncheckedColor = Color.Gray,
+                checkedColor = Color(0xFF9AC0D6)
+            )
+        )
+    }
+}
+
+
+private fun updatePlan(
+    day: DayOfWeek,
+    time: String,
+    add: Boolean,
+    plan: Plan,
+    index: Int,
+    onPlanUpdate: (Plan) -> Unit
+) {
+    val updatedDates = plan.dateWorkout.toMutableList().apply {
+        if (add) add(day) else remove(day)
+    }
+    val updatedTimes = plan.timeWorkout.toMutableList().apply {
+        if (add) {
+            if (index < size) set(index, time) else add(time)
+        } else {
+            if (index < size) set(index, "No plan")
+        }
+    }
+    onPlanUpdate(plan.copy(dateWorkout = updatedDates, timeWorkout = updatedTimes))
+}
+
+
+
 
 @SuppressLint("DefaultLocale")
 fun showTimePicker(
@@ -227,15 +263,3 @@ fun showTimePicker(
         true // Use 24-hour format
     ).show()
 }
-
-
-//@Preview(showBackground = true)
-//@Composable
-//fun EditPlanScreenPreview() {
-//    EditPlan(
-//        navController = rememberNavController(),
-//        onSave = { updatedPlan ->
-//            Log.d("EditPlanScreen", "Saved plan: $updatedPlan")
-//        }
-//    )
-//}
